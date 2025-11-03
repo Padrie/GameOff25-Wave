@@ -61,8 +61,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: com.cqf.urpvolumetricfog.runtime::VolumetricFogVolumeComponent
   active: 1
   distance:
-    m_OverrideState: 0
-    m_Value: 64
+    m_OverrideState: 1
+    m_Value: 512
   baseHeight:
     m_OverrideState: 0
     m_Value: 0
@@ -70,13 +70,13 @@ MonoBehaviour:
     m_OverrideState: 0
     m_Value: 50
   enableGround:
-    m_OverrideState: 0
+    m_OverrideState: 1
     m_Value: 0
   groundHeight:
     m_OverrideState: 0
     m_Value: 0
   density:
-    m_OverrideState: 0
+    m_OverrideState: 1
     m_Value: 0.2
   attenuationDistance:
     m_OverrideState: 0
@@ -88,14 +88,14 @@ MonoBehaviour:
     m_OverrideState: 0
     m_Value: 1
   enableMainLightContribution:
-    m_OverrideState: 0
-    m_Value: 0
+    m_OverrideState: 1
+    m_Value: 1
   anisotropy:
-    m_OverrideState: 0
+    m_OverrideState: 1
     m_Value: 0.4
   scattering:
-    m_OverrideState: 0
-    m_Value: 0.15
+    m_OverrideState: 1
+    m_Value: 0.4
   tint:
     m_OverrideState: 0
     m_Value: {r: 1, g: 1, b: 1, a: 1}
@@ -103,14 +103,14 @@ MonoBehaviour:
     m_OverrideState: 0
     m_Value: 0
   maxSteps:
-    m_OverrideState: 0
+    m_OverrideState: 1
     m_Value: 128
   blurIterations:
-    m_OverrideState: 0
+    m_OverrideState: 1
     m_Value: 2
   enabled:
-    m_OverrideState: 0
-    m_Value: 0
+    m_OverrideState: 1
+    m_Value: 1
   renderPassEvent:
     m_OverrideState: 0
     m_Value: 550
@@ -126,22 +126,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 899c54efeace73346a0a16faa3afe726, type: 3}
   m_Name: Vignette
   m_EditorClassIdentifier: 
-  active: 1
+  active: 0
   color:
-    m_OverrideState: 0
+    m_OverrideState: 1
     m_Value: {r: 0, g: 0, b: 0, a: 1}
   center:
-    m_OverrideState: 0
+    m_OverrideState: 1
     m_Value: {x: 0.5, y: 0.5}
   intensity:
     m_OverrideState: 1
     m_Value: 0.2
   smoothness:
-    m_OverrideState: 0
-    m_Value: 0.2
+    m_OverrideState: 1
+    m_Value: 1
   rounded:
-    m_OverrideState: 0
-    m_Value: 0
+    m_OverrideState: 1
+    m_Value: 1
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
