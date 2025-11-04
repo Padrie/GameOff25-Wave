@@ -21,7 +21,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Ground Material
-  m_Shader: {fileID: -6465566751694194690, guid: c326d1cbf32be644c92b55d9f6b3b6af, type: 3}
+  m_Shader: {fileID: 4800000, guid: de42c8f8c98ad0d4e82b12f219f58efc, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -109,9 +109,15 @@ Material:
     - _Cutoff: 0.5
     - _DetailAlbedoMapScale: 1
     - _DetailNormalMapScale: 1
+    - _DispAmplitude: 0.4
+    - _DisplaceAlongUp: 0
     - _DstBlend: 0
     - _DstBlendAlpha: 0
     - _EnvironmentReflections: 1
+    - _FadeEnd: 20
+    - _FadeStart: 10
+    - _FalloffEnd: 20
+    - _FalloffStart: 8
     - _Frequency: 1
     - _GlossMapScale: 0
     - _Glossiness: 0
@@ -125,7 +131,7 @@ Material:
     - _Smoothness: 0.5
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
-    - _Speed: 5
+    - _Speed: 2
     - _SrcBlend: 1
     - _SrcBlendAlpha: 1
     - _Surface: 0
@@ -133,10 +139,10 @@ Material:
     - _XRMotionVectorsPass: 1
     - _ZWrite: 1
     m_Colors:
-    - _BaseColor: {r: 0, g: 0.9804158, b: 1, a: 1}
+    - _BaseColor: {r: 0.24528301, g: 0.24528301, b: 0.24528301, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
-    - _WaveOriginWS: {r: 0, g: 0, b: 0, a: 0}
+    - _WaveOriginWS: {r: -2.1354167, g: 0.08000392, b: 8.635628, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

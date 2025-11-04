@@ -2,17 +2,12 @@ using UnityEngine;
 
 public class WaveOrigin: MonoBehaviour
 {
-    public Renderer targetRenderer;
+    public Material mat;
     public Transform player;
-    static readonly int WaveOriginWS = Shader.PropertyToID("_WaveOriginWS");
-    MaterialPropertyBlock mpb;
 
-    void Awake() => mpb = new MaterialPropertyBlock();
-
-    void LateUpdate()
+    void Update()
     {
-        targetRenderer.GetPropertyBlock(mpb);
-        mpb.SetVector(WaveOriginWS, player.position);
-        targetRenderer.SetPropertyBlock(mpb);
+        if (!mat || !player) return;
+        mat.SetVector("_WaveOriginWS", player.position);
     }
 }
