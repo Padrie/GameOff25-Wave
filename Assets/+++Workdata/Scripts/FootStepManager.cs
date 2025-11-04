@@ -46,6 +46,9 @@ namespace FootstepSystem
         [Header("Player State")]
         public bool IsCrouching;
 
+        [Header("Debug")]
+        public bool debugConsole;
+
         private CharacterController characterController;
         private Vector3 lastPosition;
         private Vector3 lastStepPosition;
@@ -55,9 +58,6 @@ namespace FootstepSystem
 
         private void Awake()
         {
-            if (!AudioSource)
-                AudioSource = GetComponent<AudioSource>();
-
             characterController = GetComponent<CharacterController>();
             lastPosition = transform.position;
             lastStepPosition = transform.position;
@@ -71,8 +71,7 @@ namespace FootstepSystem
             bool isGrounded = Physics.Raycast(
                 GroundCheckOrigin ? GroundCheckOrigin.position : transform.position + Vector3.up * 0.1f,
                 Vector3.down, out var hitInfo,
-                GroundCheckDistance, GroundLayerMask,
-                QueryTriggerInteraction.Ignore);
+                GroundCheckDistance, GroundLayerMask);
 
             velocity = (transform.position - lastPosition) / Mathf.Max(Time.deltaTime, 0.0001f);
             lastPosition = transform.position;
@@ -94,6 +93,10 @@ namespace FootstepSystem
             {
                 PlayFootstep(hitInfo, isRunning);
                 lastStepPosition = transform.position;
+                if (debugConsole)
+                {
+                    Debug.Log($"Footstep played.");
+                }
             }
         }
 
