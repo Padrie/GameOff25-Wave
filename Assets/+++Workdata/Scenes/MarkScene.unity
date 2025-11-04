@@ -2482,6 +2482,135 @@ Mesh:
       - serializedVersion: 1
         m_IndexStart: 0
         m_IndexCount: 0
+--- !u!1 &371581652
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 371581654}
+  - component: {fileID: 371581653}
+  m_Layer: 2
+  m_Name: Footstep AudioSource
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!82 &371581653
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 371581652}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
+  m_PlayOnAwake: 1
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 1
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+--- !u!4 &371581654
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 371581652}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1772423828}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &377512528
 GameObject:
   m_ObjectHideFlags: 0
@@ -2845,7 +2974,7 @@ GameObject:
   - component: {fileID: 442667513}
   - component: {fileID: 442667512}
   - component: {fileID: 442667511}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Stairs (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -10221,6 +10350,37 @@ Transform:
   m_Children: []
   m_Father: {fileID: 918850002}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &850228485
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 850228486}
+  m_Layer: 2
+  m_Name: Footstep Raycast
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &850228486
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 850228485}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.5, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1772423828}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &853462405
 GameObject:
   m_ObjectHideFlags: 0
@@ -11421,7 +11581,7 @@ GameObject:
   - component: {fileID: 996321103}
   - component: {fileID: 996321102}
   - component: {fileID: 996321101}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Plane
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -11435,7 +11595,7 @@ MeshCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 996321100}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: 431c84c287e5e78438c4cce039b7fe13, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -20765,7 +20925,12 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 9156347144040445547, guid: c82236c16aae9d34fbd437f8dea6e2c9, type: 3}
   m_PrefabInstance: {fileID: 2004776112}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1772423829
+--- !u!4 &1772423828 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 9156347144040445546, guid: c82236c16aae9d34fbd437f8dea6e2c9, type: 3}
+  m_PrefabInstance: {fileID: 2004776112}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1772423832
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -20774,40 +20939,62 @@ MonoBehaviour:
   m_GameObject: {fileID: 1772423825}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 04a5fd1b7bbb8f34d915b0561656e7f1, type: 3}
+  m_Script: {fileID: 11500000, guid: c7863620c9db2f547ab4f7df245592f4, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: '::'
-  Dirt:
-    Walk:
-    - {fileID: 8300000, guid: 9ea11a2d13d536e4e8441a0f5895995c, type: 3}
-    - {fileID: 8300000, guid: 203ac8b6f07070e4f93f1c1a6fff06c3, type: 3}
-    - {fileID: 8300000, guid: ac6649006dbee9e4685752e124111da7, type: 3}
-    - {fileID: 8300000, guid: f42914d98b070f741b2feee96a2988ee, type: 3}
-    - {fileID: 8300000, guid: feb62160ad1f8334ab037017b843d162, type: 3}
-    - {fileID: 8300000, guid: 001f691d110d55648871a03f446ffa08, type: 3}
-    - {fileID: 8300000, guid: 6478d7fb30f301b4fa8f74d5d1dad094, type: 3}
-    - {fileID: 8300000, guid: f1547ad8fbfa4f24d83e5a445aee860d, type: 3}
-    - {fileID: 8300000, guid: 47832b56ccba5bc408b1d5aac1871746, type: 3}
-    - {fileID: 8300000, guid: 3d132da7af60f1145a3deb6a8bc42a08, type: 3}
-    Run:
-    - {fileID: 8300000, guid: 9e68ea1ebd76aa44c8cfa5beb9850830, type: 3}
-    - {fileID: 8300000, guid: 1deb201b8bf8f89479323a74e421150b, type: 3}
-    - {fileID: 8300000, guid: 7c518e8469a403b4c981664ecb28a79a, type: 3}
-    - {fileID: 8300000, guid: 1f2844efbf7abf647ba3d75d510f823a, type: 3}
-    - {fileID: 8300000, guid: fa95ebee958fb0e41a42a832aab767eb, type: 3}
-    - {fileID: 8300000, guid: 0cfeb72dea261a54cb7672590d2d1656, type: 3}
-    - {fileID: 8300000, guid: 924e3e09c67130946a6d7b666e8b8b68, type: 3}
-    - {fileID: 8300000, guid: 6da235e2573048249bcbe608f984ff48, type: 3}
-    - {fileID: 8300000, guid: fdc05ea2699023143ba7e93533cc5a0b, type: 3}
-    - {fileID: 8300000, guid: f26cf9ded47cf0140957490a16f85acc, type: 3}
-    Jump:
-    - {fileID: 8300000, guid: 665f92bb69e46a94a8caf3717dbb0d5e, type: 3}
-    - {fileID: 8300000, guid: 8802544ed0324a14095edc70ab3bbab1, type: 3}
-    - {fileID: 8300000, guid: 65d9836027675574b8d070c5718f99c7, type: 3}
-    Land:
-    - {fileID: 8300000, guid: 7131d701ae015a54aa3d856feccd513f, type: 3}
-    - {fileID: 8300000, guid: 942019cf9ecd5854ebeb343b12b7f779, type: 3}
-    - {fileID: 8300000, guid: 1a88f429c4a7b734f9c4254f0c654cea, type: 3}
+  m_EditorClassIdentifier: Assembly-CSharp::FootstepSystem.FootStepManager
+  SurfaceAudioSets:
+  - SurfaceMaterial: {fileID: 13400000, guid: 431c84c287e5e78438c4cce039b7fe13, type: 2}
+    FootstepSounds:
+      WalkClips:
+      - {fileID: 8300000, guid: 1f0199a4c6005ec4abbb302f71bc036d, type: 3}
+      - {fileID: 8300000, guid: 53e2adf2ac488ef46bb2b4074de9e363, type: 3}
+      - {fileID: 8300000, guid: a03a96c5d1e99b4409ddd79098abd9ab, type: 3}
+      - {fileID: 8300000, guid: 7187dc81f98b8be4eb97bfc4dd9a5abf, type: 3}
+      - {fileID: 8300000, guid: e3cfcb32689b274419ac73380ea96888, type: 3}
+      - {fileID: 8300000, guid: 314d37dfb74502a4094b835d0e0d6c23, type: 3}
+      - {fileID: 8300000, guid: f0f794c67e9233d468a38d165590d253, type: 3}
+      - {fileID: 8300000, guid: 1a7741daba5446e46a40f8074aae75dc, type: 3}
+      - {fileID: 8300000, guid: 0bc66974c41ff8c4fa15f46d21ad3548, type: 3}
+      RunClips:
+      - {fileID: 8300000, guid: ecd647025e0a3c04fbd5829fff509e09, type: 3}
+      - {fileID: 8300000, guid: 3bd1b93317b7a3a49b13011cdaa64d0b, type: 3}
+      - {fileID: 8300000, guid: 7b4b6eb734482064c8c1e5fd45d4d76c, type: 3}
+      - {fileID: 8300000, guid: fba95cafa5bba8649a7d269656e7317b, type: 3}
+      - {fileID: 8300000, guid: e924ff5d774024542830602ee674d9a9, type: 3}
+      - {fileID: 8300000, guid: 281c105661e5ee14b8e76523200338bd, type: 3}
+      - {fileID: 8300000, guid: 3069c9f7e833f8e4099228c28f9d65dd, type: 3}
+      - {fileID: 8300000, guid: 82354d1fee336984994fbdcc8154c89c, type: 3}
+      - {fileID: 8300000, guid: 068414160a0ccf34ca0c11b55d43ffc8, type: 3}
+      - {fileID: 8300000, guid: 02d4b2dff380d194fab91c0864b0c386, type: 3}
+      JumpClips:
+      - {fileID: 8300000, guid: 3d8f480d252db9449b2f978284506f8e, type: 3}
+      - {fileID: 8300000, guid: 79e6e1370ee1ca747b469e68d0dcb0fe, type: 3}
+      - {fileID: 8300000, guid: b796f7e3b1a4d7344b7ee8d6c077a68f, type: 3}
+      - {fileID: 8300000, guid: 1f080a1e65d584c4ca3e3c75fbb406b3, type: 3}
+      - {fileID: 8300000, guid: 45bc125cb8cb195408490bec63fde615, type: 3}
+      - {fileID: 8300000, guid: c2e0d3f88cb48f240af40a1f1bac7e8c, type: 3}
+      LandClips:
+      - {fileID: 8300000, guid: 8420cf17e21d6354a98e6ef6d19dc9cc, type: 3}
+      - {fileID: 8300000, guid: e708389b7a8f64a46aa12d201c187b69, type: 3}
+      - {fileID: 8300000, guid: f85e18b3e969dac4bbfc7f6b18139932, type: 3}
+      - {fileID: 8300000, guid: caceea3cf407e1b47a4024a755887675, type: 3}
+      - {fileID: 8300000, guid: 322f3dcfdbd5b5742a885bfbc4fe5365, type: 3}
+      - {fileID: 8300000, guid: 866abdf3a931850498786581089be202, type: 3}
+  AudioSource: {fileID: 371581653}
+  MasterVolume: 1
+  WalkVolume: 1
+  RunVolume: 1
+  CrouchVolume: 0.6
+  GroundCheckOrigin: {fileID: 850228486}
+  GroundCheckDistance: 1.5
+  GroundLayerMask:
+    serializedVersion: 2
+    m_Bits: 64
+  WalkStepDistance: 2
+  RunStepDistance: 1.3
+  RunSpeedThreshold: 3.5
+  MinimumSpeed: 0.1
+  IsCrouching: 0
 --- !u!1 &1855455570
 GameObject:
   m_ObjectHideFlags: 0
@@ -22371,7 +22558,7 @@ GameObject:
   - component: {fileID: 1982320515}
   - component: {fileID: 1982320514}
   - component: {fileID: 1982320513}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Stairs
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -25442,6 +25629,10 @@ PrefabInstance:
       propertyPath: sprintSpeed
       value: 12
       objectReference: {fileID: 0}
+    - target: {fileID: 9156347144040445544, guid: c82236c16aae9d34fbd437f8dea6e2c9, type: 3}
+      propertyPath: groundMask.m_Bits
+      value: 64
+      objectReference: {fileID: 0}
     - target: {fileID: 9156347144040445545, guid: c82236c16aae9d34fbd437f8dea6e2c9, type: 3}
       propertyPath: m_Radius
       value: 0.2
@@ -25504,11 +25695,17 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: 9156347144040445546, guid: c82236c16aae9d34fbd437f8dea6e2c9, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 371581654}
+    - targetCorrespondingSourceObject: {fileID: 9156347144040445546, guid: c82236c16aae9d34fbd437f8dea6e2c9, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 850228486}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 9156347144040445547, guid: c82236c16aae9d34fbd437f8dea6e2c9, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1772423829}
+      addedObject: {fileID: 1772423832}
     - targetCorrespondingSourceObject: {fileID: 9156347143994207886, guid: c82236c16aae9d34fbd437f8dea6e2c9, type: 3}
       insertIndex: -1
       addedObject: {fileID: 870676177}
@@ -26058,7 +26255,7 @@ GameObject:
   - component: {fileID: 2107131655}
   - component: {fileID: 2107131654}
   - component: {fileID: 2107131653}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Town Hall (6)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
