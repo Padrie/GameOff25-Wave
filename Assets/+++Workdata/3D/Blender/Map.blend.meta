@@ -7,6 +7,11 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
+      name: Door_MTL
+    second: {fileID: 2100000, guid: 86bed484ca5c28a41adcc0c3d334bfbc, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
       name: Road MTL
     second: {fileID: 2100000, guid: 9235749aaf37a494bbba848f43b98a10, type: 2}
   - first:
