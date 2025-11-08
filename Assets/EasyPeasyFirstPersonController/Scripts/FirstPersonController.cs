@@ -2,7 +2,10 @@ namespace EasyPeasyFirstPersonController
 {
     using System;
     using System.Collections;
+    using UnityEditor.UI;
     using UnityEngine;
+    using UnityEngine.Animations;
+    using UnityEngine.InputSystem.LowLevel;
 
     public partial class FirstPersonController : MonoBehaviour
     {
@@ -53,13 +56,14 @@ namespace EasyPeasyFirstPersonController
         private Vector3 slideDirection;
         private float originalHeight;
         private float originalCameraParentHeight;
+        private Vector3 originalParentCameraPos;
         private float coyoteTimer;
         private Camera cam;
         private AudioSource slideAudioSource;
         private float bobTimer;
         private float defaultPosY;
         private Vector3 recoil = Vector3.zero;
-        private bool isLook = true, isMove = true;
+        private bool isLook = true, isMove = true, hasCeiling = false;
         private float currentCameraHeight;
         private float currentBobOffset;
         private float currentFov;
@@ -68,6 +72,13 @@ namespace EasyPeasyFirstPersonController
         private float slideSpeedVelocity;
         private float currentTiltAngle;
         private float tiltVelocity;
+        public float amplitude = 0.03f;
+        public float frequency = 0.8f;
+        public float smoothSpeed = 5f;
+        private float seedX;
+        private float seedY;
+        private float seedZ;
+        Vector3 targetOffset;
 
         public float CurrentCameraHeight => isCrouching || isSliding ? crouchCameraHeight : originalCameraParentHeight;
 
@@ -77,6 +88,7 @@ namespace EasyPeasyFirstPersonController
             cam = playerCamera.GetComponent<Camera>();
             originalHeight = characterController.height;
             originalCameraParentHeight = cameraParent.localPosition.y;
+            originalParentCameraPos = cameraParent.localPosition;
             defaultPosY = cameraParent.localPosition.y;
             slideAudioSource = gameObject.AddComponent<AudioSource>();
             slideAudioSource.playOnAwake = false;
@@ -92,6 +104,10 @@ namespace EasyPeasyFirstPersonController
             rotY = playerCamera.localRotation.eulerAngles.x;
             xVelocity = rotX;
             yVelocity = rotY;
+
+            seedX = UnityEngine.Random.value * 100f;
+            seedY = UnityEngine.Random.value * 100f;
+            seedZ = UnityEngine.Random.value * 100f;
         }
 
         private void Update()
@@ -123,6 +139,16 @@ namespace EasyPeasyFirstPersonController
                 currentTiltAngle = Mathf.SmoothDamp(currentTiltAngle, targetTiltAngle, ref tiltVelocity, 0.2f);
                 playerCamera.transform.localRotation = Quaternion.Euler(yVelocity - currentTiltAngle, 0f, 0f);
                 transform.rotation = Quaternion.Euler(0f, xVelocity, 0f);
+
+                float randomX = (Mathf.PerlinNoise(seedX, Time.time * frequency) - 0.5f) * 2f;
+                float randomY = (Mathf.PerlinNoise(seedY, Time.time * frequency) - 0.5f) * 2f;
+                float randomZ = (Mathf.PerlinNoise(seedZ, Time.time * frequency) - 0.5f) * 2f * 0.5f;
+
+                Vector3 desiredOffset = new Vector3(randomX, randomY, randomZ) * amplitude;
+
+                targetOffset = Vector3.Lerp(targetOffset, desiredOffset, Time.deltaTime * smoothSpeed);
+
+                cameraParent.transform.localPosition = originalParentCameraPos + targetOffset;
             }
 
             HandleHeadBob();
@@ -132,7 +158,7 @@ namespace EasyPeasyFirstPersonController
             Vector3 point2 = point1 + Vector3.up * characterController.height * 0.6f;
             float capsuleRadius = characterController.radius * 0.95f;
             float castDistance = isSliding ? originalHeight + 0.2f : originalHeight - crouchHeight + 0.2f;
-            bool hasCeiling = Physics.CapsuleCast(point1, point2, capsuleRadius, Vector3.up, castDistance, groundMask, ceilingCheckQueryTriggerInteraction);
+            hasCeiling = Physics.CapsuleCast(point1, point2, capsuleRadius, Vector3.up, castDistance, groundMask, ceilingCheckQueryTriggerInteraction);
             if (isSliding)
             {
                 postSlideCrouchTimer = 0.3f;
@@ -197,7 +223,8 @@ namespace EasyPeasyFirstPersonController
                     currentCameraHeight + currentBobOffset,
                     cameraParent.localPosition.z);
                 recoil = Vector3.zero;
-                cameraParent.localRotation = Quaternion.RotateTowards(cameraParent.localRotation, Quaternion.Euler(recoil), recoilReturnSpeed * Time.deltaTime);
+                //Headsway
+                //cameraParent.localRotation = Quaternion.RotateTowards(cameraParent.localRotation, Quaternion.Euler(recoil), recoilReturnSpeed * Time.deltaTime);
                 return;
             }
 
@@ -225,7 +252,8 @@ namespace EasyPeasyFirstPersonController
                 recoil = Vector3.zero;
             }
 
-            cameraParent.localRotation = Quaternion.RotateTowards(cameraParent.localRotation, Quaternion.Euler(recoil), recoilReturnSpeed * Time.deltaTime);
+            //Headsway
+            //cameraParent.localRotation = Quaternion.RotateTowards(cameraParent.localRotation, Quaternion.Euler(recoil), recoilReturnSpeed * Time.deltaTime);
         }
 
         private void HandleMovement()
@@ -243,7 +271,7 @@ namespace EasyPeasyFirstPersonController
 
             if (isGrounded || coyoteTimer > 0f)
             {
-                if (canJump && Input.GetKeyDown(KeyCode.Space) && !isSliding)
+                if (canJump && Input.GetKeyDown(KeyCode.Space) && !isSliding &&!hasCeiling)
                 {
                     moveDirection.y = jumpSpeed;
                 }
