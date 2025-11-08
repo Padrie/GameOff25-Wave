@@ -1,38 +1,91 @@
 using UnityEngine;
+using System.Collections;
+using System.Collections.Generic;
 
-public class WaveOriginShockwave : MonoBehaviour
+[ExecuteAlways]
+public class ShockwaveBurstSpawner : MonoBehaviour
 {
-    [Header("Assign the material used by your water/mesh")]
-    public Material mat;
-
-    [Header("Player to read position from")]
     public Transform player;
-
-    [Header("Trigger a shockwave with this key (optional)")]
     public KeyCode triggerKey = KeyCode.X;
+    [Range(1, 16)] public int burstCount = 6;
+    [Min(0.01f)] public float burstInterval = 0.08f;
+    [Min(0.01f)] public float waveLifetime = 1.2f;
+    [Range(1, 16)] public int maxWaves = 16;
 
-    [Header("Default lifetime for each shockwave (seconds)")]
-    [Min(0.01f)]
-    public float defaultLifetime = 1.0f;
+    struct Wave { public Vector3 origin; public float startT; public float life; }
+    readonly List<Wave> waves = new();
 
-    public void TriggerWave(float? lifetimeOverride = null)
+    Vector4[] waveData;
+    float[] waveLife;
+
+    Coroutine burstCo;
+
+    static readonly int GW_WaveCountID = Shader.PropertyToID("_GW_WaveCount");
+    static readonly int GW_WaveDataID = Shader.PropertyToID("_GW_WaveData");
+    static readonly int GW_WaveLifeID = Shader.PropertyToID("_GW_WaveLife");
+
+    void OnEnable() { EnsureBuffers(); UploadGlobals(); }
+
+    void EnsureBuffers()
     {
-        if (!mat || !player) return;
-
-        mat.SetVector("_WaveOriginWS", player.position);
-
-        mat.SetFloat("_WaveStartTime", Time.time);
-
-        mat.SetFloat("_WaveLifetime", lifetimeOverride.HasValue ? lifetimeOverride.Value : defaultLifetime);
+        int n = Mathf.Clamp(maxWaves, 1, 16);
+        if (waveData == null || waveData.Length != n) waveData = new Vector4[n];
+        if (waveLife == null || waveLife.Length != n) waveLife = new float[n];
     }
 
-    private void Update()
+    void Update()
     {
-        if (!mat || !player) return;
+        if (!player) return;
 
-        if (Input.GetKeyDown(KeyCode.X))
+        if (Input.GetKeyDown(triggerKey))
         {
-            TriggerWave();
+            if (burstCo != null) StopCoroutine(burstCo);
+            burstCo = StartCoroutine(EmitBurst(player.position));
         }
+
+        CullExpired();
+        UploadGlobals();
+    }
+
+    IEnumerator EmitBurst(Vector3 originAtPress)
+    {
+        float t0 = Time.time;
+        for (int i = 0; i < burstCount; i++)
+        {
+            AddWave(originAtPress, t0 + i * burstInterval, waveLifetime);
+            yield return new WaitForSeconds(burstInterval);
+        }
+    }
+
+    void AddWave(Vector3 origin, float startTime, float life)
+    {
+        waves.Add(new Wave { origin = origin, startT = startTime, life = life });
+        while (waves.Count > maxWaves) waves.RemoveAt(0);
+    }
+
+    void CullExpired()
+    {
+        float t = Time.time;
+        for (int i = waves.Count - 1; i >= 0; i--)
+            if (t - waves[i].startT > Mathf.Max(0.0001f, waves[i].life))
+                waves.RemoveAt(i);
+    }
+
+    void UploadGlobals()
+    {
+        EnsureBuffers();
+        for (int i = 0; i < waveData.Length; i++) { waveData[i] = Vector4.zero; waveLife[i] = 0f; }
+
+        int count = Mathf.Min(waves.Count, waveData.Length);
+        for (int i = 0; i < count; i++)
+        {
+            var w = waves[i];
+            waveData[i] = new Vector4(w.origin.x, w.origin.y, w.origin.z, w.startT);
+            waveLife[i] = w.life;
+        }
+
+        Shader.SetGlobalInt(GW_WaveCountID, count);
+        Shader.SetGlobalVectorArray(GW_WaveDataID, waveData);
+        Shader.SetGlobalFloatArray(GW_WaveLifeID, waveLife);
     }
 }
