@@ -17,7 +17,6 @@ public class PlayerController : MonoBehaviour
     RaycastHit groundedRaycastHit;
     RaycastHit headRaycastHit;
 
-
     public float inputX;
     public float inputZ;
 
