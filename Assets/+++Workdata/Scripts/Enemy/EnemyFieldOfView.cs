@@ -6,16 +6,16 @@ using UnityEditor;
 
 public class EnemyFieldOfView : MonoBehaviour
 {
-
-    public float viewRadius;
+    [SerializeField] bool gizmosEnabled = true;
+    [SerializeField] float viewRadius;
     [Range(0, 360)]
-    public float viewAngle;
+    [SerializeField] float viewAngle;
 
-    public LayerMask targetMask;
-    public LayerMask obstacleMask;
+    [SerializeField] LayerMask targetMask;
+    [SerializeField] LayerMask obstacleMask;
 
     //[HideInInspector]
-    public List<GameObject> visibleTargets = new List<GameObject>();
+    [SerializeField] List<GameObject> visibleTargets = new List<GameObject>();
     EnemyManager enemyManager;
 
     void Start()
@@ -76,20 +76,23 @@ public class EnemyFieldOfView : MonoBehaviour
         return new Vector3(Mathf.Sin(angleInDegrees * Mathf.Deg2Rad), 0, Mathf.Cos(angleInDegrees * Mathf.Deg2Rad));
     }
 
-    private void OnDrawGizmos()
+    private void OnDrawGizmosSelected()
     {
-        Handles.color = Color.white;
-        Handles.DrawWireArc(transform.position, Vector3.up, Vector3.forward, 360, viewRadius);
-        Vector3 viewAngleA = DirFromAngle(-viewAngle / 2, false);
-        Vector3 viewAngleB = DirFromAngle(viewAngle / 2, false);
-
-        Handles.DrawLine(transform.position, transform.position + viewAngleA * viewRadius);
-        Handles.DrawLine(transform.position, transform.position + viewAngleB * viewRadius);
-
-        Handles.color = Color.red;
-        foreach (GameObject visibleTarget in visibleTargets)
+        if (gizmosEnabled)
         {
-            Handles.DrawLine(transform.position, visibleTarget.transform.position);
+            Handles.color = Color.white;
+            Handles.DrawWireArc(transform.position, Vector3.up, Vector3.forward, 360, viewRadius);
+            Vector3 viewAngleA = DirFromAngle(-viewAngle / 2, false);
+            Vector3 viewAngleB = DirFromAngle(viewAngle / 2, false);
+
+            Handles.DrawLine(transform.position, transform.position + viewAngleA * viewRadius);
+            Handles.DrawLine(transform.position, transform.position + viewAngleB * viewRadius);
+
+            Handles.color = Color.red;
+            foreach (GameObject visibleTarget in visibleTargets)
+            {
+                Handles.DrawLine(transform.position, visibleTarget.transform.position);
+            }
         }
     }
 }

@@ -100,10 +100,11 @@ GameObject:
   - component: {fileID: 6369685975601592544}
   - component: {fileID: 4628638608120420325}
   - component: {fileID: 4526598242922662557}
+  - component: {fileID: 7782275581454938571}
   - component: {fileID: -5210475350114517621}
   - component: {fileID: -8889086453145585291}
-  - component: {fileID: 7782275581454938571}
   - component: {fileID: 732156000937196573}
+  - component: {fileID: 3720340854313712755}
   m_Layer: 0
   m_Name: Enemy
   m_TagString: Untagged
@@ -172,33 +173,6 @@ CapsuleCollider:
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0, y: 1, z: 0}
---- !u!114 &-5210475350114517621
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4283120311605566137}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3b914a9849cd0394cacd5065cc717ac9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EnemyStats
-  walkSpeed: 1
-  chaseSpeed: 3
---- !u!114 &-8889086453145585291
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4283120311605566137}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bc7499e18b1a90e4f8f7efbcb5819b69, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EnemyManager
-  target: {fileID: 0}
 --- !u!95 &7782275581454938571
 Animator:
   serializedVersion: 7
@@ -221,6 +195,33 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &-5210475350114517621
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4283120311605566137}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3b914a9849cd0394cacd5065cc717ac9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyStats
+  walkSpeed: 1
+  chaseSpeed: 5
+--- !u!114 &-8889086453145585291
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4283120311605566137}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bc7499e18b1a90e4f8f7efbcb5819b69, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyManager
+  target: {fileID: 0}
 --- !u!114 &732156000937196573
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -233,8 +234,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d85a3568537df8444a842c513b4fda9d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyFieldOfView
-  viewRadius: 4.83
-  viewAngle: 87
+  gizmosEnabled: 1
+  viewRadius: 15.59
+  viewAngle: 129
   targetMask:
     serializedVersion: 2
     m_Bits: 256
@@ -242,3 +244,21 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   visibleTargets: []
+--- !u!114 &3720340854313712755
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4283120311605566137}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a1fb5c2ad70e400468a20df62188f793, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemySoundPerception
+  gizmosEnabled: 1
+  faintSoundRadius: 4
+  quietSoundRadius: 6
+  mediumSoundRadius: 8
+  loudSoundRadius: 10
+  veryLoudSoundRadius: 12

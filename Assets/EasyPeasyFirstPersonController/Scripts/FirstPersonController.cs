@@ -9,6 +9,8 @@ namespace EasyPeasyFirstPersonController
 
     public partial class FirstPersonController : MonoBehaviour
     {
+        public SoundStrength soundStrength = SoundStrength.Faint;
+        public bool toggle = false;
         [Range(0, 100)] public float mouseSensitivity = 50f;
         [Range(0f, 200f)] private float snappiness = 100f;
         [Range(0f, 20f)] public float walkSpeed = 3f;
@@ -112,6 +114,12 @@ namespace EasyPeasyFirstPersonController
 
         private void Update()
         {
+            if (toggle)
+            {
+                SoundManager.EmitSound(transform.position, soundStrength);
+                toggle = false;
+            }
+
             isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask, groundCheckQueryTriggerInteraction);
             if (isGrounded && moveDirection.y < 0)
             {
