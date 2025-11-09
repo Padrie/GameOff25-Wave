@@ -1,0 +1,33 @@
+using UnityEngine;
+using UnityEngine.AI;
+
+public class ChaseState : IState
+{
+    private readonly EnemyManager enemyManager;
+    private readonly EnemyStats enemyStats;
+    private readonly NavMeshAgent agent;
+
+    public ChaseState(EnemyManager enemyManager, EnemyStats enemyStats, NavMeshAgent agent)
+    {
+        this.enemyManager = enemyManager;
+        this.enemyStats = enemyStats;
+        this.agent = agent;
+    }
+
+    public void OnEnter()
+    {
+        Debug.Log("Entered Chase State");
+        agent.speed = enemyStats.chaseSpeed;
+    }
+
+    public void OnExit()
+    {
+        agent.speed = enemyStats.walkSpeed;
+        Debug.Log("Exited Chase State");
+    }
+
+    public void Tick()
+    {
+        agent.SetDestination(enemyManager.target.transform.position);
+    }
+}

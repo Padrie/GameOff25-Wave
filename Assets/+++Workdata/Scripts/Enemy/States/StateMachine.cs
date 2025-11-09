@@ -16,11 +16,9 @@ public class StateMachine
     {
         var _transition = GetTransition();
         if (_transition != null)
-        {
             SetState(_transition.To);
 
-            currentState?.Tick();
-        }
+        currentState?.Tick();
     }
 
     public void SetState(IState state)
@@ -69,10 +67,8 @@ public class StateMachine
     Transition GetTransition()
     {
         foreach (var transition in anyTransitions)
-        {
             if (transition.Condition())
                 return transition;
-        }
 
         foreach (var transition in currentTransitions)
             if (transition.Condition())
