@@ -59,11 +59,11 @@ public class EnemyFieldOfView : MonoBehaviour
     {
         if (visibleTargets.Count > 0)
         {
-            enemyManager.target = visibleTargets[0];
+            enemyManager.playerTarget = visibleTargets[0];
         }
         else
         {
-            enemyManager.target = null;
+            enemyManager.playerTarget = null;
         }
     }
 

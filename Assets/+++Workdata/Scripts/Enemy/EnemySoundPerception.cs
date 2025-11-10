@@ -15,11 +15,14 @@ public class EnemySoundPerception : MonoBehaviour
 
     EnemyManager enemyManager;
     NavMeshAgent agent;
+    GameObject soundTarget;
 
     private void Awake()
     {
         enemyManager = GetComponent<EnemyManager>();
         agent = GetComponent<NavMeshAgent>();
+        soundTarget = new GameObject();
+        soundTarget.name = "Sound Target";
     }
 
     private void OnEnable()
@@ -38,8 +41,9 @@ public class EnemySoundPerception : MonoBehaviour
         float dist = Vector3.Distance(transform.position, pos);
 
         if (dist > soundStrength) return;
+        soundTarget.transform.position = pos;
 
-        agent.SetDestination(pos);
+        enemyManager.soundTarget = soundTarget.transform;
 
         print($"The sound was {SoundStrengthString(s)}");
     }

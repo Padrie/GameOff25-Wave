@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -9,7 +10,10 @@ public class EnemyManager : MonoBehaviour
     [HideInInspector] EnemyStats stats;
     [HideInInspector] Animator animator;
 
-    public GameObject target;
+    [Header("Targets")]
+    public GameObject playerTarget;
+    public Transform lastPlayerPosTarget;
+    public Transform soundTarget;
 
     StateMachine stateMachine;
 
@@ -22,19 +26,26 @@ public class EnemyManager : MonoBehaviour
         stateMachine = new StateMachine();
 
         //States
-        var idle = new IdleState(this);
-        var randomRoam = 2;
-        var chase = new ChaseState(this, stats, agent);
+        var idleState = new IdleState(this, agent);
+        var randomRoamState = 2;
+        var playerChaseState = new ChasePlayerState(this, stats, agent);
+        var soundChaseState = new ChaseSoundState(this, stats, agent);
 
         //State Transition
-        stateMachine.AddTransition(idle, chase, HasTarget());
-        stateMachine.AddTransition(chase, idle, HasNoTarget());
+        stateMachine.AddTransition(idleState, playerChaseState, HasPlayerTarget());
+        stateMachine.AddTransition(playerChaseState, idleState, HasPlayerNoTarget());
+
+        stateMachine.AddTransition(idleState, soundChaseState, HasSoundTarget());
+        stateMachine.AddTransition(soundChaseState, idleState, HasNoSoundTarget());
 
         //State Transition checks
-        Func<bool> HasTarget() => () => target != null;
-        Func<bool> HasNoTarget() => () => target == null;
+        Func<bool> HasPlayerTarget() => () => playerTarget != null;
+        Func<bool> HasPlayerNoTarget() => () => playerTarget == null;
 
-        stateMachine.SetState(idle);
+        Func<bool> HasSoundTarget() => () => soundTarget != null;
+        Func<bool> HasNoSoundTarget() => () => soundTarget == null;
+
+        stateMachine.SetState(idleState);
     }
 
     private void Update()

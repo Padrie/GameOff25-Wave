@@ -1,13 +1,13 @@
 using UnityEngine;
 using UnityEngine.AI;
 
-public class ChaseState : IState
+public class ChasePlayerState : IState
 {
     private readonly EnemyManager enemyManager;
     private readonly EnemyStats enemyStats;
     private readonly NavMeshAgent agent;
 
-    public ChaseState(EnemyManager enemyManager, EnemyStats enemyStats, NavMeshAgent agent)
+    public ChasePlayerState(EnemyManager enemyManager, EnemyStats enemyStats, NavMeshAgent agent)
     {
         this.enemyManager = enemyManager;
         this.enemyStats = enemyStats;
@@ -28,6 +28,6 @@ public class ChaseState : IState
 
     public void Tick()
     {
-        agent.SetDestination(enemyManager.target.transform.position);
+        agent.SetDestination(enemyManager.playerTarget.transform.position);
     }
 }
