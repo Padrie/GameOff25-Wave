@@ -141,10 +141,18 @@ public class CircularWaveSpawner : MonoBehaviour
         {
             if (r == null) continue;
 
-            Material mat = waveMaterial != null ? waveMaterial : r.sharedMaterial;
+            //IMPORTANT: Use each renderer's own sharedMaterial to preserve their unique properties
+            //Don't force waveMaterial onto all renderers - only use it as a reference for finding renderers
+            Material originalMat = r.sharedMaterial;
 
-            //Create instance
-            r.material = mat;
+            if (originalMat == null)
+            {
+                Debug.LogWarning($"Renderer {r.name} has no material. Skipping.");
+                continue;
+            }
+
+            //Create instance of the renderer's OWN material
+            r.material = originalMat;
             Material instance = r.material;
 
             if (!waveMaterialInstances.Contains(instance))
@@ -339,7 +347,7 @@ public class CircularWaveSpawner : MonoBehaviour
                 float amplitudeMultiplier = buildUpFactor * fadeOutFactor;
                 float currentAmplitude = wave.amplitude * amplitudeMultiplier;
 
-                SetShaderWave(i + 1, currentAmplitude, wave.wavelength, wave.speed, wave.steepness, wave.origin);
+                SetShaderWave(i + 1, currentAmplitude, wave.wavelength, wave.speed, wave.steepness, wave.origin, wave.birthTime);
             }
             else
             {
@@ -349,7 +357,7 @@ public class CircularWaveSpawner : MonoBehaviour
         }
     }
 
-    private void SetShaderWave(int index, float amplitude, float wavelength, float speed, float steepness, Vector3 origin)
+    private void SetShaderWave(int index, float amplitude, float wavelength, float speed, float steepness, Vector3 origin, float birthTime)
     {
         string prefix = $"_Wave{index}";
         Vector4 directionData = new Vector4(origin.x, origin.y, origin.z, safeZoneRadius);
@@ -364,6 +372,7 @@ public class CircularWaveSpawner : MonoBehaviour
             mat.SetFloat(prefix + "Speed", speed);
             mat.SetFloat(prefix + "Steepness", steepness);
             mat.SetVector(prefix + "Direction", directionData);
+            mat.SetFloat(prefix + "BirthTime", birthTime);
         }
     }
 
@@ -381,6 +390,7 @@ public class CircularWaveSpawner : MonoBehaviour
             mat.SetFloat(prefix + "Speed", 1f);
             mat.SetFloat(prefix + "Steepness", 0f);
             mat.SetVector(prefix + "Direction", Vector4.zero);
+            mat.SetFloat(prefix + "BirthTime", 0f);
         }
     }
 

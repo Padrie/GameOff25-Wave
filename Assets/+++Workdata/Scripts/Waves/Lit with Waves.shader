@@ -175,20 +175,25 @@ Shader "Universal Render Pipeline/Lit with Waves"
             //Wave parameters
             float _Wave1Amplitude, _Wave1Wavelength, _Wave1Speed, _Wave1Steepness;
             float4 _Wave1Direction; //.xyz = origin, .w = inner radius (safe zone)
+            float _Wave1BirthTime; //Time when this wave was spawned
             float _Wave2Amplitude, _Wave2Wavelength, _Wave2Speed, _Wave2Steepness;
             float4 _Wave2Direction;
+            float _Wave2BirthTime;
             float _Wave3Amplitude, _Wave3Wavelength, _Wave3Speed, _Wave3Steepness;
             float4 _Wave3Direction;
+            float _Wave3BirthTime;
             float _Wave4Amplitude, _Wave4Wavelength, _Wave4Speed, _Wave4Steepness;
             float4 _Wave4Direction;
+            float _Wave4BirthTime;
 
-            //Circular/Radial Wave with inner safe radius - like audio waves
+            //Circular/Radial Wave with inner safe radius - like rain splashes expanding outward
             void CircularWave(float3 position, float3 origin, float amplitude, float wavelength, float speed, float steepness, float time, float innerRadius,
                             inout float3 offset, inout float3 normal)
             {
                 if (amplitude < 0.001) return;
                 
-                //Calculate distance from origin in XZ plane (ignore Y)
+                //Calculate distance from origin in XZ plane (ignore Y for horizontal distance)
+                //This ensures surfaces at different heights but same XZ position get the same wave
                 float2 toPoint = position.xz - origin.xz;
                 float distance = length(toPoint);
                 
@@ -201,19 +206,43 @@ Shader "Universal Render Pipeline/Lit with Waves"
                 //Calculate effective distance (distance from edge of safe zone)
                 float effectiveDistance = distance - innerRadius;
                 
-                //Normalized direction from origin to current point (radial)
-                float2 direction = toPoint / distance;
-                
                 //Wave parameters
                 float k = 2.0 * 3.14159265 / max(wavelength, 0.1);
                 float c = sqrt(9.8 / k); //Phase velocity
                 
-                //Phase calculation: wave starts at inner radius and expands outward
+                //Calculate the wave front position using wave-specific time (not global time)
+                //This ensures each wave starts from zero when spawned
+                float waveFrontDistance = c * speed * time;
+                
+                //RAIN SPLASH EFFECT: Only show wave where it has reached
+                //Allow some wavelengths of trail behind the front
+                float trailLength = wavelength * 2.5;
+                float distanceFromFront = waveFrontDistance - effectiveDistance;
+                
+                //Don't render if we're ahead of the wave front or too far behind it
+                if (distanceFromFront < -wavelength * 0.5 || distanceFromFront > trailLength)
+                {
+                    return;
+                }
+                
+                //Normalized direction from origin to current point (radial)
+                float2 direction = toPoint / distance;
+                
+                //Phase calculation - uses only XZ distance so all surfaces at same XZ get same phase
                 float phase = k * effectiveDistance - k * c * speed * time;
                 
+                //Fade in at the wave front (sharp leading edge)
+                float frontFade = smoothstep(-wavelength * 0.5, wavelength * 0.2, distanceFromFront);
+                
+                //Fade out behind the wave front (creates expanding ring effect)
+                float trailFade = smoothstep(trailLength, trailLength * 0.5, distanceFromFront);
+                
+                //Combine fades
+                float fadeFactor = frontFade * trailFade;
+                
                 //Smooth fade-in at the edge of safe zone (prevents harsh edge)
-                float fadeInDistance = wavelength * 0.5; //Fade over half wavelength
-                float fadeIn = smoothstep(0, fadeInDistance, effectiveDistance);
+                float safeZoneFade = smoothstep(0, wavelength * 0.5, effectiveDistance);
+                fadeFactor *= safeZoneFade;
                 
                 //Steepness factor (controls horizontal displacement)
                 float Q = steepness / k;
@@ -222,10 +251,13 @@ Shader "Universal Render Pipeline/Lit with Waves"
                 float cosPhase = cos(phase);
                 float sinPhase = sin(phase);
                 
-                //Apply fade-in to amplitude
-                float effectiveAmplitude = amplitude * fadeIn;
+                //Apply all fades to amplitude
+                float effectiveAmplitude = amplitude * fadeFactor;
                 
                 //Vertical displacement (main wave height)
+                //This is applied relative to each surface's current position
+                //All surfaces at the same XZ coordinate get the SAME displacement
+                //This maintains their vertical offset while they move together
                 offset.y += effectiveAmplitude * sinPhase;
                 
                 //Horizontal displacement (creates the characteristic peak shape)
@@ -290,15 +322,16 @@ Shader "Universal Render Pipeline/Lit with Waves"
                 float3 normalWS = TransformObjectToWorldNormal(normalOS);
                 
                 //Apply waves in world space
-                float time = _Time.y;
+                float currentTime = _Time.y;
                 float3 waveOffset = float3(0, 0, 0);
                 float3 waveNormal = float3(0, 1, 0);
                 
                 //_Wave1Direction.w contains the inner radius (safe zone)
-                CircularWave(positionWS, _Wave1Direction.xyz, _Wave1Amplitude, _Wave1Wavelength, _Wave1Speed, _Wave1Steepness, time, _Wave1Direction.w, waveOffset, waveNormal);
-                CircularWave(positionWS, _Wave2Direction.xyz, _Wave2Amplitude, _Wave2Wavelength, _Wave2Speed, _Wave2Steepness, time, _Wave2Direction.w, waveOffset, waveNormal);
-                CircularWave(positionWS, _Wave3Direction.xyz, _Wave3Amplitude, _Wave3Wavelength, _Wave3Speed, _Wave3Steepness, time, _Wave3Direction.w, waveOffset, waveNormal);
-                CircularWave(positionWS, _Wave4Direction.xyz, _Wave4Amplitude, _Wave4Wavelength, _Wave4Speed, _Wave4Steepness, time, _Wave4Direction.w, waveOffset, waveNormal);
+                //Pass wave age (current time - birth time) instead of global time
+                CircularWave(positionWS, _Wave1Direction.xyz, _Wave1Amplitude, _Wave1Wavelength, _Wave1Speed, _Wave1Steepness, currentTime - _Wave1BirthTime, _Wave1Direction.w, waveOffset, waveNormal);
+                CircularWave(positionWS, _Wave2Direction.xyz, _Wave2Amplitude, _Wave2Wavelength, _Wave2Speed, _Wave2Steepness, currentTime - _Wave2BirthTime, _Wave2Direction.w, waveOffset, waveNormal);
+                CircularWave(positionWS, _Wave3Direction.xyz, _Wave3Amplitude, _Wave3Wavelength, _Wave3Speed, _Wave3Steepness, currentTime - _Wave3BirthTime, _Wave3Direction.w, waveOffset, waveNormal);
+                CircularWave(positionWS, _Wave4Direction.xyz, _Wave4Amplitude, _Wave4Wavelength, _Wave4Speed, _Wave4Steepness, currentTime - _Wave4BirthTime, _Wave4Direction.w, waveOffset, waveNormal);
                 
                 //Apply wave offset
                 positionWS += waveOffset;
@@ -445,12 +478,16 @@ Shader "Universal Render Pipeline/Lit with Waves"
             //Wave parameters for GBuffer
             float _Wave1Amplitude, _Wave1Wavelength, _Wave1Speed, _Wave1Steepness;
             float4 _Wave1Direction;
+            float _Wave1BirthTime;
             float _Wave2Amplitude, _Wave2Wavelength, _Wave2Speed, _Wave2Steepness;
             float4 _Wave2Direction;
+            float _Wave2BirthTime;
             float _Wave3Amplitude, _Wave3Wavelength, _Wave3Speed, _Wave3Steepness;
             float4 _Wave3Direction;
+            float _Wave3BirthTime;
             float _Wave4Amplitude, _Wave4Wavelength, _Wave4Speed, _Wave4Steepness;
             float4 _Wave4Direction;
+            float _Wave4BirthTime;
 
             void CircularWaveGBuffer(float3 position, float3 origin, float amplitude, float wavelength, float speed, float steepness, float time, float innerRadius,
                             inout float3 offset, inout float3 normal)
@@ -463,19 +500,44 @@ Shader "Universal Render Pipeline/Lit with Waves"
                 if (distance < innerRadius) return;
                 
                 float effectiveDistance = distance - innerRadius;
-                float2 direction = toPoint / distance;
+                
                 float k = 2.0 * 3.14159265 / max(wavelength, 0.1);
                 float c = sqrt(9.8 / k);
+                
+                //Calculate the wave front position (how far the wave has traveled from origin)
+                float waveFrontDistance = c * speed * time;
+                
+                //RAIN SPLASH EFFECT: Only show wave where it has reached
+                float trailLength = wavelength * 2.5;
+                float distanceFromFront = waveFrontDistance - effectiveDistance;
+                
+                //Don't render if we're ahead of the wave front or too far behind it
+                if (distanceFromFront < -wavelength * 0.5 || distanceFromFront > trailLength)
+                {
+                    return;
+                }
+                
+                float2 direction = toPoint / distance;
                 float phase = k * effectiveDistance - k * c * speed * time;
                 
-                float fadeInDistance = wavelength * 0.5;
-                float fadeIn = smoothstep(0, fadeInDistance, effectiveDistance);
+                //Fade in at the wave front (sharp leading edge)
+                float frontFade = smoothstep(-wavelength * 0.5, wavelength * 0.2, distanceFromFront);
+                
+                //Fade out behind the wave front (creates expanding ring effect)
+                float trailFade = smoothstep(trailLength, trailLength * 0.5, distanceFromFront);
+                
+                //Combine fades
+                float fadeFactor = frontFade * trailFade;
+                
+                //Smooth fade-in at the edge of safe zone
+                float safeZoneFade = smoothstep(0, wavelength * 0.5, effectiveDistance);
+                fadeFactor *= safeZoneFade;
                 
                 float Q = steepness / k;
                 float cosPhase = cos(phase);
                 float sinPhase = sin(phase);
                 
-                float effectiveAmplitude = amplitude * fadeIn;
+                float effectiveAmplitude = amplitude * fadeFactor;
                 
                 offset.y += effectiveAmplitude * sinPhase;
                 
@@ -507,14 +569,14 @@ Shader "Universal Render Pipeline/Lit with Waves"
                 float3 normalWS = TransformObjectToWorldNormal(input.normalOS);
                 
                 //Apply waves
-                float time = _Time.y;
+                float currentTime = _Time.y;
                 float3 waveOffset = float3(0, 0, 0);
                 float3 waveNormal = float3(0, 1, 0);
                 
-                CircularWaveGBuffer(positionWS, _Wave1Direction.xyz, _Wave1Amplitude, _Wave1Wavelength, _Wave1Speed, _Wave1Steepness, time, _Wave1Direction.w, waveOffset, waveNormal);
-                CircularWaveGBuffer(positionWS, _Wave2Direction.xyz, _Wave2Amplitude, _Wave2Wavelength, _Wave2Speed, _Wave2Steepness, time, _Wave2Direction.w, waveOffset, waveNormal);
-                CircularWaveGBuffer(positionWS, _Wave3Direction.xyz, _Wave3Amplitude, _Wave3Wavelength, _Wave3Speed, _Wave3Steepness, time, _Wave3Direction.w, waveOffset, waveNormal);
-                CircularWaveGBuffer(positionWS, _Wave4Direction.xyz, _Wave4Amplitude, _Wave4Wavelength, _Wave4Speed, _Wave4Steepness, time, _Wave4Direction.w, waveOffset, waveNormal);
+                CircularWaveGBuffer(positionWS, _Wave1Direction.xyz, _Wave1Amplitude, _Wave1Wavelength, _Wave1Speed, _Wave1Steepness, currentTime - _Wave1BirthTime, _Wave1Direction.w, waveOffset, waveNormal);
+                CircularWaveGBuffer(positionWS, _Wave2Direction.xyz, _Wave2Amplitude, _Wave2Wavelength, _Wave2Speed, _Wave2Steepness, currentTime - _Wave2BirthTime, _Wave2Direction.w, waveOffset, waveNormal);
+                CircularWaveGBuffer(positionWS, _Wave3Direction.xyz, _Wave3Amplitude, _Wave3Wavelength, _Wave3Speed, _Wave3Steepness, currentTime - _Wave3BirthTime, _Wave3Direction.w, waveOffset, waveNormal);
+                CircularWaveGBuffer(positionWS, _Wave4Direction.xyz, _Wave4Amplitude, _Wave4Wavelength, _Wave4Speed, _Wave4Steepness, currentTime - _Wave4BirthTime, _Wave4Direction.w, waveOffset, waveNormal);
                 
                 positionWS += waveOffset;
                 waveNormal = normalize(waveNormal);
