@@ -84,7 +84,8 @@ public class EnemySoundPerception : MonoBehaviour
         }
     }
 
-    private void OnDrawGizmos()
+#if UNITY_EDITOR
+    private void OnDrawGizmosSelected()
     {
         if (gizmosEnabled)
         {
@@ -100,4 +101,5 @@ public class EnemySoundPerception : MonoBehaviour
             Handles.DrawWireDisc(transform.position, Vector3.up, veryLoudSoundRadius);
         }
     }
+#endif
 }

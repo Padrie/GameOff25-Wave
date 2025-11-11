@@ -12,6 +12,11 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
+      name: ProBuilderDefault
+    second: {fileID: 2100000, guid: 1c5dd285fffbc284a931e770038919ad, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
       name: Road MTL
     second: {fileID: 2100000, guid: 9235749aaf37a494bbba848f43b98a10, type: 2}
   - first:

@@ -28,6 +28,9 @@ public class Door : MonoBehaviour
     Quaternion closedRot, openRot, targetRot;
     float currentSpeed;
 
+
+    private CircularWaveSpawner _circularWaveSpawner;
+
     void Awake()
     {
         closedRot = transform.rotation;
@@ -37,6 +40,8 @@ public class Door : MonoBehaviour
         currentSpeed = Speed;
         SetupTrigger(frontTrigger, false);
         SetupTrigger(backTrigger, true);
+
+        _circularWaveSpawner = FindFirstObjectByType<CircularWaveSpawner>();
     }
 
     void Update()
@@ -89,6 +94,7 @@ public class Door : MonoBehaviour
             doorSound.clip = doorOpenSound;
             if (doorSound.clip) doorSound.Play();
         }
+        _circularWaveSpawner.SpawnWaveAt(gameObject.transform.position);
     }
 
     bool IsActuallyClosed()

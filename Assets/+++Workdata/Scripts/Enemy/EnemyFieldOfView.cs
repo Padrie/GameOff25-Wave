@@ -76,6 +76,7 @@ public class EnemyFieldOfView : MonoBehaviour
         return new Vector3(Mathf.Sin(angleInDegrees * Mathf.Deg2Rad), 0, Mathf.Cos(angleInDegrees * Mathf.Deg2Rad));
     }
 
+#if UNITY_EDITOR
     private void OnDrawGizmosSelected()
     {
         if (gizmosEnabled)
@@ -84,10 +85,8 @@ public class EnemyFieldOfView : MonoBehaviour
             Handles.DrawWireArc(transform.position, Vector3.up, Vector3.forward, 360, viewRadius);
             Vector3 viewAngleA = DirFromAngle(-viewAngle / 2, false);
             Vector3 viewAngleB = DirFromAngle(viewAngle / 2, false);
-
             Handles.DrawLine(transform.position, transform.position + viewAngleA * viewRadius);
             Handles.DrawLine(transform.position, transform.position + viewAngleB * viewRadius);
-
             Handles.color = Color.red;
             foreach (GameObject visibleTarget in visibleTargets)
             {
@@ -95,4 +94,5 @@ public class EnemyFieldOfView : MonoBehaviour
             }
         }
     }
+#endif
 }
