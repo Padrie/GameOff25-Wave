@@ -27,16 +27,20 @@ public class EnemyManager : MonoBehaviour
 
         //States
         var idleState = new IdleState(this, agent);
-        var randomRoamState = 2;
+        var roamState = new RoamState(this, stats, agent);
         var playerChaseState = new ChasePlayerState(this, stats, agent);
         var soundChaseState = new ChaseSoundState(this, stats, agent);
 
         //State Transition
+        stateMachine.AddTransition(idleState, roamState, HasNoTarget());
+
         stateMachine.AddTransition(idleState, playerChaseState, HasPlayerTarget());
         stateMachine.AddTransition(playerChaseState, idleState, HasPlayerNoTarget());
 
         stateMachine.AddTransition(idleState, soundChaseState, HasSoundTarget());
         stateMachine.AddTransition(soundChaseState, idleState, HasNoSoundTarget());
+
+        Func<bool> HasNoTarget() => () => playerTarget == null && soundTarget == null && lastPlayerPosTarget == null;
 
         //State Transition checks
         Func<bool> HasPlayerTarget() => () => playerTarget != null;
