@@ -7,6 +7,11 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
+      name: DebugFont_MTL
+    second: {fileID: 2100000, guid: 03c67ea6ce6e8f64c8d9c7e2087ce06a, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
       name: Door_MTL
     second: {fileID: 2100000, guid: 86bed484ca5c28a41adcc0c3d334bfbc, type: 2}
   - first:

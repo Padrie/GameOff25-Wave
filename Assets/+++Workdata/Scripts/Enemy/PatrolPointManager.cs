@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Collections;
 using System.Linq;
 using UnityEngine;
-using UnityEditor.TerrainTools;
-
 public class PatrolPointManager : MonoBehaviour
 {
     public List<PatrolPoint> patrolPoints;
