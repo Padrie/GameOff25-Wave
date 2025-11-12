@@ -23,7 +23,7 @@ public class RoamState : IState
     {
         Debug.Log("Entered Roam State");
 
-        PatrolPointManager.instance.SelectRandomPatrolPoint();
+        //PatrolPointManager.instance.SelectRandomPatrolPoint();
         PatrolPointManager.instance.GetPath();
 
         patrolPoints = PatrolPointManager.instance.getAllCurrentPatrolPointPositions();
@@ -52,7 +52,7 @@ public class RoamState : IState
 
             if (currentIndex >= patrolPoints.Count)
             {
-                PatrolPointManager.instance.SelectRandomPatrolPoint();
+                //PatrolPointManager.instance.SelectRandomPatrolPoint();
                 PatrolPointManager.instance.GetPath();
 
                 patrolPoints = PatrolPointManager.instance.getAllCurrentPatrolPointPositions();

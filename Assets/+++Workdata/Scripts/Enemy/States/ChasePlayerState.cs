@@ -23,11 +23,13 @@ public class ChasePlayerState : IState
     public void OnExit()
     {
         agent.speed = enemyStats.walkSpeed;
+        //enemyManager.lastPlayerPosTarget = enemyManager.playerTarget.transform;
         Debug.Log("Exited Chase State");
     }
 
     public void Tick()
     {
         agent.SetDestination(enemyManager.playerTarget.transform.position);
+
     }
 }

@@ -29,6 +29,7 @@ public class EnemyManager : MonoBehaviour
         var idleState = new IdleState(this, agent);
         var roamState = new RoamState(this, stats, agent);
         var playerChaseState = new ChasePlayerState(this, stats, agent);
+        var lastKnownPositionState = 0;
         var soundChaseState = new ChaseSoundState(this, stats, agent);
 
         //State Transition
