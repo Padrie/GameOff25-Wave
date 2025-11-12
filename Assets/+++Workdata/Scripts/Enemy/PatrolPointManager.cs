@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Collections;
 using System.Linq;
 using UnityEngine;
+
 public class PatrolPointManager : MonoBehaviour
 {
-    public List<PatrolPoint> patrolPoints;
-    public PatrolPoint targetPatrolPoint;
+    [SerializeField] List<PatrolPoint> patrolPoints;
+    [SerializeField] PatrolPoint targetPatrolPoint;
+    [SerializeField] float selectRandomPointAroundPlayer = 20f;
 
     [Header("K Nearest")]
     [SerializeField] LayerMask obstacleMask;
@@ -20,7 +22,7 @@ public class PatrolPointManager : MonoBehaviour
     [SerializeField] Color goodPatrolPointColor = Color.green;
     [SerializeField] Color badPatrolPointColor = Color.yellow;
 
-    public List<PatrolPoint> finalPatrolPath;
+    [SerializeField] List<PatrolPoint> finalPatrolPath;
 
     EnemyManager enemyManager;
     FirstPersonController player;
@@ -72,13 +74,10 @@ public class PatrolPointManager : MonoBehaviour
         if (patrolPoints == null || patrolPoints.Count == 0)
             return;
 
-        float preferredRadius = 20f;
-        float maxDistance = 50f;
-
         Vector3 playerPosition = player.transform.position;
 
         var nearbyPoints = patrolPoints
-            .Where(p => Vector3.Distance(playerPosition, p.transform.position) <= preferredRadius)
+            .Where(p => Vector3.Distance(playerPosition, p.transform.position) <= selectRandomPointAroundPlayer)
             .ToList();
 
         if (nearbyPoints.Count > 0)
@@ -287,10 +286,16 @@ public class PatrolPointManager : MonoBehaviour
         finalPatrolPath?.Clear();
     }
 
-    public Vector3 getNextPatrolPointPosition(int index, out int i)
+    public List<Vector3> getAllCurrentPatrolPointPositions()
     {
-        i = finalPatrolPath.Count;
-        return finalPatrolPath[index].transform.position;
+        List<Vector3> patrolPoints = new List<Vector3>();
+
+        for (int j = 0; j < finalPatrolPath.Count; j++)
+        {
+            patrolPoints.Add(finalPatrolPath[j].transform.position);
+        }
+
+        return patrolPoints;
     }
 
     public GameObject getNearestPatrolPoint(Vector3 pos)

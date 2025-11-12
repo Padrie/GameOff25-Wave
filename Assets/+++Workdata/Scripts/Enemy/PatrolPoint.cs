@@ -84,7 +84,7 @@ public class PatrolPoint : MonoBehaviour
         if (drawGizmos)
         {
             Gizmos.color = patrolPointColor;
-            Gizmos.DrawSphere(transform.position, 0.5f);
+            Gizmos.DrawSphere(transform.position, 0.2f);
         }
     }
 }

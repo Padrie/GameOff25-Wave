@@ -45,7 +45,7 @@ public class EnemySoundPerception : MonoBehaviour
 
         enemyManager.soundTarget = soundTarget.transform;
 
-        print($"The sound was {SoundStrengthString(s)}");
+        //print($"The sound was {SoundStrengthString(s)}");
     }
 
     public float SoundStrengthCalc(SoundStrength s)

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -6,6 +7,10 @@ public class RoamState : IState
     private readonly EnemyManager enemyManager;
     private readonly EnemyStats enemyStats;
     private readonly NavMeshAgent agent;
+
+    private List<Vector3> patrolPoints = new List<Vector3>();
+    private int currentIndex = 0;
+    private float arriveThreshold = 1.0f;
 
     public RoamState(EnemyManager enemyManager, EnemyStats enemyStats, NavMeshAgent navMeshAgent)
     {
@@ -17,28 +22,45 @@ public class RoamState : IState
     public void OnEnter()
     {
         Debug.Log("Entered Roam State");
+
+        PatrolPointManager.instance.SelectRandomPatrolPoint();
+        PatrolPointManager.instance.GetPath();
+
+        patrolPoints = PatrolPointManager.instance.getAllCurrentPatrolPointPositions();
+
+        if (patrolPoints.Count > 0)
+        {
+            currentIndex = 0;
+            agent.SetDestination(patrolPoints[currentIndex]);
+        }
     }
 
     public void OnExit()
     {
         Debug.Log("Exited Roam State");
+        agent.ResetPath();
     }
-
-    int sizeOfPatrolList = 0;
-    int index = 0;
 
     public void Tick()
     {
-        var posOfPatrolPoint = PatrolPointManager.instance.getNextPatrolPointPosition(index, out sizeOfPatrolList);
+        if (patrolPoints == null || patrolPoints.Count == 0)
+            return;
 
-        agent.SetDestination(posOfPatrolPoint);
-
-        if (Vector3.Distance(enemyManager.transform.position, posOfPatrolPoint) <= 0.1f)
+        if (!agent.pathPending && agent.remainingDistance <= arriveThreshold)
         {
-            index++;
+            currentIndex++;
 
-            if (index >= sizeOfPatrolList)
-                index = 0;
+            if (currentIndex >= patrolPoints.Count)
+            {
+                PatrolPointManager.instance.SelectRandomPatrolPoint();
+                PatrolPointManager.instance.GetPath();
+
+                patrolPoints = PatrolPointManager.instance.getAllCurrentPatrolPointPositions();
+                currentIndex = 0;
+            }
+
+            if (patrolPoints.Count > 0)
+                agent.SetDestination(patrolPoints[currentIndex]);
         }
     }
 }
