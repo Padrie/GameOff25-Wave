@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 public class StickToWave : MonoBehaviour
 {
-    [SerializeField] private CircularWaveSpawner waveSpawner;
+    private CircularWaveSpawner waveSpawner;
     [SerializeField][Range(0f, 1.5f)] private float waveInfluence = 1.0f;
     [SerializeField] private bool smoothDisplacement = true;
     [SerializeField][Range(1f, 30f)] private float smoothSpeed = 20f;
@@ -28,8 +28,8 @@ public class StickToWave : MonoBehaviour
 
     private void Start()
     {
-        if (waveSpawner == null)
-            waveSpawner = FindObjectOfType<CircularWaveSpawner>();
+        waveSpawner = FindFirstObjectByType<CircularWaveSpawner>();
+
 
         basePosition = transform.position;
         CacheWaveMaterial();

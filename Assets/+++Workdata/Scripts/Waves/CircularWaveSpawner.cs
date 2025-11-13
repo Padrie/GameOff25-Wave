@@ -5,12 +5,6 @@ public class CircularWaveSpawner : MonoBehaviour
 {
     [Header("Material Setup")]
     [SerializeField] private Material waveMaterial;
-    [Tooltip("Single target renderer (leave empty to use multiple targets)")]
-    [SerializeField] private Renderer targetRenderer;
-    [Tooltip("Multiple target renderers (if set, overrides single target)")]
-    [SerializeField] private Renderer[] targetRenderers;
-    [Tooltip("Auto-find all renderers with the wave material in the scene")]
-    [SerializeField] private bool autoFindAllTargets = false;
 
     [Header("Player/Target Reference")]
     [Tooltip("The transform around which waves will spawn (usually the player)")]
@@ -73,7 +67,7 @@ public class CircularWaveSpawner : MonoBehaviour
     {
         cam = Camera.main;
 
-        //Setup target renderers
+        //Setup target renderers - automatically find all renderers with wave material
         SetupTargetRenderers();
 
         //Auto-find player if not set
@@ -97,43 +91,42 @@ public class CircularWaveSpawner : MonoBehaviour
     {
         waveMaterialInstances.Clear();
 
+        if (waveMaterial == null)
+        {
+            Debug.LogError("⚠️ Wave Material is not assigned! Please assign a wave material in the inspector.");
+            return;
+        }
+
         List<Renderer> renderers = new List<Renderer>();
 
-        //Priority 1: Use targetRenderers array if set
-        if (targetRenderers != null && targetRenderers.Length > 0)
-        {
-            renderers.AddRange(targetRenderers);
-            Debug.Log($"Using {targetRenderers.Length} manually assigned renderer(s)");
-        }
-        //Priority 2: Use single targetRenderer if set
-        else if (targetRenderer != null)
-        {
-            renderers.Add(targetRenderer);
-            Debug.Log("Using single manually assigned renderer");
-        }
-        //Priority 3: Auto-find if enabled
-        else if (autoFindAllTargets)
-        {
-            Renderer[] allRenderers = FindObjectsOfType<Renderer>();
+        //Find all renderers in the scene
+        Renderer[] allRenderers = FindObjectsOfType<Renderer>();
 
-            if (waveMaterial != null)
+        //Find all renderers using the wave material
+        foreach (Renderer r in allRenderers)
+        {
+            if (r == null) continue;
+
+            //Check all materials on this renderer
+            Material[] materials = r.sharedMaterials;
+            for (int i = 0; i < materials.Length; i++)
             {
-                //Find all renderers using the wave material
-                foreach (Renderer r in allRenderers)
+                if (materials[i] == waveMaterial)
                 {
-                    if (r.sharedMaterial != null && r.sharedMaterial.shader.name == waveMaterial.shader.name)
-                    {
-                        renderers.Add(r);
-                    }
+                    renderers.Add(r);
+                    Debug.Log($"Found wave material on: {r.gameObject.name}");
+                    break; //Only add each renderer once
                 }
-                Debug.Log($"Auto-found {renderers.Count} renderer(s) with wave shader");
             }
-            else
-            {
-                //No material specified, use all renderers
-                renderers.AddRange(allRenderers);
-                Debug.Log($"Auto-found {renderers.Count} renderer(s)");
-            }
+        }
+
+        if (renderers.Count == 0)
+        {
+            Debug.LogWarning($"⚠️ No renderers found using the wave material '{waveMaterial.name}'. Make sure objects in your scene are using this material.");
+        }
+        else
+        {
+            Debug.Log($"Auto-found {renderers.Count} renderer(s) with wave material '{waveMaterial.name}'");
         }
 
         //Create material instances for each renderer
@@ -141,23 +134,21 @@ public class CircularWaveSpawner : MonoBehaviour
         {
             if (r == null) continue;
 
-            //IMPORTANT: Use each renderer's own sharedMaterial to preserve their unique properties
-            //Don't force waveMaterial onto all renderers - only use it as a reference for finding renderers
-            Material originalMat = r.sharedMaterial;
-
-            if (originalMat == null)
+            //Find which material slot has the wave material
+            Material[] materials = r.sharedMaterials;
+            for (int i = 0; i < materials.Length; i++)
             {
-                Debug.LogWarning($"Renderer {r.name} has no material. Skipping.");
-                continue;
-            }
+                if (materials[i] == waveMaterial)
+                {
+                    //Create instance of this specific material
+                    Material instance = r.materials[i]; //This creates an instance automatically
 
-            //Create instance of the renderer's OWN material
-            r.material = originalMat;
-            Material instance = r.material;
-
-            if (!waveMaterialInstances.Contains(instance))
-            {
-                waveMaterialInstances.Add(instance);
+                    if (!waveMaterialInstances.Contains(instance))
+                    {
+                        waveMaterialInstances.Add(instance);
+                    }
+                    break;
+                }
             }
         }
 
@@ -237,56 +228,49 @@ public class CircularWaveSpawner : MonoBehaviour
     {
         if (Input.GetKeyDown(spawnKey))
         {
-            Vector3 spawnPos;
-
             if (spawnAtPlayer && playerTransform != null)
             {
-                spawnPos = playerTransform.position;
+                SpawnWave(playerTransform.position);
             }
             else
             {
-                spawnPos = GetMouseWorldPosition();
-            }
-
-            if (spawnPos != Vector3.zero)
-            {
-                SpawnWave(spawnPos);
+                SpawnWaveAtMousePosition();
             }
         }
     }
 
-    private Vector3 GetMouseWorldPosition()
+    private void SpawnWaveAtMousePosition()
     {
-        if (cam == null) return Vector3.zero;
+        if (cam == null)
+        {
+            Debug.LogError("Main camera not found!");
+            return;
+        }
 
         Ray ray = cam.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
 
         if (Physics.Raycast(ray, out hit, 1000f, raycastLayers))
         {
-            return hit.point;
+            SpawnWave(hit.point);
         }
-
-        //Fallback to plane at Y=0
-        Plane plane = new Plane(Vector3.up, Vector3.zero);
-        float enter;
-        if (plane.Raycast(ray, out enter))
+        else
         {
-            return ray.GetPoint(enter);
+            Debug.Log("No surface hit by raycast. Try clicking on geometry.");
         }
-
-        return Vector3.zero;
     }
 
-    public void SpawnWave(Vector3 worldPosition)
+    private void SpawnWave(Vector3 worldPosition)
     {
-        //Remove oldest wave if at capacity
+        //Limit number of simultaneous waves
         if (activeWaves.Count >= maxSimultaneousWaves)
         {
+            //Remove oldest wave
             activeWaves.RemoveAt(0);
+            Debug.Log("Max waves reached. Removing oldest wave.");
         }
 
-        //Enable wave keyword when spawning first wave
+        //Enable wave keyword when first wave spawns
         if (activeWaves.Count == 0)
         {
             EnableWaveKeyword();
