@@ -7,6 +7,11 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
+      name: Base_MTL
+    second: {fileID: 2100000, guid: 9235749aaf37a494bbba848f43b98a10, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
       name: Mechanic_MTL
     second: {fileID: 2100000, guid: 7003e56dff8b65b49a91372ce65ef45d, type: 2}
   - first:
@@ -29,6 +34,11 @@ ModelImporter:
       assembly: UnityEngine.CoreModule
       name: Road MTL
     second: {fileID: 2100000, guid: 9235749aaf37a494bbba848f43b98a10, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Road_MTL
+    second: {fileID: 2100000, guid: 1b0980e87e88e1c4a93cfd996ca2d9f0, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
@@ -70,7 +80,7 @@ ModelImporter:
     extraExposedTransformPaths: []
     extraUserProperties: []
     clipAnimations: []
-    isReadable: 0
+    isReadable: 1
   meshes:
     lODScreenPercentages: []
     globalScale: 1

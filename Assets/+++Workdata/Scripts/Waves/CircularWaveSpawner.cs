@@ -4,7 +4,7 @@ using System.Collections.Generic;
 public class CircularWaveSpawner : MonoBehaviour
 {
     [Header("Material Setup")]
-    [SerializeField] private Material waveMaterial;
+    [SerializeField] private Material[] waveMaterials;
 
     [Header("Player/Target Reference")]
     [Tooltip("The transform around which waves will spawn (usually the player)")]
@@ -37,10 +37,9 @@ public class CircularWaveSpawner : MonoBehaviour
     [SerializeField] private AnimationCurve buildUpCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
     [SerializeField] private int maxSimultaneousWaves = 4;
 
-    [Header("Visual Feedback")]
+    [Header("Debug")]
     [SerializeField] private bool showDebugGizmos = true;
     [SerializeField] private Color gizmoColor = new Color(0, 1, 1, 0.8f);
-    [SerializeField] private GameObject spawnEffectPrefab;
 
     private List<CircularWave> activeWaves = new List<CircularWave>();
     private List<Material> waveMaterialInstances = new List<Material>();
@@ -67,7 +66,7 @@ public class CircularWaveSpawner : MonoBehaviour
     {
         cam = Camera.main;
 
-        //Setup target renderers - automatically find all renderers with wave material
+        //Setup target renderers - automatically find all renderers with wave materials
         SetupTargetRenderers();
 
         //Auto-find player if not set
@@ -84,25 +83,25 @@ public class CircularWaveSpawner : MonoBehaviour
         //Initialize all waves as disabled
         DisableAllWaves();
 
-        Debug.Log($"✅ CircularWaveSpawner initialized with {waveMaterialInstances.Count} material(s). Press X to spawn.");
+        Debug.Log($"✅ CircularWaveSpawner initialized with {waveMaterialInstances.Count} material instance(s). Press X to spawn.");
     }
 
     private void SetupTargetRenderers()
     {
         waveMaterialInstances.Clear();
 
-        if (waveMaterial == null)
+        if (waveMaterials == null || waveMaterials.Length == 0)
         {
-            Debug.LogError("⚠️ Wave Material is not assigned! Please assign a wave material in the inspector.");
+            Debug.LogError("⚠️ Wave Materials array is empty! Please assign at least one wave material in the inspector.");
             return;
         }
 
-        List<Renderer> renderers = new List<Renderer>();
+        List<Renderer> foundRenderers = new List<Renderer>();
 
         //Find all renderers in the scene
         Renderer[] allRenderers = FindObjectsOfType<Renderer>();
 
-        //Find all renderers using the wave material
+        //Find all renderers using any of the wave materials
         foreach (Renderer r in allRenderers)
         {
             if (r == null) continue;
@@ -111,43 +110,62 @@ public class CircularWaveSpawner : MonoBehaviour
             Material[] materials = r.sharedMaterials;
             for (int i = 0; i < materials.Length; i++)
             {
-                if (materials[i] == waveMaterial)
+                if (materials[i] == null) continue;
+
+                //Check if this material matches any of our wave materials
+                foreach (Material waveMat in waveMaterials)
                 {
-                    renderers.Add(r);
-                    Debug.Log($"Found wave material on: {r.gameObject.name}");
-                    break; //Only add each renderer once
+                    if (waveMat == null) continue;
+
+                    if (materials[i] == waveMat)
+                    {
+                        if (!foundRenderers.Contains(r))
+                        {
+                            foundRenderers.Add(r);
+                            Debug.Log($"Found wave material '{waveMat.name}' on: {r.gameObject.name}");
+                        }
+                        break;
+                    }
                 }
             }
         }
 
-        if (renderers.Count == 0)
+        if (foundRenderers.Count == 0)
         {
-            Debug.LogWarning($"⚠️ No renderers found using the wave material '{waveMaterial.name}'. Make sure objects in your scene are using this material.");
+            Debug.LogWarning($"⚠️ No renderers found using any of the {waveMaterials.Length} wave material(s). Make sure objects in your scene are using these materials.");
         }
         else
         {
-            Debug.Log($"Auto-found {renderers.Count} renderer(s) with wave material '{waveMaterial.name}'");
+            Debug.Log($"Auto-found {foundRenderers.Count} renderer(s) with wave materials");
         }
 
         //Create material instances for each renderer
-        foreach (Renderer r in renderers)
+        foreach (Renderer r in foundRenderers)
         {
             if (r == null) continue;
 
-            //Find which material slot has the wave material
+            //Find which material slots have wave materials
             Material[] materials = r.sharedMaterials;
             for (int i = 0; i < materials.Length; i++)
             {
-                if (materials[i] == waveMaterial)
-                {
-                    //Create instance of this specific material
-                    Material instance = r.materials[i]; //This creates an instance automatically
+                if (materials[i] == null) continue;
 
-                    if (!waveMaterialInstances.Contains(instance))
+                //Check if this material matches any of our wave materials
+                foreach (Material waveMat in waveMaterials)
+                {
+                    if (waveMat == null) continue;
+
+                    if (materials[i] == waveMat)
                     {
-                        waveMaterialInstances.Add(instance);
+                        //Create instance of this specific material
+                        Material instance = r.materials[i]; //This creates an instance automatically
+
+                        if (!waveMaterialInstances.Contains(instance))
+                        {
+                            waveMaterialInstances.Add(instance);
+                        }
+                        break;
                     }
-                    break;
                 }
             }
         }
@@ -155,6 +173,10 @@ public class CircularWaveSpawner : MonoBehaviour
         if (waveMaterialInstances.Count == 0)
         {
             Debug.LogWarning("⚠️ No target renderers found! Waves will not be visible.");
+        }
+        else
+        {
+            Debug.Log($"Created {waveMaterialInstances.Count} material instance(s) for wave rendering");
         }
     }
 
@@ -288,13 +310,6 @@ public class CircularWaveSpawner : MonoBehaviour
         };
 
         activeWaves.Add(wave);
-
-        //Spawn visual effect
-        if (spawnEffectPrefab != null)
-        {
-            GameObject effect = Instantiate(spawnEffectPrefab, worldPosition, Quaternion.identity);
-            Destroy(effect, 2f);
-        }
 
         Debug.Log($"🌊 Wave spawned at {worldPosition}. Will expand to ~{propagationSpeed * waveDuration:F1}m radius");
     }

@@ -1,5 +1,6 @@
 using UnityEngine;
 using System;
+using System.Collections;
 
 namespace FootstepSystem
 {
@@ -26,11 +27,12 @@ namespace FootstepSystem
         public SurfaceAudio[] SurfaceAudioSets;
 
         [Header("Audio Settings")]
-        public AudioSource AudioSource;
         [Range(0f, 1f)] public float MasterVolume = 1f;
         public float WalkVolume = 1f;
         public float RunVolume = 1f;
         public float CrouchVolume = 0.6f;
+        public float AudioSourceLifetime = 2f;
+        public float _spatialBlend = 1f;
 
         [Header("Ground Detection")]
         public Transform GroundCheckOrigin;
@@ -55,6 +57,7 @@ namespace FootstepSystem
         private Vector3 velocity;
         private bool wasGrounded;
         private RaycastHit lastGroundHit;
+        private PhysicsMaterial lastSurfaceMaterial;
 
         private void Awake()
         {
@@ -65,7 +68,7 @@ namespace FootstepSystem
 
         private void Update()
         {
-            if (!AudioSource || !characterController)
+            if (!characterController)
                 return;
 
             bool isGrounded = Physics.Raycast(
@@ -82,11 +85,30 @@ namespace FootstepSystem
             if (!isGrounded || horizontalSpeed <= MinimumSpeed)
                 return;
 
+            bool isRunning = horizontalSpeed >= RunSpeedThreshold && !IsCrouching;
+
+            PhysicsMaterial currentMaterial = hitInfo.collider ? hitInfo.collider.sharedMaterial : null;
+            bool surfaceChanged = currentMaterial != lastSurfaceMaterial;
+
+            if (surfaceChanged && lastSurfaceMaterial != null)
+            {
+                PlayFootstep(hitInfo, isRunning);
+                lastStepPosition = transform.position;
+                lastSurfaceMaterial = currentMaterial;
+
+                if (debugConsole)
+                {
+                    Debug.Log($"Surface changed! New sound played.");
+                }
+                return;
+            }
+
+            lastSurfaceMaterial = currentMaterial;
+
             float distanceMoved = Vector3.Distance(
                 new Vector3(transform.position.x, 0, transform.position.z),
                 new Vector3(lastStepPosition.x, 0, lastStepPosition.z));
 
-            bool isRunning = horizontalSpeed >= RunSpeedThreshold && !IsCrouching;
             float stepDistance = isRunning ? RunStepDistance : WalkStepDistance;
 
             if (distanceMoved >= stepDistance)
@@ -100,7 +122,6 @@ namespace FootstepSystem
             }
         }
 
-        //Handles jump and land sounds
         private void HandleJumpAndLand(bool isGrounded, RaycastHit hitInfo)
         {
             if (wasGrounded && !isGrounded)
@@ -120,7 +141,6 @@ namespace FootstepSystem
             wasGrounded = isGrounded;
         }
 
-        //Plays a walk or run footstep
         private void PlayFootstep(RaycastHit hitInfo, bool isRunning)
         {
             if (TryGetSurface(hitInfo, out var surface))
@@ -148,13 +168,29 @@ namespace FootstepSystem
             return false;
         }
 
-        //Plays a random audio clip
         private void PlayRandomClip(AudioClip[] clips, float volume)
         {
             if (clips == null || clips.Length == 0) return;
             var clip = clips[UnityEngine.Random.Range(0, clips.Length)];
             if (clip != null)
-                AudioSource.PlayOneShot(clip, volume);
+            {
+                GameObject audioObject = new GameObject("FootstepAudio");
+                audioObject.transform.position = transform.position;
+                AudioSource audioSource = audioObject.AddComponent<AudioSource>();
+                audioSource.clip = clip;
+                audioSource.volume = volume;
+                audioSource.spatialBlend = _spatialBlend;
+                audioSource.Play();
+
+                StartCoroutine(DestroyAudioSource(audioObject, AudioSourceLifetime));
+            }
+        }
+
+        private IEnumerator DestroyAudioSource(GameObject audioObject, float delay)
+        {
+            yield return new WaitForSeconds(delay);
+            if (audioObject != null)
+                Destroy(audioObject);
         }
     }
 }

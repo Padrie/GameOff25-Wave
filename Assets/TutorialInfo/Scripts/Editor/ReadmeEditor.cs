@@ -200,7 +200,7 @@ public class ReadmeEditor : Editor
     {
         if (m_Initialized)
             return;
-        m_BodyStyle = new GUIStyle(EditorStyles.label);
+        m_BodyStyle = new GUIStyle(EditorStyles.miniLabel);
         m_BodyStyle.wordWrap = true;
         m_BodyStyle.fontSize = 14;
         m_BodyStyle.richText = true;
@@ -219,7 +219,7 @@ public class ReadmeEditor : Editor
         m_LinkStyle.normal.textColor = new Color(0x00 / 255f, 0x78 / 255f, 0xDA / 255f, 1f);
         m_LinkStyle.stretchWidth = false;
 
-        m_ButtonStyle = new GUIStyle(EditorStyles.miniButton);
+        m_ButtonStyle = new GUIStyle(EditorStyles.boldLabel);
         m_ButtonStyle.fontStyle = FontStyle.Bold;
 
         m_Initialized = true;

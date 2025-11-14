@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-2416342448452053508
+--- !u!114 &-1340299129041016950
 MonoBehaviour:
   m_ObjectHideFlags: 11
   m_CorrespondingSourceObject: {fileID: 0}
@@ -24,10 +24,11 @@ Material:
   m_Shader: {fileID: 4800000, guid: 375d1991baaec1b45bf4ab6ed9efe714, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
-  m_ValidKeywords: []
+  m_ValidKeywords:
+  - _NORMALMAP
   m_InvalidKeywords: []
   m_LightmapFlags: 4
-  m_EnableInstancingVariants: 0
+  m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: 2000
   stringTagMap:
@@ -38,11 +39,11 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _BaseMap:
-        m_Texture: {fileID: 2800000, guid: 8bf9c2c849650164db84b83027d664ca, type: 3}
+        m_Texture: {fileID: 2800000, guid: d6777183a529f6e49817fed442f80704, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BumpMap:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: 8a9b77025ee029849919b3e76db7fe6d, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DetailAlbedoMap:
@@ -62,7 +63,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: 8bf9c2c849650164db84b83027d664ca, type: 3}
+        m_Texture: {fileID: 2800000, guid: d6777183a529f6e49817fed442f80704, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
@@ -100,33 +101,25 @@ Material:
     - _AlphaToMask: 0
     - _Blend: 0
     - _BlendModePreserveSpecular: 1
-    - _BumpScale: 1
+    - _BumpScale: 0
     - _ClearCoatMask: 0
     - _ClearCoatSmoothness: 0
     - _Cull: 2
     - _Cutoff: 0.5
     - _DetailAlbedoMapScale: 1
     - _DetailNormalMapScale: 1
-    - _DispAmplitude: 0.25
-    - _DispAttenK: 0.25
-    - _DisplaceAlongUp: 0
     - _DstBlend: 0
     - _DstBlendAlpha: 0
     - _EnableWaves: 0
     - _EnvironmentReflections: 1
-    - _FalloffEnd: 20
-    - _FalloffStart: 5
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossyReflections: 0
     - _Metallic: 0
     - _OcclusionStrength: 1
-    - _Parallax: 0.005
-    - _PropagationSpeed: 6
+    - _Parallax: 0.0479
     - _QueueOffset: 0
     - _ReceiveShadows: 1
-    - _RingIntensity: 1
-    - _RingWidth: 1
     - _Smoothness: 0
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
@@ -149,7 +142,6 @@ Material:
     - _Wave4Speed: 1.5
     - _Wave4Steepness: 0.35
     - _Wave4Wavelength: 12
-    - _WaveCount: 0
     - _WorkflowMode: 1
     - _XRMotionVectorsPass: 1
     - _ZWrite: 1
