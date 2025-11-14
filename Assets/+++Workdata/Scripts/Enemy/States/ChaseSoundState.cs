@@ -7,6 +7,8 @@ public class ChaseSoundState : IState
     EnemyStats enemyStats;
     NavMeshAgent agent;
 
+    float timeToMove = 0;
+
     public ChaseSoundState(EnemyManager enemyManager, EnemyStats enemyStats, NavMeshAgent agent)
     {
         this.enemyManager = enemyManager;
@@ -29,9 +31,16 @@ public class ChaseSoundState : IState
     public void Tick()
     {
         agent.SetDestination(enemyManager.soundTarget.position);
-        if (Vector3.Distance(enemyManager.transform.position, enemyManager.soundTarget.position) < 0.1f)
+        if (Vector3.Distance(enemyManager.transform.position, enemyManager.soundTarget.position) < 1f)
         {
-            enemyManager.soundTarget = null;
+            timeToMove += Time.deltaTime;
+
+            if (timeToMove >= enemyStats.afterChaseWaitTime)
+            {
+                timeToMove = 0;
+
+                enemyManager.soundTarget = null;
+            }
         }
     }
 }

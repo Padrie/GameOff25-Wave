@@ -29,7 +29,7 @@ public class EnemyManager : MonoBehaviour
         var idleState = new IdleState(this, agent);
         var roamState = new RoamState(this, stats, agent);
         var playerChaseState = new ChasePlayerState(this, stats, agent);
-        var lastKnownPositionState = 0;
+        //var lastKnownPositionState = new LastKnownPositionState(this, stats, agent);
         var soundChaseState = new ChaseSoundState(this, stats, agent);
 
         //State Transition
@@ -38,6 +38,10 @@ public class EnemyManager : MonoBehaviour
         stateMachine.AddTransition(idleState, playerChaseState, HasPlayerTarget());
         stateMachine.AddTransition(roamState, playerChaseState, HasPlayerTarget());
         stateMachine.AddTransition(playerChaseState, idleState, HasPlayerNoTarget());
+
+        //stateMachine.AddTransition(idleState, lastKnownPositionState, HasLastKnowPlayerPos());
+        //stateMachine.AddTransition(roamState, lastKnownPositionState, HasLastKnowPlayerPos());
+        //stateMachine.AddTransition(lastKnownPositionState, idleState, HasNoLastKnowPlayerPos());
 
         stateMachine.AddTransition(idleState, soundChaseState, HasSoundTarget());
         stateMachine.AddTransition(roamState, soundChaseState, HasSoundTarget());
@@ -48,6 +52,9 @@ public class EnemyManager : MonoBehaviour
         //State Transition checks
         Func<bool> HasPlayerTarget() => () => playerTarget != null;
         Func<bool> HasPlayerNoTarget() => () => playerTarget == null;
+
+        Func<bool> HasLastKnowPlayerPos() => () => lastPlayerPosTarget != null;
+        Func<bool> HasNoLastKnowPlayerPos() => () => lastPlayerPosTarget == null;
 
         Func<bool> HasSoundTarget() => () => soundTarget != null;
         Func<bool> HasNoSoundTarget() => () => soundTarget == null;

@@ -12,6 +12,8 @@ public class RoamState : IState
     private int currentIndex = 0;
     private float arriveThreshold = 1.0f;
 
+    private float timeToMove = 0f;
+
     public RoamState(EnemyManager enemyManager, EnemyStats enemyStats, NavMeshAgent navMeshAgent)
     {
         this.enemyManager = enemyManager;
@@ -23,7 +25,7 @@ public class RoamState : IState
     {
         Debug.Log("Entered Roam State");
 
-        //PatrolPointManager.instance.SelectRandomPatrolPoint();
+        PatrolPointManager.instance.SelectRandomPatrolPoint();
         PatrolPointManager.instance.GetPath();
 
         patrolPoints = PatrolPointManager.instance.getAllCurrentPatrolPointPositions();
@@ -52,14 +54,21 @@ public class RoamState : IState
 
             if (currentIndex >= patrolPoints.Count)
             {
-                //PatrolPointManager.instance.SelectRandomPatrolPoint();
-                PatrolPointManager.instance.GetPath();
+                timeToMove += Time.deltaTime;
 
-                patrolPoints = PatrolPointManager.instance.getAllCurrentPatrolPointPositions();
-                currentIndex = 0;
+                if (timeToMove >= enemyStats.roamWaitTime)
+                {
+                    timeToMove = 0;
+
+                    PatrolPointManager.instance.SelectRandomPatrolPoint();
+                    PatrolPointManager.instance.GetPath();
+
+                    patrolPoints = PatrolPointManager.instance.getAllCurrentPatrolPointPositions();
+                    currentIndex = 0;
+                }
             }
 
-            if (patrolPoints.Count > 0)
+            if (patrolPoints.Count >= 0 && currentIndex < patrolPoints.Count)
                 agent.SetDestination(patrolPoints[currentIndex]);
         }
     }

@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.AI;
+using static UnityEditor.Experimental.GraphView.GraphView;
 
 public class ChasePlayerState : IState
 {
@@ -23,7 +24,6 @@ public class ChasePlayerState : IState
     public void OnExit()
     {
         agent.speed = enemyStats.walkSpeed;
-        //enemyManager.lastPlayerPosTarget = enemyManager.playerTarget.transform;
         Debug.Log("Exited Chase State");
     }
 

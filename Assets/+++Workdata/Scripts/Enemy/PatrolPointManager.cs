@@ -1,14 +1,19 @@
-using EasyPeasyFirstPersonController;
+﻿using EasyPeasyFirstPersonController;
 using System.Collections.Generic;
 using System.Collections;
 using System.Linq;
 using UnityEngine;
+using Unity.Burst;
+using Unity.VisualScripting;
 
 public class PatrolPointManager : MonoBehaviour
 {
+    static readonly Vector3 RAYCAST_OFFSET = new Vector3(0, 0.25f, 0);
+
     [SerializeField] List<PatrolPoint> patrolPoints;
     [SerializeField] PatrolPoint targetPatrolPoint;
     [SerializeField] float selectRandomPointAroundPlayer = 20f;
+    [SerializeField] bool drawGizmos = true;
 
     [Header("K Nearest")]
     [SerializeField] LayerMask obstacleMask;
@@ -23,6 +28,8 @@ public class PatrolPointManager : MonoBehaviour
     [SerializeField] Color badPatrolPointColor = Color.yellow;
 
     [SerializeField] List<PatrolPoint> finalPatrolPath;
+
+    HashSet<PatrolPoint> touchedPatrolPoints = new HashSet<PatrolPoint>();
 
     EnemyManager enemyManager;
     FirstPersonController player;
@@ -47,6 +54,15 @@ public class PatrolPointManager : MonoBehaviour
 
     private void Start()
     {
+        if (!drawGizmos)
+        {
+            foreach (PatrolPoint p in patrolPoints)
+            {
+                p.drawGizmos = false;
+            }
+        }
+
+        GetNeighbors();
         GetPath();
     }
 
@@ -58,13 +74,11 @@ public class PatrolPointManager : MonoBehaviour
     private void Update()
     {
         playerPos = player.transform;
-        //GetPath();
     }
 
     public void GetPath()
     {
         ResetPatrolPoints();
-        GetNeighbors();
         //StartCoroutine(CalculatePath());
         CalculatePath();
     }
@@ -77,7 +91,7 @@ public class PatrolPointManager : MonoBehaviour
         Vector3 playerPosition = player.transform.position;
 
         var nearbyPoints = patrolPoints
-            .Where(p => Vector3.Distance(playerPosition, p.transform.position) <= selectRandomPointAroundPlayer)
+            .Where(p => (playerPosition - p.transform.position).sqrMagnitude <= selectRandomPointAroundPlayer * selectRandomPointAroundPlayer)
             .ToList();
 
         if (nearbyPoints.Count > 0)
@@ -87,25 +101,24 @@ public class PatrolPointManager : MonoBehaviour
         else
         {
             var sorted = patrolPoints
-                .OrderBy(p => Vector3.Distance(playerPosition, p.transform.position))
+                .OrderBy(p => (playerPosition - p.transform.position).sqrMagnitude)
                 .Take(5)
                 .ToList();
 
             targetPatrolPoint = sorted[Random.Range(0, sorted.Count)];
         }
 
-        targetPatrolPoint.ChangeGizmoColor(finalPatrolPointColor);
+        if (drawGizmos)
+            targetPatrolPoint.ChangeGizmoColor(finalPatrolPointColor);
     }
 
     public void CalculatePath()
     {
-        //yield return new WaitForSeconds(1f);
-        //SelectRandomPatrolPoint();
-        int safeCheck = 0;
         bool calculatingPath = true;
 
-        List<PatrolPoint> openPatrolPoints = new List<PatrolPoint>();
-        List<PatrolPoint> closedPatrolPoints = new List<PatrolPoint>();
+        PriorityQueue<PatrolPoint> openPatrolPoints = new PriorityQueue<PatrolPoint>();
+        HashSet<PatrolPoint> openSet = new HashSet<PatrolPoint>();
+        HashSet<PatrolPoint> closedPatrolPoints = new HashSet<PatrolPoint>();
 
         PatrolPoint startPoint = getNearestPatrolPoint(enemyManager.transform.position).GetComponent<PatrolPoint>();
         PatrolPoint targetPoint = targetPatrolPoint;
@@ -114,20 +127,30 @@ public class PatrolPointManager : MonoBehaviour
         startPoint.UpdateText();
 
         //move in While loop
-        startPoint.ChangeGizmoColor(goodPatrolPointColor);
-        targetPoint.ChangeGizmoColor(finalPatrolPointColor);
+        if (drawGizmos)
+        {
+            startPoint.ChangeGizmoColor(goodPatrolPointColor);
+            targetPoint.ChangeGizmoColor(finalPatrolPointColor);
+        }
 
-        openPatrolPoints.Add(startPoint);
+        openPatrolPoints.Enqueue(startPoint, startPoint.GetF());
 
-        while (calculatingPath && safeCheck <= 10000)
+        while (calculatingPath)
         {
             if (openPatrolPoints.Count == 0)
             {
+                print(openPatrolPoints.Count);
                 Debug.LogWarning("Open list is empty");
                 break;
             }
 
-            PatrolPoint currentPatrolPoint = openPatrolPoints.OrderBy(p => p.GetF()).First();
+            PatrolPoint currentPatrolPoint = openPatrolPoints.Dequeue();
+            openSet.Remove(currentPatrolPoint);
+
+            if (closedPatrolPoints.Contains(currentPatrolPoint))
+                continue;
+
+            closedPatrolPoints.Add(currentPatrolPoint);
 
             if (currentPatrolPoint == targetPoint)
             {
@@ -135,9 +158,6 @@ public class PatrolPointManager : MonoBehaviour
                 calculatingPath = false;
                 break;
             }
-
-            openPatrolPoints.Remove(currentPatrolPoint);
-            closedPatrolPoints.Add(currentPatrolPoint);
 
             if (currentPatrolPoint.neighbors != null)
             {
@@ -149,37 +169,39 @@ public class PatrolPointManager : MonoBehaviour
                         continue;
                     }
 
-                    float tentativeG = currentPatrolPoint.GetG() + Vector3.Distance(currentPatrolPoint.transform.position, neighbor.transform.position);
+                    float tentativeG = currentPatrolPoint.GetG() +
+                        (currentPatrolPoint.pos - neighbor.pos).sqrMagnitude;
 
-                    bool setup = false;
+                    bool isNewNode = !openSet.Contains(neighbor);
 
-                    if (!openPatrolPoints.Contains(neighbor))
+                    if (isNewNode || tentativeG < neighbor.GetG())
                     {
-                        setup = true;
-                        openPatrolPoints.Add(neighbor);
-                    }
-                    else if (tentativeG >= neighbor.GetG())
-                    {
-                        setup = true;
-                    }
+                        neighbor.Setup(tentativeG, neighbor.pos, targetPatrolPoint.pos, currentPatrolPoint);
+                        openPatrolPoints.Enqueue(neighbor, neighbor.GetF());
 
-                    if (setup)
-                    {
-                        neighbor.Setup(tentativeG, neighbor.transform.position, targetPatrolPoint.transform.position, currentPatrolPoint);
-                        if (neighbor != targetPoint)
-                            neighbor.ChangeGizmoColor(badPatrolPointColor);
-                        neighbor.UpdateText();
-                        //Debug.DrawLine(currentPatrolPoint.transform.position, neighbor.transform.position, Color.cyan, 1f);
+                        if (isNewNode)
+                            openSet.Add(neighbor);
+
+                        setupVisuals(neighbor);
                     }
                 }
             }
+        }
+    }
 
-            safeCheck++;
-            //yield return null;
+    private void setupVisuals(PatrolPoint neighbor)
+    {
+        if (drawGizmos)
+        {
+            if (neighbor != targetPatrolPoint)
+                neighbor.ChangeGizmoColor(badPatrolPointColor);
+
+            neighbor.UpdateText();
         }
 
-        //yield return null;
+        touchedPatrolPoints.Add(neighbor);
     }
+
 
     public List<PatrolPoint> ReconstructPath(PatrolPoint current)
     {
@@ -196,7 +218,7 @@ public class PatrolPointManager : MonoBehaviour
         {
             if (path[i] != null)
             {
-                if (path[i] != targetPatrolPoint)
+                if (path[i] != targetPatrolPoint && drawGizmos)
                     path[i].ChangeGizmoColor(goodPatrolPointColor);
                 //Debug.DrawLine(path[i].transform.position, path[i + 1].transform.position, Color.cyan, 10f);
             }
@@ -210,7 +232,8 @@ public class PatrolPointManager : MonoBehaviour
         int n = patrolPoints.Count;
         Vector3[] positions = new Vector3[n];
 
-        for (int i = 0; i < n; i++) positions[i] = patrolPoints[i].transform.position;
+        for (int i = 0; i < n; i++)
+            positions[i] = patrolPoints[i].pos;
 
         for (int i = 0; i < n; i++)
         {
@@ -226,9 +249,9 @@ public class PatrolPointManager : MonoBehaviour
                 for (int j = 0; j < n; j++)
                 {
                     if (i == j) continue;
-                    float d = Vector3.Distance(positions[i], positions[j]);
-                    if (d <= searchRadius)
-                        validCandidates.Add((patrolPoints[j], d));
+                    float sqrD = (positions[i] - positions[j]).sqrMagnitude;
+                    if (sqrD <= searchRadius * searchRadius)
+                        validCandidates.Add((patrolPoints[j], sqrD));
                 }
 
                 if (validCandidates.Count > 0)
@@ -240,8 +263,8 @@ public class PatrolPointManager : MonoBehaviour
                     {
                         if (visible.Count >= maxNeighbors) break;
 
-                        Vector3 from = positions[i] + Vector3.up * 0.25f;
-                        Vector3 to = c.p.transform.position + Vector3.up * 0.25f;
+                        Vector3 from = positions[i] + RAYCAST_OFFSET;
+                        Vector3 to = c.p.pos + RAYCAST_OFFSET;
                         Vector3 dir = to - from;
                         float dist = dir.magnitude;
 
@@ -281,8 +304,9 @@ public class PatrolPointManager : MonoBehaviour
 
     public void ResetPatrolPoints()
     {
-        foreach (var p in patrolPoints)
+        foreach (var p in touchedPatrolPoints)
             p.Reset();
+        touchedPatrolPoints.Clear();
         finalPatrolPath?.Clear();
     }
 
@@ -303,11 +327,11 @@ public class PatrolPointManager : MonoBehaviour
         if (patrolPoints == null || patrolPoints.Count == 0) return null;
 
         GameObject smallestDistanceObject = patrolPoints[0].gameObject;
-        float smallestDistance = Vector3.Distance(pos, patrolPoints[0].transform.position);
+        float smallestDistance = (pos - patrolPoints[0].pos).sqrMagnitude;
 
         for (int i = 1; i < patrolPoints.Count; i++)
         {
-            float d = Vector3.Distance(pos, patrolPoints[i].transform.position);
+            float d = (pos - patrolPoints[i].pos).sqrMagnitude;
             if (d < smallestDistance)
             {
                 smallestDistance = d;

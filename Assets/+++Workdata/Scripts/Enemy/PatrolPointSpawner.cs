@@ -19,11 +19,7 @@ public class PatrolPointSpawner : MonoBehaviour
     public Color pointColor = Color.red;
     public float gizmoPointSize = 0.5f;
 
-    public void Awake()
-    {
-        SpawnPatrolPoints();
-    }
-
+    [ContextMenu("Spawn Patrol Points")]
     public void SpawnPatrolPoints()
     {
         float stepX = spawnRange.x / (gridResolution.x - 1);

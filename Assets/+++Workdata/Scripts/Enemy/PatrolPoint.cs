@@ -11,6 +11,7 @@ public class PatrolPoint : MonoBehaviour
     [HideInInspector, Tooltip("Cost of distance from starting node")] float gScore = 0;
     [HideInInspector, Tooltip("Cost of distance from end node")] float hScore = 0;
     [HideInInspector, Tooltip("Total estimated cost")] float fScore = 0;
+    [HideInInspector] public Vector3 pos;
 
     [SerializeField] TextMeshPro gText;
     [SerializeField] TextMeshPro hText;
@@ -19,9 +20,15 @@ public class PatrolPoint : MonoBehaviour
     [HideInInspector] public PatrolPoint cameFrom;
     public List<PatrolPoint> neighbors;
 
+
     public void ChangeGizmoColor(Color color)
     {
         patrolPointColor = color;
+    }
+
+    private void Awake()
+    {
+        pos = transform.position;
     }
 
     public void UpdateText()
@@ -61,7 +68,7 @@ public class PatrolPoint : MonoBehaviour
 
     private void SetH(Vector3 start, Vector3 goal)
     {
-        hScore = Vector3.Distance(start, goal);
+        hScore = (start - goal).sqrMagnitude;
     }
 
     public float GetH()

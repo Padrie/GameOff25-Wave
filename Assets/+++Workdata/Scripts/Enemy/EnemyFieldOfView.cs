@@ -20,7 +20,7 @@ public class EnemyFieldOfView : MonoBehaviour
 
     void Start()
     {
-        StartCoroutine(FindTargetsWithDelay(.2f));
+        StartCoroutine(FindTargetsWithDelay(.1f));
         enemyManager = GetComponent<EnemyManager>();
     }
 
