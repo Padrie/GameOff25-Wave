@@ -7,7 +7,7 @@ public class LastKnownPositionState : IState
     EnemyStats enemyStats;
     NavMeshAgent agent;
 
-    GameObject playerTransform;
+    float timeToMove = 0;
 
     public LastKnownPositionState(EnemyManager enemyManager, EnemyStats enemyStats, NavMeshAgent navMeshAgent)
     {
@@ -20,12 +20,7 @@ public class LastKnownPositionState : IState
     {
         Debug.Log("Entered LastKnownPositionState");
 
-        if (playerTransform == null)
-            playerTransform = new GameObject();
-
-        playerTransform.transform.position = enemyManager.lastPlayerPosTarget.position;
-
-        agent.SetDestination(playerTransform.transform.position);
+        agent.SetDestination(enemyManager.lastPlayerPosTarget.transform.position);
     }
 
     public void OnExit()
@@ -35,9 +30,17 @@ public class LastKnownPositionState : IState
 
     public void Tick()
     {
-        if (Vector3.Distance(enemyManager.transform.position, enemyManager.lastPlayerPosTarget.position) < 0.1f)
+        if (Vector3.Distance(enemyManager.transform.position, enemyManager.lastPlayerPosTarget.position) < 1f)
         {
-            enemyManager.lastPlayerPosTarget = null;
+            timeToMove += Time.deltaTime;
+
+            if (timeToMove >= enemyStats.afterChaseWaitTime)
+            {
+                timeToMove = 0;
+
+                enemyManager.lastPlayerPosTarget = null;
+                enemyManager.lostPlayer = false;
+            }
         }
     }
 }

@@ -1,7 +1,5 @@
 using UnityEngine;
 using System.Collections;
-using System.Collections.Generic;
-using static UnityEngine.GraphicsBuffer;
 using UnityEditor;
 
 public class EnemyFieldOfView : MonoBehaviour
@@ -14,42 +12,46 @@ public class EnemyFieldOfView : MonoBehaviour
     [SerializeField] LayerMask targetMask;
     [SerializeField] LayerMask obstacleMask;
 
-    //[HideInInspector]
-    [SerializeField] List<GameObject> visibleTargets = new List<GameObject>();
+    [SerializeField] GameObject visibleTarget;
+    GameObject playerTarget;
     EnemyManager enemyManager;
+
+    bool hadVisibleTargetLastFrame = false;
 
     void Start()
     {
-        StartCoroutine(FindTargetsWithDelay(.1f));
+        StartCoroutine(FindTargetWithDelay(.1f));
         enemyManager = GetComponent<EnemyManager>();
+        playerTarget = new GameObject("Player target");
     }
 
 
-    IEnumerator FindTargetsWithDelay(float delay)
+    IEnumerator FindTargetWithDelay(float delay)
     {
         while (true)
         {
             yield return new WaitForSeconds(delay);
-            FindVisibleTargets();
+            FindVisibleTarget();
         }
     }
-    void FindVisibleTargets()
+    void FindVisibleTarget()
     {
-        visibleTargets.Clear();
+        visibleTarget = null;
         Collider[] targetsInViewRadius = Physics.OverlapSphere(transform.position, viewRadius, targetMask);
-
 
         for (int i = 0; i < targetsInViewRadius.Length; i++)
         {
             GameObject target = targetsInViewRadius[i].gameObject;
             Vector3 dirToTarget = (target.transform.position - transform.position).normalized;
+
             if (Vector3.Angle(transform.forward, dirToTarget) < viewAngle / 2)
             {
                 float dstToTarget = Vector3.Distance(transform.position, target.transform.position);
 
                 if (!Physics.Raycast(transform.position, dirToTarget, dstToTarget, obstacleMask))
                 {
-                    visibleTargets.Add(target);
+                    visibleTarget = target;
+                    playerTarget.transform.position = target.transform.position;
                 }
             }
         }
@@ -57,14 +59,23 @@ public class EnemyFieldOfView : MonoBehaviour
 
     private void Update()
     {
-        if (visibleTargets.Count > 0)
+        if (enemyManager == null)
+            return;
+
+        bool hasVisibleNow = visibleTarget != null;
+
+        if (hadVisibleTargetLastFrame && !hasVisibleNow)
         {
-            enemyManager.playerTarget = visibleTargets[0];
+            playerTarget.transform.position = enemyManager.playerTarget.position;
+            enemyManager.lastPlayerPosTarget = playerTarget.transform;
         }
+
+        if (hasVisibleNow)
+            enemyManager.playerTarget = visibleTarget.transform;
         else
-        {
             enemyManager.playerTarget = null;
-        }
+
+        hadVisibleTargetLastFrame = hasVisibleNow;
     }
 
     public Vector3 DirFromAngle(float angleInDegrees, bool angleIsGlobal)
@@ -76,7 +87,6 @@ public class EnemyFieldOfView : MonoBehaviour
         return new Vector3(Mathf.Sin(angleInDegrees * Mathf.Deg2Rad), 0, Mathf.Cos(angleInDegrees * Mathf.Deg2Rad));
     }
 
-#if UNITY_EDITOR
     private void OnDrawGizmosSelected()
     {
         if (gizmosEnabled)
@@ -87,12 +97,12 @@ public class EnemyFieldOfView : MonoBehaviour
             Vector3 viewAngleB = DirFromAngle(viewAngle / 2, false);
             Handles.DrawLine(transform.position, transform.position + viewAngleA * viewRadius);
             Handles.DrawLine(transform.position, transform.position + viewAngleB * viewRadius);
-            Handles.color = Color.red;
-            foreach (GameObject visibleTarget in visibleTargets)
+
+            if (visibleTarget != null)
             {
+                Handles.color = Color.red;
                 Handles.DrawLine(transform.position, visibleTarget.transform.position);
             }
         }
     }
-#endif
 }
