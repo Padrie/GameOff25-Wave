@@ -106,7 +106,7 @@ GameObject:
   - component: {fileID: 732156000937196573}
   - component: {fileID: 3720340854313712755}
   - component: {fileID: 3599919691648712894}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Enemy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -139,7 +139,7 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.5
-  m_Speed: 3.5
+  m_Speed: 1
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 120
@@ -210,6 +210,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyStats
   walkSpeed: 1
   chaseSpeed: 1
+  roamWaitTime: 2
+  screamCooldown: 120
+  afterChaseWaitTime: 2
+  monsterFootSteps: []
+  monsterAmbience: []
+  chaseFootSteps: []
+  monsterScream: []
 --- !u!114 &-8889086453145585291
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -222,6 +229,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bc7499e18b1a90e4f8f7efbcb5819b69, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyManager
+  lostPlayer: 0
   playerTarget: {fileID: 0}
   lastPlayerPosTarget: {fileID: 0}
   soundTarget: {fileID: 0}
@@ -237,16 +245,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d85a3568537df8444a842c513b4fda9d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyFieldOfView
-  gizmosEnabled: 0
-  viewRadius: 0
-  viewAngle: 0
+  gizmosEnabled: 1
+  viewRadius: 30
+  viewAngle: 105
   targetMask:
     serializedVersion: 2
     m_Bits: 256
   obstacleMask:
     serializedVersion: 2
-    m_Bits: 64
-  visibleTargets: []
+    m_Bits: 576
+  visibleTarget: {fileID: 0}
 --- !u!114 &3720340854313712755
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -259,7 +267,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a1fb5c2ad70e400468a20df62188f793, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemySoundPerception
-  gizmosEnabled: 1
+  gizmosEnabled: 0
   faintSoundRadius: 5
   quietSoundRadius: 10
   normalSoundRadius: 15
@@ -279,14 +287,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PatrolPointManager
   patrolPoints: []
   targetPatrolPoint: {fileID: 0}
+  selectRandomPointAroundPlayer: 400
+  drawGizmos: 1
   obstacleMask:
     serializedVersion: 2
-    m_Bits: 64
+    m_Bits: 576
   maxNeighbors: 4
-  initialRadius: 8
+  initialRadius: 16
   radiusStep: 8
   maxRadius: 64
   useLineCast: 1
   finalPatrolPointColor: {r: 0, g: 0, b: 1, a: 1}
   goodPatrolPointColor: {r: 0, g: 1, b: 0, a: 1}
-  badPatrolPointColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  badPatrolPointColor: {r: 1, g: 0, b: 0, a: 1}
+  finalPatrolPath: []
