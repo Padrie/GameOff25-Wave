@@ -82,8 +82,6 @@ public class CircularWaveSpawner : MonoBehaviour
 
         //Initialize all waves as disabled
         DisableAllWaves();
-
-        Debug.Log($"✅ CircularWaveSpawner initialized with {waveMaterialInstances.Count} material instance(s). Press X to spawn.");
     }
 
     private void SetupTargetRenderers()
@@ -92,7 +90,6 @@ public class CircularWaveSpawner : MonoBehaviour
 
         if (waveMaterials == null || waveMaterials.Length == 0)
         {
-            Debug.LogError("⚠️ Wave Materials array is empty! Please assign at least one wave material in the inspector.");
             return;
         }
 

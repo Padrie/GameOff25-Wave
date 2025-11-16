@@ -22,19 +22,14 @@ public static class WaveEditorController
         switch (state)
         {
             case PlayModeStateChange.EnteredEditMode:
-                //Entered Edit Mode - disable all waves
                 DisableAllWaveMaterials();
-                Debug.Log("🛑 Wave materials disabled in Edit Mode");
                 break;
 
             case PlayModeStateChange.ExitingPlayMode:
-                //About to exit Play Mode - disable all waves
                 DisableAllWaveMaterials();
                 break;
 
             case PlayModeStateChange.EnteredPlayMode:
-                //Entered Play Mode - waves will be controlled by CircularWaveSpawner
-                Debug.Log("▶️ Play Mode - Waves controlled by CircularWaveSpawner");
                 break;
         }
     }

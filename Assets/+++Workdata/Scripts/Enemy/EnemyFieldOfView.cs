@@ -87,6 +87,8 @@ public class EnemyFieldOfView : MonoBehaviour
         return new Vector3(Mathf.Sin(angleInDegrees * Mathf.Deg2Rad), 0, Mathf.Cos(angleInDegrees * Mathf.Deg2Rad));
     }
 
+
+#if (UNITY_EDITOR)
     private void OnDrawGizmosSelected()
     {
         if (gizmosEnabled)
@@ -105,4 +107,5 @@ public class EnemyFieldOfView : MonoBehaviour
             }
         }
     }
+#endif
 }
