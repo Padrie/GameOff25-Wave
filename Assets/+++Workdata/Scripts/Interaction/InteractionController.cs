@@ -1,5 +1,6 @@
-using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
 
 public class InteractionController : MonoBehaviour
 {
@@ -12,12 +13,19 @@ public class InteractionController : MonoBehaviour
     private HashSet<IInteractable> hoveredInteractables = new HashSet<IInteractable>();
     private RaycastHit[] raycastHits = new RaycastHit[10]; // Increase if needed
 
+
+    public RawImage crosshairImage;
+
+    public Texture crosshairImageDefault;
+    public Texture crosshairImageOnTarget;
+
     private void Start()
     {
         if (playerCamera == null)
         {
             playerCamera = Camera.main;
         }
+        ChangeRawImage(crosshairImageDefault, Color.white);
     }
 
     private void Update()
@@ -65,6 +73,7 @@ public class InteractionController : MonoBehaviour
             if (!newHoveredInteractables.Contains(interactable))
             {
                 interactable.OnHoverExit();
+                ChangeRawImage(crosshairImageDefault, Color.white);
             }
         }
 
@@ -74,6 +83,7 @@ public class InteractionController : MonoBehaviour
             if (!hoveredInteractables.Contains(interactable))
             {
                 interactable.OnHoverEnter();
+                ChangeRawImage(crosshairImageOnTarget, Color.red);
             }
         }
 
@@ -89,6 +99,13 @@ public class InteractionController : MonoBehaviour
             currentInteractable.Interact();
         }
     }
+
+    private void ChangeRawImage(Texture newTexture, Color newColor)
+    {
+        crosshairImage.texture = newTexture;
+        crosshairImage.color = newColor;
+    }
+
 
     private void OnDrawGizmos()
     {
