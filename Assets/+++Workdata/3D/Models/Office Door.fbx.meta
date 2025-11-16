@@ -3,7 +3,12 @@ guid: 61c9ea1e9eac12a438116681ba406d28
 ModelImporter:
   serializedVersion: 24200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: OfficeDoor_MTL
+    second: {fileID: 2100000, guid: 846905b1e33ce35458a2021cff5aeacb, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0

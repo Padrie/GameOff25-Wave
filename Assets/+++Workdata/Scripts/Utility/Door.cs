@@ -1,8 +1,10 @@
 using UnityEngine;
 using System.Collections;
 using SteamAudio;
+using EasyPeasyFirstPersonController;
+using Vector3 = UnityEngine.Vector3;
 
-public class Door : MonoBehaviour
+public class Door : MonoBehaviour, IInteractableWithHit
 {
     [Header("Open/Close")]
     public bool toggleOpenOrientation;
@@ -11,7 +13,6 @@ public class Door : MonoBehaviour
     public float RotationThreshold = 0.5f;
 
     [Header("Input (optional)")]
-    public KeyCode toggleDoor = KeyCode.E;
     public KeyCode toggleOpenDirection = KeyCode.T;
 
     [Header("Audio")]
@@ -39,7 +40,7 @@ public class Door : MonoBehaviour
     float currentSpeed;
 
     private CircularWaveSpawner _circularWaveSpawner;
-
+    private Vector3 lastHitPoint;
     void Awake()
     {
         closedRot = transform.rotation;
@@ -69,8 +70,41 @@ public class Door : MonoBehaviour
             }
         }
 
-        if (Input.GetKeyDown(toggleDoor)) ToggleDoor();
         if (Input.GetKeyDown(toggleOpenDirection)) toggleOpenOrientation = !toggleOpenOrientation;
+    }
+
+    //Store hit point information from raycast
+    public void UpdateHitInfo(RaycastHit hit)
+    {
+        lastHitPoint = hit.point;
+    }
+
+    //Called when player interacts with door
+    public void Interact()
+    {
+        DetermineOpenDirection();
+        ToggleDoor();
+    }
+
+    //Called when player starts looking at door
+    public void OnHoverEnter()
+    {
+    }
+
+    //Called when player stops looking at door
+    public void OnHoverExit()
+    {
+    }
+
+    //Determine which way door should open based on player position
+    private void DetermineOpenDirection()
+    {
+        Vector3 doorForward = transform.forward;
+        Vector3 hitToPlayer = lastHitPoint - transform.position;
+
+        float dot = Vector3.Dot(doorForward, hitToPlayer);
+
+        toggleOpenOrientation = dot < 0;
     }
 
     public void ToggleDoor()
@@ -83,7 +117,7 @@ public class Door : MonoBehaviour
         AudioClip clipToPlay = isOpen ? doorOpenSound : doorCloseSound;
         if (clipToPlay != null)
         {
-            PlayDoorSound(clipToPlay);
+            PlayDoorSound(clipToPlay, false);
         }
     }
 
@@ -100,7 +134,7 @@ public class Door : MonoBehaviour
 
         if (doorOpenSound != null)
         {
-            PlayDoorSound(doorOpenSound);
+            PlayDoorSound(doorOpenSound, true);
         }
         _circularWaveSpawner.SpawnWaveAt(gameObject.transform.position);
     }
@@ -119,7 +153,7 @@ public class Door : MonoBehaviour
         relay.Initialize(this, openOrientationForThisSide, playerTag);
     }
 
-    private void PlayDoorSound(AudioClip clip)
+    private void PlayDoorSound(AudioClip clip, bool withForce)
     {
         if (clip == null) return;
 
@@ -128,7 +162,9 @@ public class Door : MonoBehaviour
 
         AudioSource audioSource = audioObject.AddComponent<AudioSource>();
         audioSource.clip = clip;
-        audioSource.volume = volume;
+
+        audioSource.volume = volume * (withForce ? .8f : 0.2f);
+        audioSource.pitch = withForce ? 1f : Random.Range(0.6f, .8f);
         audioSource.spatialBlend = spatialBlend;
 
         SteamAudioSource steamAudio = audioObject.AddComponent<SteamAudioSource>();
@@ -153,8 +189,15 @@ public class Door : MonoBehaviour
 public class DoorAutoZone : MonoBehaviour
 {
     Door door;
+    private FirstPersonController _firstPersonController;
     bool openOrientation;
     string playerTag;
+
+    private void Awake()
+    {
+        _firstPersonController = FindFirstObjectByType<FirstPersonController>();
+    }
+
 
     public void Initialize(Door door, bool openOrientation, string playerTag)
     {
@@ -168,7 +211,7 @@ public class DoorAutoZone : MonoBehaviour
     void OnTriggerEnter(Collider other)
     {
         if (!door) return;
-        if (other.CompareTag(playerTag))
+        if (other.CompareTag(playerTag) && _firstPersonController.isSprinting)
         {
             door.TryKnockOpen(openOrientation);
         }

@@ -307,8 +307,6 @@ public class CircularWaveSpawner : MonoBehaviour
         };
 
         activeWaves.Add(wave);
-
-        Debug.Log($"🌊 Wave spawned at {worldPosition}. Will expand to ~{propagationSpeed * waveDuration:F1}m radius");
     }
 
     private void UpdateWaves()

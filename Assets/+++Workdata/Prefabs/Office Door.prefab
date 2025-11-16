@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 410133233858164910}
   - component: {fileID: 2273795077672129957}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Front Trigger
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -63,7 +63,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4726104255518980821}
   - component: {fileID: 867605739891224580}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Back Trigger
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -174,6 +174,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Office Door
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 61c9ea1e9eac12a438116681ba406d28, type: 3}
+      propertyPath: m_Layer
+      value: 11
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:
@@ -186,7 +190,13 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 61c9ea1e9eac12a438116681ba406d28, type: 3}
       insertIndex: -1
+      addedObject: {fileID: 3361773932438092420}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 61c9ea1e9eac12a438116681ba406d28, type: 3}
+      insertIndex: -1
       addedObject: {fileID: 1444912273328766247}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 61c9ea1e9eac12a438116681ba406d28, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 204886985008103875}
   m_SourcePrefab: {fileID: 100100000, guid: 61c9ea1e9eac12a438116681ba406d28, type: 3}
 --- !u!4 &3568328192233665742 stripped
 Transform:
@@ -198,6 +208,28 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 61c9ea1e9eac12a438116681ba406d28, type: 3}
   m_PrefabInstance: {fileID: 3895480536820618021}
   m_PrefabAsset: {fileID: 0}
+--- !u!64 &3361773932438092420
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4237587329082535540}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 1764005622640946637, guid: 61c9ea1e9eac12a438116681ba406d28, type: 3}
 --- !u!114 &1444912273328766247
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -214,7 +246,6 @@ MonoBehaviour:
   EndRotation: 90
   Speed: 180
   RotationThreshold: 0.5
-  toggleDoor: 101
   toggleOpenDirection: 116
   doorOpenSound: {fileID: 8300000, guid: b1334dbf63b8b12469d492e285f8003d, type: 3}
   doorCloseSound: {fileID: 8300000, guid: d7f59595aa88d4148b306f5e4a1b5096, type: 3}
@@ -228,4 +259,18 @@ MonoBehaviour:
   frontTrigger: {fileID: 2273795077672129957}
   backTrigger: {fileID: 867605739891224580}
   playerTag: Player
-  knockSpeedMultiplier: 2
+  knockSpeedMultiplier: 5
+--- !u!114 &204886985008103875
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4237587329082535540}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b76dac034d34fef45b8444ffa83fce0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InteractableObject
+  objectName: Door
+  canInteractMultipleTimes: 1
