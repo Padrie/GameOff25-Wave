@@ -8,6 +8,15 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/+++Workdata/Scenes/MarkScene.unity
     guid: 0d092eefc251c9e41a3c8e915affa9da
+  - enabled: 1
+    path: Assets/+++Workdata/Scenes/PatricScene.unity
+    guid: 1b73b8b7eff33ac43b83eba7d8777704
+  - enabled: 1
+    path: Assets/+++Workdata/Scenes/OptionsScene.unity
+    guid: 245a2d425f9f9a54aa19b05fd11d2c9f
+  - enabled: 1
+    path: Assets/+++Workdata/Scenes/MainMenuScene.unity
+    guid: 1a75e773ce82d1a44b5d0040198e17f7
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0

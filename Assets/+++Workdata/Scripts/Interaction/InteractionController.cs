@@ -14,8 +14,8 @@ public class InteractionController : MonoBehaviour
     private RaycastHit[] raycastHits = new RaycastHit[10]; // Increase if needed
 
 
+    [Header("Crosshair Settings")]
     public RawImage crosshairImage;
-
     public Texture crosshairImageDefault;
     public Texture crosshairImageOnTarget;
 
