@@ -23,7 +23,7 @@ MonoBehaviour:
   sceneType: 0
   layerMask:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 1
   maxOcclusionSamples: 16
   realTimeRays: 4096
   realTimeBounces: 4
@@ -57,4 +57,4 @@ MonoBehaviour:
   TANDuration: 1
   TANAmbisonicOrder: 1
   TANMaxSources: 32
-  EnableValidation: 0
+  EnableValidation: 1

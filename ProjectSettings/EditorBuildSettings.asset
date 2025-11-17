@@ -8,13 +8,13 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/+++Workdata/Scenes/MarkScene.unity
     guid: 0d092eefc251c9e41a3c8e915affa9da
-  - enabled: 0
+  - enabled: 1
     path: Assets/+++Workdata/Scenes/PatricScene.unity
     guid: 1b73b8b7eff33ac43b83eba7d8777704
-  - enabled: 0
+  - enabled: 1
     path: Assets/+++Workdata/Scenes/OptionsScene.unity
     guid: 245a2d425f9f9a54aa19b05fd11d2c9f
-  - enabled: 0
+  - enabled: 1
     path: Assets/+++Workdata/Scenes/MainMenuScene.unity
     guid: 1a75e773ce82d1a44b5d0040198e17f7
   m_configObjects:

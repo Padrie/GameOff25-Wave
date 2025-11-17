@@ -39,7 +39,6 @@ public class Door : MonoBehaviour, IInteractableWithHit
     Quaternion closedRot, openRot, targetRot;
     float currentSpeed;
 
-
     private CircularWaveSpawner _circularWaveSpawner;
     private Vector3 lastHitPoint;
     void Awake()
@@ -137,7 +136,7 @@ public class Door : MonoBehaviour, IInteractableWithHit
         {
             PlayDoorSound(doorOpenSound, true);
         }
-        //_circularWaveSpawner.SpawnWaveAt(gameObject.transform.position);
+        _circularWaveSpawner.SpawnWaveAt(gameObject.transform.position);
     }
 
     bool IsActuallyClosed()
