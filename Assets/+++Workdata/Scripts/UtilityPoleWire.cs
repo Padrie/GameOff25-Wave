@@ -7,9 +7,9 @@ using UnityEditor;
 [ExecuteAlways]
 public class UtilityPoleWire : MonoBehaviour
 {
-    [Header("Connection")]
-    [Tooltip("The pole to connect to")]
-    public Transform targetPole;
+    [Header("Connections")]
+    [Tooltip("The poles to connect to")]
+    public Transform[] targetPoles;
 
     [Header("Wire Appearance")]
     public Material wireMaterial;
@@ -137,7 +137,7 @@ public class UtilityPoleWire : MonoBehaviour
     private bool HasChanged()
     {
         //Check if pole moved or settings changed
-        if (targetPole == null) return false;
+        if (targetPoles == null || targetPoles.Length == 0) return false;
         if (!wiresCreated) return true;
 
         //Simple check - you can expand this
@@ -148,7 +148,7 @@ public class UtilityPoleWire : MonoBehaviour
     [ContextMenu("Create Wires")]
     public void CreateWires()
     {
-        if (targetPole == null)
+        if (targetPoles == null || targetPoles.Length == 0)
         {
             return;
         }
@@ -161,8 +161,20 @@ public class UtilityPoleWire : MonoBehaviour
         //Clear existing wires
         ClearWires();
 
+        //Count valid poles (non-null)
+        int validPoleCount = 0;
+        foreach (Transform pole in targetPoles)
+        {
+            if (pole != null) validPoleCount++;
+        }
+
+        if (validPoleCount == 0)
+        {
+            return;
+        }
+
         //Create container
-        wireContainer = new GameObject($"Wires_{gameObject.name}_to_{targetPole.name}");
+        wireContainer = new GameObject($"Wires_{gameObject.name}");
         wireContainer.transform.SetParent(transform);
         wireContainer.transform.localPosition = Vector3.zero;
 
@@ -175,13 +187,21 @@ public class UtilityPoleWire : MonoBehaviour
 #endif
 
         //Initialize arrays
-        lineRenderers = new LineRenderer[1];
-        originalPositions = new Vector3[1][];
-        randomOffsets = new float[1];
+        lineRenderers = new LineRenderer[validPoleCount];
+        originalPositions = new Vector3[validPoleCount][];
+        randomOffsets = new float[validPoleCount];
 
-        //Create wire
-        CreateWire(0);
-        randomOffsets[0] = Random.Range(0f, 100f);
+        //Create wires for each valid pole
+        int wireIndex = 0;
+        for (int i = 0; i < targetPoles.Length; i++)
+        {
+            if (targetPoles[i] != null)
+            {
+                CreateWire(wireIndex, targetPoles[i]);
+                randomOffsets[wireIndex] = Random.Range(0f, 100f);
+                wireIndex++;
+            }
+        }
 
         wiresCreated = true;
     }
@@ -212,9 +232,9 @@ public class UtilityPoleWire : MonoBehaviour
         wiresCreated = false;
     }
 
-    private void CreateWire(int wireIndex)
+    private void CreateWire(int wireIndex, Transform targetPole)
     {
-        GameObject wireObj = new GameObject($"Wire_{wireIndex}");
+        GameObject wireObj = new GameObject($"Wire_{wireIndex}_to_{targetPole.name}");
         wireObj.transform.SetParent(wireContainer.transform);
 
         LineRenderer lr = wireObj.AddComponent<LineRenderer>();
