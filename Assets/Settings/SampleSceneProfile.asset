@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b2db86121404754db890f4c8dfe81b2, type: 3}
   m_Name: Bloom
   m_EditorClassIdentifier: 
-  active: 1
+  active: 0
   skipIterations:
     m_OverrideState: 1
     m_Value: 0
@@ -68,7 +68,7 @@ MonoBehaviour:
     m_Value: 0
   maximumHeight:
     m_OverrideState: 1
-    m_Value: 50
+    m_Value: 222
   enableGround:
     m_OverrideState: 1
     m_Value: 1
@@ -77,7 +77,7 @@ MonoBehaviour:
     m_Value: 0
   density:
     m_OverrideState: 1
-    m_Value: 0.01
+    m_Value: 0.002
   attenuationDistance:
     m_OverrideState: 1
     m_Value: 128
@@ -92,7 +92,7 @@ MonoBehaviour:
     m_Value: 1
   anisotropy:
     m_OverrideState: 1
-    m_Value: 1
+    m_Value: -1
   scattering:
     m_OverrideState: 1
     m_Value: 1
@@ -112,8 +112,8 @@ MonoBehaviour:
     m_OverrideState: 1
     m_Value: 1
   renderPassEvent:
-    m_OverrideState: 0
-    m_Value: 550
+    m_OverrideState: 1
+    m_Value: 450
 --- !u!114 &-3357603926938260329
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -235,7 +235,7 @@ MonoBehaviour:
     m_Value: 0.6
   minSmoothness:
     m_OverrideState: 1
-    m_Value: 0.164
+    m_Value: 1
 --- !u!114 &6915961223657456497
 MonoBehaviour:
   m_ObjectHideFlags: 3
