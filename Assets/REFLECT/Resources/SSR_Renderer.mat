@@ -38,7 +38,7 @@ Material:
     m_Ints: []
     m_Floats:
     - _BinarySamples: 1
-    - _MinSmoothness: 0.164
+    - _MinSmoothness: 1
     - _Samples: 1
     - _StepSize: 0.78
     - _Thickness: 0.6

@@ -235,7 +235,7 @@ MonoBehaviour:
     m_Value: 0.6
   minSmoothness:
     m_OverrideState: 1
-    m_Value: 0.164
+    m_Value: 1
 --- !u!114 &6915961223657456497
 MonoBehaviour:
   m_ObjectHideFlags: 3
