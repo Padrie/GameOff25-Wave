@@ -11,6 +11,15 @@ public class UtilityPoleWire : MonoBehaviour
     [Tooltip("The poles to connect to")]
     public Transform[] targetPoles;
 
+    [Header("Line Count")]
+    [Tooltip("Number of lines per target pole")]
+    [Range(1, 10)]
+    public int lineCountPerPole = 1;
+
+    [Tooltip("Offset variance between multiple lines per pole")]
+    [Range(0f, 1f)]
+    public float lineOffsetVariance = 0.2f;
+
     [Header("Wire Appearance")]
     public Material wireMaterial;
     public float wireWidth = 0.05f;
@@ -186,20 +195,27 @@ public class UtilityPoleWire : MonoBehaviour
         }
 #endif
 
-        //Initialize arrays
-        lineRenderers = new LineRenderer[validPoleCount];
-        originalPositions = new Vector3[validPoleCount][];
-        randomOffsets = new float[validPoleCount];
+        //Calculate total number of lines (poles * lineCountPerPole)
+        int totalLineCount = validPoleCount * lineCountPerPole;
 
-        //Create wires for each valid pole
+        //Initialize arrays
+        lineRenderers = new LineRenderer[totalLineCount];
+        originalPositions = new Vector3[totalLineCount][];
+        randomOffsets = new float[totalLineCount];
+
+        //Create wires for each valid pole and each line
         int wireIndex = 0;
         for (int i = 0; i < targetPoles.Length; i++)
         {
             if (targetPoles[i] != null)
             {
-                CreateWire(wireIndex, targetPoles[i]);
-                randomOffsets[wireIndex] = Random.Range(0f, 100f);
-                wireIndex++;
+                //Create multiple lines for this pole
+                for (int lineNum = 0; lineNum < lineCountPerPole; lineNum++)
+                {
+                    CreateWire(wireIndex, targetPoles[i], lineNum, lineCountPerPole);
+                    randomOffsets[wireIndex] = Random.Range(0f, 100f);
+                    wireIndex++;
+                }
             }
         }
 
@@ -232,9 +248,9 @@ public class UtilityPoleWire : MonoBehaviour
         wiresCreated = false;
     }
 
-    private void CreateWire(int wireIndex, Transform targetPole)
+    private void CreateWire(int wireIndex, Transform targetPole, int lineNumber, int totalLinesForPole)
     {
-        GameObject wireObj = new GameObject($"Wire_{wireIndex}_to_{targetPole.name}");
+        GameObject wireObj = new GameObject($"Wire_{wireIndex}_to_{targetPole.name}_line{lineNumber + 1}");
         wireObj.transform.SetParent(wireContainer.transform);
 
         LineRenderer lr = wireObj.AddComponent<LineRenderer>();
@@ -250,8 +266,12 @@ public class UtilityPoleWire : MonoBehaviour
 
         float currentHeight = 0;
 
-        Vector3 startPos = transform.position + Vector3.up * currentHeight;
-        Vector3 endPos = targetPole.position + Vector3.up * currentHeight;
+        //Calculate offset for this line to create a messy appearance
+        Vector3 startOffset = GetLineOffset(lineNumber, totalLinesForPole);
+        Vector3 endOffset = GetLineOffset(lineNumber, totalLinesForPole);
+
+        Vector3 startPos = transform.position + Vector3.up * currentHeight + startOffset;
+        Vector3 endPos = targetPole.position + Vector3.up * currentHeight + endOffset;
 
         //Create the wire
         if (useSag)
@@ -282,6 +302,28 @@ public class UtilityPoleWire : MonoBehaviour
             originalPositions[wireIndex][0] = startPos;
             originalPositions[wireIndex][1] = endPos;
         }
+    }
+
+    private Vector3 GetLineOffset(int lineNumber, int totalLines)
+    {
+        if (totalLines <= 1 || lineOffsetVariance == 0)
+            return Vector3.zero;
+
+        //Distribute lines evenly around the center
+        float distribution = (lineNumber - (totalLines - 1) * 0.5f) / Mathf.Max(1, totalLines - 1);
+
+        Vector3 offset = Vector3.zero;
+
+        //Horizontal spread (X axis)
+        offset.x = distribution * lineOffsetVariance;
+
+        //Slight vertical variation
+        offset.y = Mathf.Sin(lineNumber * 12.9898f) * lineOffsetVariance * 0.5f;
+
+        //Depth variation (Z axis)
+        offset.z = Mathf.Cos(lineNumber * 78.233f) * lineOffsetVariance * 0.3f;
+
+        return offset;
     }
 
     private void AnimateWind()

@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: e598a7e96ed13854fbc3ebf3e542f16c
+ShaderIncludeImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 261116
+  packageName: REFLECT - SSR For URP
+  packageVersion: 1.0
+  assetPath: Assets/REFLECT/HLSL/SSR_Opaque.hlsl
+  uploadId: 617029

@@ -1,6 +1,6 @@
 using UnityEngine;
 using System.Collections;
-using SteamAudio;
+//using SteamAudio;
 using EasyPeasyFirstPersonController;
 using Vector3 = UnityEngine.Vector3;
 
@@ -39,7 +39,6 @@ public class Door : MonoBehaviour, IInteractableWithHit
     Quaternion closedRot, openRot, targetRot;
     float currentSpeed;
 
-    private CircularWaveSpawner _circularWaveSpawner;
     private Vector3 lastHitPoint;
     void Awake()
     {
@@ -51,7 +50,6 @@ public class Door : MonoBehaviour, IInteractableWithHit
         SetupTrigger(frontTrigger, false);
         SetupTrigger(backTrigger, true);
 
-        _circularWaveSpawner = FindFirstObjectByType<CircularWaveSpawner>();
     }
 
     void Update()
@@ -136,7 +134,6 @@ public class Door : MonoBehaviour, IInteractableWithHit
         {
             PlayDoorSound(doorOpenSound, true);
         }
-        _circularWaveSpawner.SpawnWaveAt(gameObject.transform.position);
     }
 
     bool IsActuallyClosed()
@@ -167,11 +164,11 @@ public class Door : MonoBehaviour, IInteractableWithHit
         audioSource.pitch = withForce ? 1f : Random.Range(0.6f, .8f);
         audioSource.spatialBlend = spatialBlend;
 
-        SteamAudioSource steamAudio = audioObject.AddComponent<SteamAudioSource>();
-        steamAudio.directBinaural = directBinaural;
-        steamAudio.reflections = applyReflections;
-        steamAudio.pathing = applyPathing;
-        steamAudio.distanceAttenuation = true;
+        //SteamAudioSource steamAudio = audioObject.AddComponent<SteamAudioSource>();
+        //steamAudio.directBinaural = directBinaural;
+        //steamAudio.reflections = applyReflections;
+        //steamAudio.pathing = applyPathing;
+        //steamAudio.distanceAttenuation = true;
 
         audioSource.Play();
 

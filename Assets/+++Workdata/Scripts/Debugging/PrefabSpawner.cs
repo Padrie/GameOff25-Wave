@@ -127,7 +127,7 @@ public class PrefabSpawner : MonoBehaviour
 #if UNITY_EDITOR
         GameObject prefabInstance = (GameObject)PrefabUtility.InstantiatePrefab(rule.Prefab);
 #else
-        GameObject Instance = Instantiate(rule.Prefab);
+        GameObject prefabInstance = Instantiate(rule.Prefab);
 #endif
 
         if (prefabInstance != null)

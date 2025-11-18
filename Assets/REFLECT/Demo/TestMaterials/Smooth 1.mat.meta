@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 5cfa55cf9d4d52c4ea12ade4124ddc77
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 261116
+  packageName: REFLECT - SSR For URP
+  packageVersion: 1.0
+  assetPath: Assets/REFLECT/Demo/TestMaterials/Smooth 1.mat
+  uploadId: 617029

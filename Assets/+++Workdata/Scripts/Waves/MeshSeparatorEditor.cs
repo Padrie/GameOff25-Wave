@@ -17,24 +17,15 @@ public class MeshSeparatorEditor : Editor
         if (GUILayout.Button("Analyze Mesh", GUILayout.Height(30)))
         {
             int partCount = separator.GetLoosePartCount();
-            EditorUtility.DisplayDialog(
-                "Mesh Analysis",
-                $"Found {partCount} loose part(s) in the mesh.",
-                "OK"
-            );
+            Debug.Log($"Found {partCount} loose part(s) in the mesh.");
         }
 
         EditorGUILayout.Space(5);
 
         if (GUILayout.Button("Separate Loose Parts", GUILayout.Height(40)))
         {
-            if (EditorUtility.DisplayDialog(
-                "Separate Mesh Parts",
-                "This will create separate GameObjects for each loose part. Continue?",
-                "Yes", "Cancel"))
-            {
-                separator.SeparateLooseParts();
-            }
+            separator.SeparateLooseParts();
+            Debug.Log("Mesh separation complete!");
         }
 
         EditorGUILayout.Space(5);
@@ -57,14 +48,14 @@ public class MeshSeparatorMenu
 
         if (selected == null)
         {
-            EditorUtility.DisplayDialog("Error", "Please select a GameObject with a mesh first.", "OK");
+            Debug.LogError("Please select a GameObject with a mesh first.");
             return;
         }
 
         MeshFilter mf = selected.GetComponent<MeshFilter>();
         if (mf == null || mf.sharedMesh == null)
         {
-            EditorUtility.DisplayDialog("Error", "Selected object doesn't have a valid mesh.", "OK");
+            Debug.LogError("Selected object doesn't have a valid mesh.");
             return;
         }
 

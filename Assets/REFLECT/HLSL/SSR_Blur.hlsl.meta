@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: 57725fe1d7eff8e45953d9c4952aaf68
+ShaderImporter:
+  externalObjects: {}
+  defaultTextures: []
+  nonModifiableTextures: []
+  preprocessorOverride: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 261116
+  packageName: REFLECT - SSR For URP
+  packageVersion: 1.0
+  assetPath: Assets/REFLECT/HLSL/SSR_Blur.hlsl
+  uploadId: 617029

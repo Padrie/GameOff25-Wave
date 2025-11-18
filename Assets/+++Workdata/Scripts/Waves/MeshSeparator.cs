@@ -3,6 +3,10 @@ using System.Collections.Generic;
 
 public class MeshSeparator : MonoBehaviour
 {
+    [Header("Target Settings")]
+    [Tooltip("GameObject to separate. If null, uses the GameObject this script is attached to")]
+    public GameObject targetObject;
+
     [Header("Settings")]
     [Tooltip("Create separate GameObjects for each loose part")]
     public bool createSeparateObjects = true;
@@ -36,10 +40,12 @@ public class MeshSeparator : MonoBehaviour
 
     public void SeparateLooseParts()
     {
-        MeshFilter meshFilter = GetComponent<MeshFilter>();
+        GameObject target = targetObject != null ? targetObject : gameObject;
+
+        MeshFilter meshFilter = target.GetComponent<MeshFilter>();
         if (meshFilter == null || meshFilter.sharedMesh == null)
         {
-            Debug.LogWarning("MeshSeparator: No MeshFilter or mesh found!");
+            Debug.LogWarning("MeshSeparator: No MeshFilter or mesh found on target object!");
             return;
         }
 
@@ -50,7 +56,7 @@ public class MeshSeparator : MonoBehaviour
 
         if (createSeparateObjects && looseParts.Count > 1)
         {
-            CreateSeparateGameObjects(originalMesh, looseParts);
+            CreateSeparateGameObjects(target, originalMesh, looseParts);
         }
     }
 
@@ -186,21 +192,21 @@ public class MeshSeparator : MonoBehaviour
         }
     }
 
-    private void CreateSeparateGameObjects(Mesh originalMesh, List<List<int>> looseParts)
+    private void CreateSeparateGameObjects(GameObject targetObject, Mesh originalMesh, List<List<int>> looseParts)
     {
-        MeshRenderer originalRenderer = GetComponent<MeshRenderer>();
+        MeshRenderer originalRenderer = targetObject.GetComponent<MeshRenderer>();
         Material[] materials = originalRenderer?.sharedMaterials;
 
         // Get original collider and its physics material
-        MeshCollider originalCollider = GetComponent<MeshCollider>();
+        MeshCollider originalCollider = targetObject.GetComponent<MeshCollider>();
         PhysicsMaterial originalPhysicsMaterial = originalCollider != null
             ? originalCollider.sharedMaterial
             : null;
 
         // Get original layer
-        int originalLayer = gameObject.layer;
+        int originalLayer = targetObject.layer;
 
-        Transform parent = separatedObjectsParent != null ? separatedObjectsParent : transform.parent;
+        Transform parent = separatedObjectsParent != null ? separatedObjectsParent : targetObject.transform.parent;
 
         // Clear existing children before creating new objects
         ClearChildren(parent);
@@ -216,10 +222,10 @@ public class MeshSeparator : MonoBehaviour
                 continue;
 
             // Create new GameObject
-            GameObject partObject = new GameObject($"{gameObject.name}_Part_{partIndex + 1}");
-            partObject.transform.position = transform.position;
-            partObject.transform.rotation = transform.rotation;
-            partObject.transform.localScale = transform.localScale;
+            GameObject partObject = new GameObject($"{targetObject.name}_Part_{partIndex + 1}");
+            partObject.transform.position = targetObject.transform.position;
+            partObject.transform.rotation = targetObject.transform.rotation;
+            partObject.transform.localScale = Vector3.one;
             partObject.transform.SetParent(parent);
 
             // Set as static
@@ -258,7 +264,7 @@ public class MeshSeparator : MonoBehaviour
         Debug.Log($"MeshSeparator: Created {successfulParts} separate objects");
 
         // Optionally disable the original object
-        gameObject.SetActive(false);
+        targetObject.SetActive(false);
     }
 
     /// <summary>
@@ -389,7 +395,6 @@ public class MeshSeparator : MonoBehaviour
 
     /// <summary>
     /// Validates if a mesh is suitable for a mesh collider.
-    /// (No more full triangle scan here – much faster.)
     /// </summary>
     private bool IsValidForCollider(Mesh mesh)
     {
@@ -410,7 +415,9 @@ public class MeshSeparator : MonoBehaviour
     /// </summary>
     public int GetLoosePartCount()
     {
-        MeshFilter meshFilter = GetComponent<MeshFilter>();
+        GameObject target = targetObject != null ? targetObject : gameObject;
+
+        MeshFilter meshFilter = target.GetComponent<MeshFilter>();
         if (meshFilter == null || meshFilter.sharedMesh == null)
             return 0;
 

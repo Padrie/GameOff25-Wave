@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 3df4e1e32f0469e42859a646219b6408
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 261116
+  packageName: REFLECT - SSR For URP
+  packageVersion: 1.0
+  assetPath: Assets/REFLECT/Scripts/SSR.cs
+  uploadId: 617029

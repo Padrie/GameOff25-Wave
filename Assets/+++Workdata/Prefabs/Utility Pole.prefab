@@ -84,11 +84,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 03b7f3030026ac34ba6f7d2f0caf6b09, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SimpleWireConnector
-  targetPole: {fileID: 0}
+  targetPoles: []
+  lineCountPerPole: 1
+  lineOffsetVariance: 0.2
   wireMaterial: {fileID: 2100000, guid: bc6773304bcb5414d9184cd3a3a03bdd, type: 2}
   wireWidth: 0.1
   useSag: 1
-  sagAmount: 1
+  sagAmount: 2
   sagSegments: 10
   enableWind: 1
   windStrength: 0.1
@@ -111,11 +113,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 03b7f3030026ac34ba6f7d2f0caf6b09, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SimpleWireConnector
-  targetPole: {fileID: 0}
+  targetPoles: []
+  lineCountPerPole: 1
+  lineOffsetVariance: 0.2
   wireMaterial: {fileID: 2100000, guid: bc6773304bcb5414d9184cd3a3a03bdd, type: 2}
   wireWidth: 0.1
   useSag: 1
-  sagAmount: 1
+  sagAmount: 2
   sagSegments: 10
   enableWind: 1
   windStrength: 0.1

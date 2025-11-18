@@ -1,7 +1,7 @@
 using UnityEngine;
 using System;
 using System.Collections;
-using SteamAudio;
+//using SteamAudio;
 using Vector3 = UnityEngine.Vector3;
 
 
@@ -191,11 +191,11 @@ namespace FootstepSystem
                 audioSource.volume = volume;
                 audioSource.spatialBlend = _spatialBlend;
 
-                SteamAudioSource steamAudio = audioObject.AddComponent<SteamAudioSource>();
-                steamAudio.directBinaural = directBinaural;
-                steamAudio.reflections = applyReflections;
-                steamAudio.pathing = applyPathing;
-                steamAudio.distanceAttenuation = true;
+                //SteamAudioSource steamAudio = audioObject.AddComponent<SteamAudioSource>();
+                //steamAudio.directBinaural = directBinaural;
+                //steamAudio.reflections = applyReflections;
+                //steamAudio.pathing = applyPathing;
+                //steamAudio.distanceAttenuation = true;
 
                 audioSource.Play();
 

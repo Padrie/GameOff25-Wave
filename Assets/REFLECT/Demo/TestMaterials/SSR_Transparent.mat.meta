@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 0725ff95b7eb57347bd7100c3e59388a
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 261116
+  packageName: REFLECT - SSR For URP
+  packageVersion: 1.0
+  assetPath: Assets/REFLECT/Demo/TestMaterials/SSR_Transparent.mat
+  uploadId: 617029
