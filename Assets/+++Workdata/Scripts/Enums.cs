@@ -13,4 +13,5 @@ public enum RepaitItemCategory
 {
     None,
     Battery,
+    Ball
 }

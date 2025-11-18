@@ -40,6 +40,10 @@ public class SubSystem : MonoBehaviour
             {
                 CorrectRepairItem();
             }
+            else
+            {
+                print("Falsches Repair item du opfen");
+            }
         }
     }
 
@@ -48,5 +52,6 @@ public class SubSystem : MonoBehaviour
         player.itemSlot.Reparent(repairItemSlot);
         GetComponent<Collider>().enabled = false;
         onRepaired?.Invoke();
+        print("Inserted correct repair item");
     }
 }
