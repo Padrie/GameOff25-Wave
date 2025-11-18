@@ -1,13 +1,13 @@
 namespace EasyPeasyFirstPersonController
 {
     using System;
-    using System.Collections;
     using UnityEngine;
-    using UnityEngine.Animations;
-    using UnityEngine.InputSystem.LowLevel;
 
     public partial class FirstPersonController : MonoBehaviour
     {
+        public RepairItem itemSlot;
+        public Transform itemHolder;
+        public bool preventSprintWhenHoldingItem = true;
         public SoundStrength soundStrength = SoundStrength.Faint;
         public KeyCode keyCode = KeyCode.O;
         [Range(0, 100)] public float mouseSensitivity = 50f;
@@ -264,7 +264,7 @@ namespace EasyPeasyFirstPersonController
         {
             moveInput.x = Input.GetAxis("Horizontal");
             moveInput.y = Input.GetAxis("Vertical");
-            isSprinting = canSprint && Input.GetKey(KeyCode.LeftShift) && moveInput.y > 0.1f && isGrounded && !isCrouching && !isSliding;
+            isSprinting = canSprint && ShouldSprintWhileHoldingItem() && Input.GetKey(KeyCode.LeftShift) && moveInput.y > 0.1f && isGrounded && !isCrouching && !isSliding;
 
             float currentSpeed = isCrouching ? crouchSpeed : (isSprinting ? sprintSpeed : walkSpeed);
             if (!isMove) currentSpeed = 0f;
@@ -316,6 +316,16 @@ namespace EasyPeasyFirstPersonController
         {
             Cursor.lockState = newVisibility ? CursorLockMode.None : CursorLockMode.Locked;
             Cursor.visible = newVisibility;
+        }
+
+        private bool ShouldSprintWhileHoldingItem()
+        {
+            if (itemSlot == null)
+                return true;
+            else if (itemSlot != null && preventSprintWhenHoldingItem)
+                return false;
+            else
+                return true;
         }
     }
 }

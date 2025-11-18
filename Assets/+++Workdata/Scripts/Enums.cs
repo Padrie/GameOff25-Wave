@@ -8,3 +8,9 @@ public enum SoundStrength
     Loud = 4,
     VeryLoud = 5
 }
+
+public enum RepaitItemCategory
+{
+    None,
+    Battery,
+}
