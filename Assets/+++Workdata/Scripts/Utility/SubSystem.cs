@@ -1,5 +1,7 @@
 using EasyPeasyFirstPersonController;
+using System;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class SubSystem : MonoBehaviour
 {
@@ -9,6 +11,8 @@ public class SubSystem : MonoBehaviour
     bool isInTrigger = false;
 
     FirstPersonController player;
+    [Space(10)]
+    public UnityEvent onRepaired;
 
     private void OnTriggerEnter(Collider other)
     {
@@ -43,5 +47,6 @@ public class SubSystem : MonoBehaviour
     {
         player.itemSlot.Reparent(repairItemSlot);
         GetComponent<Collider>().enabled = false;
+        onRepaired?.Invoke();
     }
 }

@@ -1,14 +1,14 @@
 using EasyPeasyFirstPersonController;
+
 using UnityEngine;
 
 public class RepairItem : MonoBehaviour
 {
     public RepaitItemCategory repairItem;
-    public SoundStrength dropSoundStrength;
-    public bool isPlayerHolding = false;
-
+    [SerializeField] SoundStrength dropSoundStrength;
     [SerializeField] LayerMask dropItemLayerMask;
 
+    bool isPlayerHolding = false;
     bool isPlayerInTrigger = false;
     FirstPersonController player;
 
@@ -22,7 +22,8 @@ public class RepairItem : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
         colliders = GetComponents<Collider>();
-        renderer = GetComponent<Renderer>();
+
+        renderer = GetComponentInChildren<Renderer>();
         materials = renderer.materials;
     }
 
