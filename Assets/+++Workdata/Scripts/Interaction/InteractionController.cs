@@ -11,8 +11,11 @@ public class InteractionController : MonoBehaviour
 
     private IInteractable currentInteractable;
     private HashSet<IInteractable> hoveredInteractables = new HashSet<IInteractable>();
-    private RaycastHit[] raycastHits = new RaycastHit[10]; // Increase if needed
+    private RaycastHit[] raycastHits = new RaycastHit[10];
 
+    [Header("Render Layer Settings")]
+    [SerializeField] private int outlineRenderingLayer = 0;
+    private Dictionary<IInteractable, uint> originalRenderingLayers = new Dictionary<IInteractable, uint>();
 
     [Header("Crosshair Settings")]
     public RawImage crosshairImage;
@@ -73,6 +76,7 @@ public class InteractionController : MonoBehaviour
             if (!newHoveredInteractables.Contains(interactable))
             {
                 interactable.OnHoverExit();
+                RemoveOutline(interactable);
                 ChangeRawImage(crosshairImageDefault, Color.white);
             }
         }
@@ -83,6 +87,7 @@ public class InteractionController : MonoBehaviour
             if (!hoveredInteractables.Contains(interactable))
             {
                 interactable.OnHoverEnter();
+                CreateOutline(interactable);
                 ChangeRawImage(crosshairImageOnTarget, Color.red);
             }
         }
@@ -91,7 +96,50 @@ public class InteractionController : MonoBehaviour
         currentInteractable = closest;
     }
 
-    // Check for interaction input
+    // Add rendering layer to interactable object
+    private void CreateOutline(IInteractable interactable)
+    {
+        if (originalRenderingLayers.ContainsKey(interactable))
+            return; // Already has stored rendering layer
+
+        // Get the GameObject from the interactable
+        MonoBehaviour interactableMono = interactable as MonoBehaviour;
+        if (interactableMono == null)
+            return;
+
+        Renderer renderer = interactableMono.GetComponent<Renderer>();
+        if (renderer == null)
+            return;
+
+        // Store original rendering layer mask
+        originalRenderingLayers[interactable] = renderer.renderingLayerMask;
+
+        // Add outline rendering layer to existing mask
+        uint layerMask = 1u << outlineRenderingLayer;
+        renderer.renderingLayerMask |= layerMask;
+    }
+
+    //Remove rendering layer from interactable object
+    private void RemoveOutline(IInteractable interactable)
+    {
+        if (!originalRenderingLayers.TryGetValue(interactable, out uint originalRenderingLayer))
+            return;
+
+        //Get the GameObject from the interactable
+        MonoBehaviour interactableMono = interactable as MonoBehaviour;
+        if (interactableMono == null)
+            return;
+
+        Renderer renderer = interactableMono.GetComponent<Renderer>();
+        if (renderer == null)
+            return;
+
+        // Restore original rendering layer mask
+        renderer.renderingLayerMask = originalRenderingLayer;
+        originalRenderingLayers.Remove(interactable);
+    }
+
+    // Check for interaction  input
     private void HandleInteractionInput()
     {
         if (Input.GetKeyDown(interactKey) && currentInteractable != null)
@@ -106,6 +154,23 @@ public class InteractionController : MonoBehaviour
         crosshairImage.color = newColor;
     }
 
+    // Clean up and restore originall rendering layers on disable
+    private void OnDisable()
+    {
+        foreach (var kvp in originalRenderingLayers)
+        {
+            MonoBehaviour interactableMono = kvp.Key as MonoBehaviour;
+            if (interactableMono != null)
+            {
+                Renderer renderer = interactableMono.GetComponent<Renderer>();
+                if (renderer != null)
+                {
+                    renderer.renderingLayerMask = kvp.Value;
+                }
+            }
+        }
+        originalRenderingLayers.Clear();
+    }
 
     private void OnDrawGizmos()
     {
