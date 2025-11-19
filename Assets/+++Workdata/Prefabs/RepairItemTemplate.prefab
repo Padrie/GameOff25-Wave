@@ -103,6 +103,7 @@ GameObject:
   - component: {fileID: 4920532639977045379}
   - component: {fileID: 6489123844272393879}
   - component: {fileID: 111686503936086388}
+  - component: {fileID: 5596517929609003210}
   m_Layer: 11
   m_Name: RepairItemTemplate
   m_TagString: Untagged
@@ -225,4 +226,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InteractableObject
   objectName: RepairItem
-  canInteractMultipleTimes: 1
+  canInteractMultipleTimes: 0
+--- !u!114 &5596517929609003210
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8259680502981883628}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 372ebc7693c38374ba38332c8a75873a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::StickToWave
+  waveInfluence: 1
+  smoothDisplacement: 1
+  smoothSpeed: 20
+  groundOffset: 0
+  showDebugInfo: 0

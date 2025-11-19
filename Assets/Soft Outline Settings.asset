@@ -16,7 +16,7 @@ MonoBehaviour:
   showInSceneView: 1
   outlines:
   - {fileID: 5907528421375827994}
-  type: 1
+  type: 0
   hardness: 1
   sharedColor: {r: 1, g: 1, b: 1, a: 1}
   intensity: 7.2
@@ -44,7 +44,7 @@ MonoBehaviour:
   material: {fileID: 0}
   materialInstanced: {fileID: 0}
   isActive: 1
-  disableColor: 1
+  disableColor: 0
   RenderingLayer:
     serializedVersion: 0
     m_Bits: 4

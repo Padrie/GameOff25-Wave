@@ -70,12 +70,12 @@ MonoBehaviour:
     probeSamplingDebugTexture: {fileID: 2800000, guid: 24ec0e140fb444a44ab96ee80844e18e, type: 3}
     probeVolumeBlendStatesCS: {fileID: 7200000, guid: b9a23f869c4fd45f19c5ada54dd82176, type: 3}
   m_RendererFeatures:
-  - {fileID: 8962477313718901727}
-  - {fileID: -4020926858050451184}
   - {fileID: -7687515392871023383}
   - {fileID: 1065984157931247492}
+  - {fileID: 8962477313718901727}
+  - {fileID: -4020926858050451184}
   - {fileID: 1997403587394009203}
-  m_RendererFeatureMap: df5bb6afa11d617c1049138e53cc32c8e93c93fa7a7550958497af9df122cb0e73f8b5e3fa33b81b
+  m_RendererFeatureMap: e93c93fa7a7550958497af9df122cb0edf5bb6afa11d617c1049138e53cc32c873f8b5e3fa33b81b
   m_UseNativeRenderPass: 1
   xrSystemData: {fileID: 0}
   postProcessData: {fileID: 11400000, guid: 41439944d30ece34e96484bdb6645b55, type: 2}
@@ -97,7 +97,7 @@ MonoBehaviour:
     failOperation: 0
     zFailOperation: 0
   m_ShadowTransparentReceive: 1
-  m_RenderingMode: 1
+  m_RenderingMode: 2
   m_DepthPrimingMode: 0
   m_CopyDepthMode: 0
   m_DepthAttachmentFormat: 0
@@ -116,7 +116,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9377bada70366419aa6301068e988aa4, type: 3}
   m_Name: EdgeDetection
   m_EditorClassIdentifier: Linework::Linework.EdgeDetection.EdgeDetection
-  m_Active: 1
+  m_Active: 0
   settings: {fileID: 11400000, guid: 3f62bbf1c4bb520479bd2dc66b0f5711, type: 2}
   shaders:
     section: {fileID: 4800000, guid: 555b69c4bab64af2aab316a4335ad6be, type: 3}

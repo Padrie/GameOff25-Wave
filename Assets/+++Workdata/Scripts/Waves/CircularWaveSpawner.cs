@@ -279,7 +279,7 @@ public class CircularWaveSpawner : MonoBehaviour
         }
     }
 
-    private void SpawnWave(Vector3 worldPosition)
+    public void SpawnWave(Vector3 worldPosition)
     {
         //Limit number of simultaneous waves
         if (activeWaves.Count >= maxSimultaneousWaves)

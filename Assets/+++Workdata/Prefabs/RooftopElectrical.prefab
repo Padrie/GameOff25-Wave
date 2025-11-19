@@ -63,37 +63,5 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 7892124407050642638, guid: 81d20bd640b583c49b7ec1737ed43bd5, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1600820562829332549}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 81d20bd640b583c49b7ec1737ed43bd5, type: 3}
---- !u!1 &7050495595895223863 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 7892124407050642638, guid: 81d20bd640b583c49b7ec1737ed43bd5, type: 3}
-  m_PrefabInstance: {fileID: 891168703494476537}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1600820562829332549
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7050495595895223863}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 03b7f3030026ac34ba6f7d2f0caf6b09, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SimpleWireConnector
-  targetPoles: []
-  lineCountPerPole: 4
-  lineOffsetVariance: 0.4
-  wireMaterial: {fileID: 2100000, guid: bc6773304bcb5414d9184cd3a3a03bdd, type: 2}
-  wireWidth: 0.1
-  useSag: 1
-  sagAmount: 0.5
-  sagSegments: 10
-  enableWind: 1
-  windStrength: 0.1
-  windSpeed: 4
-  windDirection: {x: 1, y: 0.5}

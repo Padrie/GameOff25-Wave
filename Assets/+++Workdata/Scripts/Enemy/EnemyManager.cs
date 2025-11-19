@@ -21,11 +21,15 @@ public class EnemyManager : MonoBehaviour
     StateMachine stateMachine;
     float screamTime = 0f;
 
+
+    public CircularWaveSpawner waveSpawner;
+
     private void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
         stats = GetComponent<EnemyStats>();
         animator = GetComponent<Animator>();
+        waveSpawner = FindFirstObjectByType<CircularWaveSpawner>();
 
         stateMachine = new StateMachine();
 
@@ -99,6 +103,7 @@ public class EnemyManager : MonoBehaviour
     public void StartScreamCooldown()
     {
         StartCoroutine(Scream());
+        waveSpawner.SpawnWaveAt(transform.position);
     }
 
     private IEnumerator Scream()
