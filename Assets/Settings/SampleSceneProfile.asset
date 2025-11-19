@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b2db86121404754db890f4c8dfe81b2, type: 3}
   m_Name: Bloom
   m_EditorClassIdentifier: 
-  active: 0
+  active: 1
   skipIterations:
     m_OverrideState: 1
     m_Value: 0
@@ -21,7 +21,7 @@ MonoBehaviour:
     m_Value: 1
   intensity:
     m_OverrideState: 1
-    m_Value: 0.25
+    m_Value: 0.5
   scatter:
     m_OverrideState: 1
     m_Value: 0.5
@@ -89,7 +89,7 @@ MonoBehaviour:
     m_Value: 1
   enableMainLightContribution:
     m_OverrideState: 1
-    m_Value: 1
+    m_Value: 0
   anisotropy:
     m_OverrideState: 1
     m_Value: -1
@@ -159,9 +159,8 @@ MonoBehaviour:
   - {fileID: -7893295128165547882}
   - {fileID: 7391319092446245454}
   - {fileID: -3357603926938260329}
+  - {fileID: 6066606407764309988}
   - {fileID: -4751701562819338633}
-  - {fileID: 6915961223657456497}
-  - {fileID: 5083406805704616120}
 --- !u!114 &849379129802519247
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -202,7 +201,7 @@ MonoBehaviour:
   maxNits:
     m_OverrideState: 1
     m_Value: 647
---- !u!114 &5083406805704616120
+--- !u!114 &6066606407764309988
 MonoBehaviour:
   m_ObjectHideFlags: 3
   m_CorrespondingSourceObject: {fileID: 0}
@@ -211,98 +210,258 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3df4e1e32f0469e42859a646219b6408, type: 3}
-  m_Name: ScreenSpaceReflections
-  m_EditorClassIdentifier: Assembly-CSharp::UnityEngine.Rendering.Universal.ScreenSpaceReflections
-  active: 1
-  enabled:
+  m_Script: {fileID: 11500000, guid: cad00e0c748434bbb89ed2d571f9309d, type: 3}
+  m_Name: ShinyScreenSpaceRaytracedReflections
+  m_EditorClassIdentifier: ScreenSpaceReflections::ShinySSRR.ShinyScreenSpaceRaytracedReflections
+  active: 0
+  reflectionStyle:
     m_OverrideState: 1
-    m_Value: 1
-  downsample:
+    m_Value: 0
+  reflectionsMultiplier:
     m_OverrideState: 1
     m_Value: 2
-  samples:
+  showInSceneView:
     m_OverrideState: 1
     m_Value: 1
-  steps:
+  reflectionsWorkflow:
     m_OverrideState: 1
-    m_Value: 1
-  stepSize:
+    m_Value: 0
+  sampleCount:
     m_OverrideState: 1
-    m_Value: 0.78
+    m_Value: 100
+  maxRayLength:
+    m_OverrideState: 1
+    m_Value: 20
   thickness:
     m_OverrideState: 1
-    m_Value: 0.6
-  minSmoothness:
+    m_Value: 0.75
+  binarySearchIterations:
+    m_OverrideState: 1
+    m_Value: 6
+  refineThickness:
+    m_OverrideState: 1
+    m_Value: 0
+  thicknessFine:
+    m_OverrideState: 1
+    m_Value: 0.05
+  jitter:
+    m_OverrideState: 0
+    m_Value: 0
+  animatedJitter:
+    m_OverrideState: 0
+    m_Value: 0
+  computeBackFaces:
+    m_OverrideState: 1
+    m_Value: 0
+  thicknessMinimum:
+    m_OverrideState: 1
+    m_Value: 0.16
+  computeBackFacesLayerMask:
+    m_OverrideState: 0
+    m_Value:
+      serializedVersion: 2
+      m_Bits: 4294967295
+  downsampling:
     m_OverrideState: 1
     m_Value: 1
---- !u!114 &6915961223657456497
-MonoBehaviour:
-  m_ObjectHideFlags: 3
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 06437c1ff663d574d9447842ba0a72e4, type: 3}
-  m_Name: ScreenSpaceLensFlare
-  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.ScreenSpaceLensFlare
-  active: 0
-  intensity:
+  depthBias:
     m_OverrideState: 1
-    m_Value: 4
-  tintColor:
+    m_Value: 0.03
+  temporalFilter:
     m_OverrideState: 1
-    m_Value: {r: 1, g: 1, b: 1, a: 1}
-  bloomMip:
+    m_Value: 0
+  temporalFilterResponseSpeed:
     m_OverrideState: 0
     m_Value: 1
-  firstFlareIntensity:
+  smoothnessThreshold:
+    m_OverrideState: 0
+    m_Value: 0
+  reflectionsMinIntensity:
+    m_OverrideState: 0
+    m_Value: 0
+  reflectionsMaxIntensity:
     m_OverrideState: 1
     m_Value: 1
-  secondaryFlareIntensity:
+  reflectionsIntensityCurve:
+    m_OverrideState: 0
+    m_Value:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0
+        inSlope: 0
+        outSlope: 1
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 1
+        inSlope: 1
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+  reflectionsSmoothnessCurve:
+    m_OverrideState: 0
+    m_Value:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0
+        inSlope: 0
+        outSlope: 0.166666
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 0.5
+        value: 0.25
+        inSlope: 0.833333
+        outSlope: 1.166666
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 1
+        inSlope: 1.833333
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+  fresnel:
     m_OverrideState: 1
     m_Value: 1
-  warpedFlareIntensity:
+  decay:
     m_OverrideState: 1
+    m_Value: 2
+  metallicBoost:
+    m_OverrideState: 1
+    m_Value: 0
+  metallicBoostThreshold:
+    m_OverrideState: 0
+    m_Value: 0
+  specularControl:
+    m_OverrideState: 0
+    m_Value: 0
+  specularSoftenPower:
+    m_OverrideState: 0
+    m_Value: 15
+  skyboxIntensity:
+    m_OverrideState: 0
+    m_Value: 0
+  skyboxResolution:
+    m_OverrideState: 0
+    m_Value: 6
+  skyboxUpdateMode:
+    m_OverrideState: 0
+    m_Value: 0
+  skyboxUpdateInterval:
+    m_OverrideState: 0
+    m_Value: 3
+  skyboxContributionPass:
+    m_OverrideState: 1
+    m_Value: 0
+  skyboxCustomCubemap:
+    m_OverrideState: 0
+    m_Value: {fileID: 0}
+    dimension: 1
+  nearCameraAttenuationStart:
+    m_OverrideState: 0
+    m_Value: 0
+  nearCameraAttenuationRange:
+    m_OverrideState: 0
     m_Value: 1
-  warpedFlareScale:
+  farCameraAttenuationStart:
+    m_OverrideState: 0
+    m_Value: 900
+  farCameraAttenuationRange:
+    m_OverrideState: 0
+    m_Value: 100
+  useCustomBounds:
+    m_OverrideState: 0
+    m_Value: 0
+  boundsMin:
+    m_OverrideState: 0
+    m_Value: {x: -10000, y: -10000, z: -10000}
+  boundsMax:
+    m_OverrideState: 0
+    m_Value: {x: 10000, y: 10000, z: 10000}
+  vignetteSize:
+    m_OverrideState: 1
+    m_Value: 2
+  vignettePower:
+    m_OverrideState: 1
+    m_Value: 10
+  fuzzyness:
+    m_OverrideState: 0
+    m_Value: 0
+  contactHardening:
+    m_OverrideState: 0
+    m_Value: 22
+  minimumBlur:
+    m_OverrideState: 0
+    m_Value: 0.2
+  blurDownsampling:
+    m_OverrideState: 0
+    m_Value: 1
+  blurStrength:
     m_OverrideState: 0
     m_Value: {x: 1, y: 1}
-  samples:
+  outputMode:
+    m_OverrideState: 1
+    m_Value: 0
+  separationPos:
+    m_OverrideState: 0
+    m_Value: 0.576
+  lowPrecision:
+    m_OverrideState: 0
+    m_Value: 0
+  stopNaN:
+    m_OverrideState: 0
+    m_Value: 0
+  stencilCheck:
+    m_OverrideState: 0
+    m_Value: 1
+  stencilValue:
+    m_OverrideState: 0
+    m_Value: 1
+  stencilCompareFunction:
+    m_OverrideState: 0
+    m_Value: 8
+  useReflectionsScripts:
+    m_OverrideState: 0
+    m_Value: 0
+  reflectionsScriptsLayerMask:
+    m_OverrideState: 1
+    m_Value:
+      serializedVersion: 2
+      m_Bits: 4294967295
+  skipDeferredPass:
+    m_OverrideState: 0
+    m_Value: 0
+  transparencySupport:
     m_OverrideState: 1
     m_Value: 1
-  sampleDimmer:
-    m_OverrideState: 0
-    m_Value: 0.5
-  vignetteEffect:
+  transparentLayerMask:
     m_OverrideState: 1
-    m_Value: 1
-  startingPosition:
-    m_OverrideState: 1
-    m_Value: 1.25
-  scale:
-    m_OverrideState: 1
-    m_Value: 1.5
-  streaksIntensity:
-    m_OverrideState: 1
-    m_Value: 555
-  streaksLength:
-    m_OverrideState: 1
-    m_Value: 0.5
-  streaksOrientation:
-    m_OverrideState: 1
-    m_Value: 55
-  streaksThreshold:
-    m_OverrideState: 1
-    m_Value: 0.25
-  resolution:
-    m_OverrideState: 0
-    m_Value: 4
-  chromaticAbberationIntensity:
-    m_OverrideState: 1
-    m_Value: 0.5
+    m_Value:
+      serializedVersion: 2
+      m_Bits: 4087
 --- !u!114 &7391319092446245454
 MonoBehaviour:
   m_ObjectHideFlags: 3

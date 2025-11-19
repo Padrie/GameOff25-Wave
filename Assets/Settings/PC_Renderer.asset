@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-3844939862671473474
+--- !u!114 &-7687515392871023383
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -9,17 +9,42 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 521933c422ef94aa58e7d435b6f8921a, type: 3}
-  m_Name: WideOutline
-  m_EditorClassIdentifier: Linework::Linework.WideOutline.WideOutline
+  m_Script: {fileID: 11500000, guid: e598cd55476104d909f677d2b056f508, type: 3}
+  m_Name: SoftOutline
+  m_EditorClassIdentifier: Linework::Linework.SoftOutline.SoftOutline
   m_Active: 1
-  settings: {fileID: 11400000, guid: 97d247eb6d251914e8454b5f35aa2d60, type: 2}
+  settings: {fileID: 11400000, guid: 63c397d9d51fab04c8ae6e1271eac4a6, type: 2}
   shaders:
-    mask: {fileID: 4800000, guid: 1ed7bc804a124d559675facf61722b63, type: 3}
-    silhouette: {fileID: 4800000, guid: 2a1be836d8f24bbb91714e9a51f8fec1, type: 3}
-    silhouetteInstanced: {fileID: 4800000, guid: 85d004b6af6cd48209d21826b2f0a5a3, type: 3}
-    outline: {fileID: 4800000, guid: 90865e175cad4ccd80a2e1965c38f3e9, type: 3}
-    clear: {fileID: 4800000, guid: 9d6033fe8c48f4059a892093b5eec20b, type: 3}
+    mask: {fileID: 4800000, guid: 231df427ffff4fee9202f22ce6a5d357, type: 3}
+    silhouette: {fileID: 4800000, guid: b0e6032b7b104d8db7f40d7f6e743674, type: 3}
+    silhouetteInstanced: {fileID: 4800000, guid: b7b25b6fd39f14aeeba46013a510a40c, type: 3}
+    boxBlur: {fileID: 4800000, guid: d8d4df91388b465aa9a07d27ccc72b73, type: 3}
+    gaussianBlur: {fileID: 4800000, guid: cb6a37cd1abc46e180a83317d8fefb26, type: 3}
+    kawaseBlur: {fileID: 4800000, guid: ead7e4745cd94d22beaeeea69ae381a7, type: 3}
+    dilate: {fileID: 4800000, guid: a987f6629a694e19a74290edccde4040, type: 3}
+    outline: {fileID: 4800000, guid: b0cf66d628f541279229be85e2c31db3, type: 3}
+--- !u!114 &-4020926858050451184
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cf716a1be50b448e7b1d1968ab734946, type: 3}
+  m_Name: ShinySSRR
+  m_EditorClassIdentifier: ScreenSpaceReflections::ShinySSRR.ShinySSRR
+  m_Active: 0
+  renderPassEvent: 500
+  useDeferred: 0
+  enableScreenSpaceNormalsPass: 0
+  customSmoothnessMetallicPass: 0
+  ignorePostProcessingOption: 1
+  cameraLayerMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  ignoreReflectionProbes: 1
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -46,9 +71,11 @@ MonoBehaviour:
     probeVolumeBlendStatesCS: {fileID: 7200000, guid: b9a23f869c4fd45f19c5ada54dd82176, type: 3}
   m_RendererFeatures:
   - {fileID: 8962477313718901727}
-  - {fileID: 2715076551195136033}
-  - {fileID: -3844939862671473474}
-  m_RendererFeatureMap: df5bb6afa11d617c2190fafbbce3ad25be44baf69007a4ca
+  - {fileID: -4020926858050451184}
+  - {fileID: -7687515392871023383}
+  - {fileID: 1065984157931247492}
+  - {fileID: 1997403587394009203}
+  m_RendererFeatureMap: df5bb6afa11d617c1049138e53cc32c8e93c93fa7a7550958497af9df122cb0e73f8b5e3fa33b81b
   m_UseNativeRenderPass: 1
   xrSystemData: {fileID: 0}
   postProcessData: {fileID: 11400000, guid: 41439944d30ece34e96484bdb6645b55, type: 2}
@@ -70,14 +97,14 @@ MonoBehaviour:
     failOperation: 0
     zFailOperation: 0
   m_ShadowTransparentReceive: 1
-  m_RenderingMode: 2
+  m_RenderingMode: 1
   m_DepthPrimingMode: 0
   m_CopyDepthMode: 0
   m_DepthAttachmentFormat: 0
   m_DepthTextureFormat: 0
   m_AccurateGbufferNormals: 0
-  m_IntermediateTextureMode: 0
---- !u!114 &2715076551195136033
+  m_IntermediateTextureMode: 1
+--- !u!114 &1065984157931247492
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -86,12 +113,41 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5028f2f00df2eb2418e473937e9ae556, type: 3}
-  m_Name: ReflectRenderPass
-  m_EditorClassIdentifier: Assembly-CSharp::ReflectRenderPass
+  m_Script: {fileID: 11500000, guid: 9377bada70366419aa6301068e988aa4, type: 3}
+  m_Name: EdgeDetection
+  m_EditorClassIdentifier: Linework::Linework.EdgeDetection.EdgeDetection
   m_Active: 1
-  renderPass: 550
-  passIndex: 0
+  settings: {fileID: 11400000, guid: 3f62bbf1c4bb520479bd2dc66b0f5711, type: 2}
+  shaders:
+    section: {fileID: 4800000, guid: 555b69c4bab64af2aab316a4335ad6be, type: 3}
+    sectionMask: {fileID: 4800000, guid: 66bb1bcc44054ea3bf6082c4d4e9edf9, type: 3}
+    outline: {fileID: 4800000, guid: 0049e25744c864ee4916fc340cf7957f, type: 3}
+--- !u!114 &1997403587394009203
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f62c9c65cf3354c93be831c8bc075510, type: 3}
+  m_Name: ScreenSpaceAmbientOcclusion
+  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.ScreenSpaceAmbientOcclusion
+  m_Active: 0
+  m_Settings:
+    AOMethod: 0
+    Downsample: 1
+    AfterOpaque: 0
+    Source: 1
+    NormalSamples: 1
+    Intensity: 10
+    DirectLightingStrength: 0.25
+    Radius: 1
+    Samples: 2
+    BlurQuality: 2
+    Falloff: 100
+    SampleCount: -1
 --- !u!114 &8962477313718901727
 MonoBehaviour:
   m_ObjectHideFlags: 0

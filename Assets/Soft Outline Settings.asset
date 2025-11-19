@@ -1,0 +1,64 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b5eff1c8ed1641c38476a8e6907dca3e, type: 3}
+  m_Name: Soft Outline Settings
+  m_EditorClassIdentifier: Linework::Linework.SoftOutline.SoftOutlineSettings
+  injectionPoint: 600
+  showInSceneView: 1
+  outlines:
+  - {fileID: 5907528421375827994}
+  type: 1
+  hardness: 1
+  sharedColor: {r: 1, g: 1, b: 1, a: 1}
+  intensity: 7.2
+  gap: 0
+  blendMode: 0
+  dilationMethod: 3
+  kernelSize: 10
+  blurSpread: 1.35
+  blurPasses: 2
+  scaleWithResolution: 1
+  referenceResolution: 2
+  customResolution: 0
+--- !u!114 &5907528421375827994
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 61913a156ea0417aa894f46ab63dad06, type: 3}
+  m_Name: Outline
+  m_EditorClassIdentifier: Linework::Linework.SoftOutline.Outline
+  material: {fileID: 0}
+  materialInstanced: {fileID: 0}
+  isActive: 1
+  disableColor: 1
+  RenderingLayer:
+    serializedVersion: 0
+    m_Bits: 4
+  layerMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  renderQueue: 0
+  occlusion: 0
+  cullingMode: 0
+  closedLoop: 0
+  alphaCutout: 0
+  alphaCutoutTexture: {fileID: 0}
+  alphaCutoutThreshold: 0.5
+  alphaCutoutUVTransform: {x: 0, y: 0, z: 0, w: 0}
+  gpuInstancing: 0
+  vertexAnimation: 0
+  color: {r: 1, g: 0, b: 0, a: 1}

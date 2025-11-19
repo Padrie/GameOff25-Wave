@@ -37,11 +37,11 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _BinarySamples: 1
-    - _MinSmoothness: 1
-    - _Samples: 1
-    - _StepSize: 0.78
-    - _Thickness: 0.6
+    - _BinarySamples: 8
+    - _MinSmoothness: 0.1
+    - _Samples: 125
+    - _StepSize: 0.1
+    - _Thickness: 0.1
     m_Colors: []
   m_BuildTextureStacks: []
   m_AllowLocking: 1

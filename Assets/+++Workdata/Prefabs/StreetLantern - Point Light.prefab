@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 9188205178085533471}
   - component: {fileID: 4396562821044582927}
   - component: {fileID: 1879881367105776614}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: StreetLantern - Point Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
