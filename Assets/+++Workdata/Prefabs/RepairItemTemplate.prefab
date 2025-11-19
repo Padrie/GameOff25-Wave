@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 2429822244722474979}
   - component: {fileID: 2284933607202671672}
   - component: {fileID: 1928409830716705626}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: PlaceholderCube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -66,8 +66,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
-  - {fileID: 2100000, guid: b8d301fc93938cf46b46b751bb41ab40, type: 2}
+  - {fileID: 2100000, guid: 757bf648349e6084cb69989a899a6781, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -99,11 +98,12 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1411918483151877002}
-  - component: {fileID: 5259806685316008629}
   - component: {fileID: 6599423649130314508}
+  - component: {fileID: 5259806685316008629}
   - component: {fileID: 4920532639977045379}
   - component: {fileID: 6489123844272393879}
-  m_Layer: 0
+  - component: {fileID: 111686503936086388}
+  m_Layer: 11
   m_Name: RepairItemTemplate
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -120,33 +120,12 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.8, y: 0.8, z: 0.8}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2429822244722474979}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!65 &5259806685316008629
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8259680502981883628}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 3, y: 3, z: 3}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!65 &6599423649130314508
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -167,6 +146,27 @@ BoxCollider:
   m_Enabled: 1
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!65 &5259806685316008629
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8259680502981883628}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1.5, y: 1.5, z: 1.5}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!54 &4920532639977045379
 Rigidbody:
@@ -212,3 +212,17 @@ MonoBehaviour:
   dropItemLayerMask:
     serializedVersion: 2
     m_Bits: 64
+--- !u!114 &111686503936086388
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8259680502981883628}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b76dac034d34fef45b8444ffa83fce0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InteractableObject
+  objectName: RepairItem
+  canInteractMultipleTimes: 1

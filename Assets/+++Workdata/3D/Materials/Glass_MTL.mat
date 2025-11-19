@@ -112,7 +112,7 @@ Material:
     m_Ints: []
     m_Floats:
     - _AddPrecomputedVelocity: 1
-    - _Alpha: 0.5
+    - _Alpha: 0.35
     - _AlphaClip: 0
     - _AlphaToMask: 0
     - _BinarySamples: 8
@@ -133,7 +133,7 @@ Material:
     - _GlossyReflections: 0
     - _Metallic: 0
     - _MinSmoothness: 0
-    - _NormalStrength: 1
+    - _NormalStrength: 0
     - _OcclusionStrength: 1
     - _Opacity: 1
     - _Parallax: 0.005

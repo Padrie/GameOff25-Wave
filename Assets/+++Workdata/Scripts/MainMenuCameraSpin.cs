@@ -16,6 +16,7 @@ public class MainMenuCameraSpin : MonoBehaviour
         }
         else
         {
+            // Random starting rotation
             randomInt = Random.Range(0f, 359f);
             cameraParent.transform.rotation = Quaternion.Euler(0f, randomInt, 0f);
         }

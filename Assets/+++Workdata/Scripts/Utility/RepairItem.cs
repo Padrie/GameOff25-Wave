@@ -1,16 +1,16 @@
 using EasyPeasyFirstPersonController;
-
+using System.Runtime.InteropServices.WindowsRuntime;
 using UnityEngine;
 
-public class RepairItem : MonoBehaviour
+public class RepairItem : MonoBehaviour, IInteractable
 {
     public RepaitItemCategory repairItem;
     [SerializeField] SoundStrength dropSoundStrength;
     [SerializeField] LayerMask dropItemLayerMask;
 
-    bool isPlayerHolding = false;
-    bool isPlayerInTrigger = false;
-    FirstPersonController player;
+    bool holdsItem = false;
+    //bool isPlayerInTrigger = false;
+    FirstPersonController _firstPersonController;
 
     Collider[] colliders;
     Material[] materials;
@@ -20,6 +20,8 @@ public class RepairItem : MonoBehaviour
 
     private void Awake()
     {
+        _firstPersonController = FindFirstObjectByType<FirstPersonController>();
+
         rb = GetComponent<Rigidbody>();
         colliders = GetComponents<Collider>();
 
@@ -27,54 +29,68 @@ public class RepairItem : MonoBehaviour
         materials = renderer.materials;
     }
 
-    private void OnTriggerEnter(Collider other)
+    //private void OnTriggerEnter(Collider other)
+    //{
+    //    if (isPlayerHolding) return;
+
+    //    if (other.TryGetComponent(out FirstPersonController p))
+    //    {
+    //        player = p;
+    //        isPlayerInTrigger = true;
+    //        print($"{player} has entered the Collider");
+
+    //        foreach (Material m in materials)
+    //        {
+    //            if (m.shader.name == "Shader Graphs/OutlineShader")
+    //            {
+    //                m.SetFloat("_outlineEnabled", 1f);
+    //            }
+    //        }
+    //    }
+    //}
+
+    //private void OnTriggerExit(Collider other)
+    //{
+    //    if (isPlayerHolding) return;
+
+    //    if (other.TryGetComponent(out FirstPersonController p) && p == player)
+    //    {
+    //        isPlayerInTrigger = false;
+    //        player = null;
+    //        print($"Player has exited the Collider");
+
+    //        foreach (Material m in materials)
+    //        {
+    //            if (m.shader.name == "Shader Graphs/OutlineShader")
+    //            {
+    //                m.SetFloat("_outlineEnabled", 0f);
+    //            }
+    //        }
+    //    }
+    //}
+
+
+    public void Interact()
     {
-        if (isPlayerHolding) return;
-
-        if (other.TryGetComponent(out FirstPersonController p))
-        {
-            player = p;
-            isPlayerInTrigger = true;
-            print($"{player} has entered the Collider");
-
-            foreach (Material m in materials)
-            {
-                if (m.shader.name == "Shader Graphs/OutlineShader")
-                {
-                    m.SetFloat("_outlineEnabled", 1f);
-                }
-            }
-        }
+        if (holdsItem) return;
+        PickupItem();
     }
 
-    private void OnTriggerExit(Collider other)
+    public void OnHoverEnter() 
     {
-        if (isPlayerHolding) return;
-
-        if (other.TryGetComponent(out FirstPersonController p) && p == player)
-        {
-            isPlayerInTrigger = false;
-            player = null;
-            print($"Player has exited the Collider");
-
-            foreach (Material m in materials)
-            {
-                if (m.shader.name == "Shader Graphs/OutlineShader")
-                {
-                    m.SetFloat("_outlineEnabled", 0f);
-                }
-            }
-        }
+    }
+    public void OnHoverExit() 
+    {
     }
 
     private void Update()
     {
-        if (!isPlayerHolding && isPlayerInTrigger && player != null && Input.GetKeyDown(KeyCode.E))
-        {
-            PickupItem();
-        }
+        //if (!isPlayerHolding && isPlayerInTrigger && player != null && Input.GetKeyDown(KeyCode.E))
+        //{
+        //    PickupItem();
+        //}
 
-        if (isPlayerHolding && Input.GetKeyDown(KeyCode.Q))
+        if (holdsItem && Input.GetKeyDown(KeyCode.Q))
         {
             DropItem();
         }
@@ -82,10 +98,12 @@ public class RepairItem : MonoBehaviour
 
     public void PickupItem()
     {
+        var player = _firstPersonController;
+
         if (player.itemSlot != null)
             player.itemSlot.DropItem();
 
-        isPlayerHolding = true;
+        holdsItem = true;
 
         player.itemSlot = this;
 
@@ -93,13 +111,13 @@ public class RepairItem : MonoBehaviour
         transform.localPosition = Vector3.zero;
         transform.localRotation = Quaternion.identity;
 
-        foreach (Material m in materials)
-        {
-            if (m.shader.name == "Shader Graphs/OutlineShader")
-            {
-                m.SetFloat("_outlineEnabled", 0f);
-            }
-        }
+        //foreach (Material m in materials)
+        //{
+        //    if (m.shader.name == "Shader Graphs/OutlineShader")
+        //    {
+        //        m.SetFloat("_outlineEnabled", 0f);
+        //    }
+        //}
 
         DisableGravity();
         print("Picked up item");
@@ -107,7 +125,9 @@ public class RepairItem : MonoBehaviour
 
     public void DropItem()
     {
-        isPlayerHolding = false;
+        var player = _firstPersonController;
+
+        holdsItem = false;
 
         player.itemSlot = null;
 
@@ -128,7 +148,9 @@ public class RepairItem : MonoBehaviour
 
     public void Reparent(Transform newParent)
     {
-        isPlayerHolding = false;
+        var player = _firstPersonController;
+
+        holdsItem = false;
 
         player.itemSlot = null;
 

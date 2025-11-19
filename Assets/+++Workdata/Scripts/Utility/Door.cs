@@ -1,216 +1,236 @@
 using UnityEngine;
 using System.Collections;
-//using SteamAudio;
+using System.Collections.Generic;
 using EasyPeasyFirstPersonController;
-using Vector3 = UnityEngine.Vector3;
 
 public class Door : MonoBehaviour, IInteractableWithHit
 {
-    [Header("Open/Close")]
-    public bool toggleOpenOrientation;
-    public float EndRotation = 90f;
-    public float Speed = 180f;
-    public float RotationThreshold = 0.5f;
+    [Header("Rotation")]
+    public float openAngle = 90f;
+    public float openSpeed = 180f;
+    public float closeSpeed = 180f;
+    public float rotationThreshold = 0.5f;
 
-    [Header("Input (optional)")]
-    public KeyCode toggleOpenDirection = KeyCode.T;
+    [Header("Paired Door")]
+    [SerializeField] private List<Door> pairedDoors = new List<Door>();
 
     [Header("Audio")]
-    public AudioClip doorOpenSound;
-    public AudioClip doorCloseSound;
-    [Range(0f, 1f)] public float volume = 1f;
+    public AudioClip openSound;
+    public AudioClip closeSound;
+    public AudioClip kickSound;
+    public float volume = 1f;
     public float spatialBlend = 1f;
-    public float audioSourceLifetime = 2f;
+    public float forcedVolumeMultiplier = 1f;
+    public float normalVolumeMultiplier = 0.1f;
 
-    [Header("Steam Audio Settings")]
-    public bool applyHRTF = true;
-    public bool applyReflections = true;
-    public bool applyPathing = false;
-    public bool directBinaural = true;
-
-    [Header("Auto-Open Triggers")]
+    [Header("Triggers")]
     public BoxCollider frontTrigger;
     public BoxCollider backTrigger;
     public string playerTag = "Player";
-    public float knockSpeedMultiplier = 2.5f;
+    public float kickSpeedMultiplier = 2.5f;
 
-    bool isOpen;
-    bool isMoving;
-    Quaternion closedRot, openRot, targetRot;
-    float currentSpeed;
+    private bool isOpen;
+    private bool isMoving;
+    private Quaternion targetRotation;
+    private float currentSpeed;
+    private Quaternion closedRotation;
+    private RaycastHit lastHit;
+    private bool currentOpenDirection;
 
-    private Vector3 lastHitPoint;
     void Awake()
     {
-        closedRot = transform.rotation;
-        openRot = closedRot * Quaternion.Euler(0f, toggleOpenOrientation ? -EndRotation : EndRotation, 0f);
-        isOpen = Quaternion.Angle(transform.rotation, openRot) < Quaternion.Angle(transform.rotation, closedRot);
-        targetRot = isOpen ? openRot : closedRot;
-        currentSpeed = Speed;
-        SetupTrigger(frontTrigger, false);
-        SetupTrigger(backTrigger, true);
-
+        closedRotation = transform.rotation;
+        SetupTriggers();
     }
 
     void Update()
     {
-        var desiredOpenRot = closedRot * Quaternion.Euler(0f, toggleOpenOrientation ? -EndRotation : EndRotation, 0f);
-        if (desiredOpenRot != openRot) { openRot = desiredOpenRot; if (isOpen) targetRot = openRot; }
-
         if (isMoving)
         {
-            transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRot, currentSpeed * Time.deltaTime);
-            if (Quaternion.Angle(transform.rotation, targetRot) <= RotationThreshold)
+            transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, currentSpeed * Time.deltaTime);
+            if (Quaternion.Angle(transform.rotation, targetRotation) <= rotationThreshold)
             {
-                transform.rotation = targetRot;
+                transform.rotation = targetRotation;
                 isMoving = false;
-                currentSpeed = Speed;
             }
         }
-
-        if (Input.GetKeyDown(toggleOpenDirection)) toggleOpenOrientation = !toggleOpenOrientation;
     }
 
-    //Store hit point information from raycast
     public void UpdateHitInfo(RaycastHit hit)
     {
-        lastHitPoint = hit.point;
+        lastHit = hit;
     }
 
-    //Called when player interacts with door
     public void Interact()
     {
-        DetermineOpenDirection();
-        ToggleDoor();
+        if (isMoving) return;
+        Toggle();
     }
 
-    //Called when player starts looking at door
-    public void OnHoverEnter()
+    public void OnHoverEnter() { }
+    public void OnHoverExit() { }
+
+    private bool DetermineDirectionFromHit()
     {
+        float dot = Vector3.Dot(transform.forward, lastHit.normal);
+        return dot < 0;
     }
 
-    //Called when player stops looking at door
-    public void OnHoverExit()
+    public void Toggle()
     {
-    }
-
-    //Determine which way door should open based on player position
-    private void DetermineOpenDirection()
-    {
-        Vector3 doorForward = transform.forward;
-        Vector3 hitToPlayer = lastHitPoint - transform.position;
-
-        float dot = Vector3.Dot(doorForward, hitToPlayer);
-
-        toggleOpenOrientation = dot < 0;
-    }
-
-    public void ToggleDoor()
-    {
-        isOpen = !isOpen;
-        targetRot = isOpen ? openRot : closedRot;
-        isMoving = true;
-        currentSpeed = Speed;
-
-        AudioClip clipToPlay = isOpen ? doorOpenSound : doorCloseSound;
-        if (clipToPlay != null)
+        if (!isOpen)
         {
-            PlayDoorSound(clipToPlay, false);
+            currentOpenDirection = DetermineDirectionFromHit();
+            isOpen = true;
         }
+        else
+        {
+            isOpen = false;
+        }
+
+        SetRotationTarget();
+        PlaySound(isOpen ? openSound : closeSound, false);
+
+        if (pairedDoors.Count > 0)
+            TogglePairedDoors();
     }
 
-    public void TryKnockOpen(bool openOrientationForThisSide)
+    public void Kick(bool direction)
     {
-        if (!IsActuallyClosed()) return;
+        if (!IsClosed()) return;
 
-        toggleOpenOrientation = openOrientationForThisSide;
-        openRot = closedRot * Quaternion.Euler(0f, toggleOpenOrientation ? -EndRotation : EndRotation, 0f);
+        currentOpenDirection = direction;
         isOpen = true;
-        targetRot = openRot;
-        isMoving = true;
-        currentSpeed = Speed * knockSpeedMultiplier;
+        SetRotationTarget();
+        PlaySound(kickSound, true);
+        currentSpeed = openSpeed * kickSpeedMultiplier;
 
-        if (doorOpenSound != null)
+        if (pairedDoors.Count > 0)
+            KickPairedDoors(direction);
+    }
+
+    private void SetRotationTarget()
+    {
+        if (!isOpen)
         {
-            PlayDoorSound(doorOpenSound, true);
+            targetRotation = closedRotation;
+            currentSpeed = closeSpeed;
+        }
+        else
+        {
+            float angle = currentOpenDirection ? -openAngle : openAngle;
+            targetRotation = closedRotation * Quaternion.Euler(0f, angle, 0f);
+            currentSpeed = openSpeed;
+        }
+
+        isMoving = true;
+    }
+
+    private void TogglePairedDoors()
+    {
+        foreach (Door paired in pairedDoors)
+        {
+            if (paired == null || paired == this) continue;
+
+            paired.isOpen = this.isOpen;
+            paired.currentOpenDirection = this.currentOpenDirection;
+            paired.SetRotationTarget();
+
+            AudioClip sound = this.isOpen ? paired.openSound : paired.closeSound;
+            if (sound) paired.PlaySound(sound, false);
         }
     }
 
-    bool IsActuallyClosed()
+    private void KickPairedDoors(bool direction)
     {
-        return Quaternion.Angle(transform.rotation, closedRot) <= RotationThreshold + 0.001f;
+        foreach (Door paired in pairedDoors)
+        {
+            if (paired == null || paired == this || !paired.IsClosed()) continue;
+
+            paired.currentOpenDirection = direction;
+            paired.isOpen = true;
+            paired.SetRotationTarget();
+            paired.currentSpeed = paired.openSpeed * paired.kickSpeedMultiplier;
+            paired.PlaySound(paired.kickSound, true);
+        }
     }
 
-    void SetupTrigger(BoxCollider col, bool openOrientationForThisSide)
+    private void PlaySound(AudioClip clip, bool forced)
     {
-        if (!col) return;
-        col.isTrigger = true;
-        var relay = col.gameObject.GetComponent<DoorAutoZone>();
-        if (!relay) relay = col.gameObject.AddComponent<DoorAutoZone>();
-        relay.Initialize(this, openOrientationForThisSide, playerTag);
+        if (!clip) return;
+
+        GameObject audioObj = new GameObject("DoorAudio");
+        audioObj.transform.position = transform.position;
+
+        AudioSource source = audioObj.AddComponent<AudioSource>();
+        source.clip = clip;
+        source.volume = volume * (forced ? forcedVolumeMultiplier : normalVolumeMultiplier);
+        source.pitch = forced ? 1f : Random.Range(0.6f, 0.8f);
+        source.spatialBlend = spatialBlend;
+        source.Play();
+
+        StartCoroutine(DestroyAfterDelay(audioObj, clip.length + 0.5f));
     }
 
-    private void PlayDoorSound(AudioClip clip, bool withForce)
-    {
-        if (clip == null) return;
-
-        GameObject audioObject = new GameObject("DoorAudio_" + clip.name);
-        audioObject.transform.position = transform.position;
-
-        AudioSource audioSource = audioObject.AddComponent<AudioSource>();
-        audioSource.clip = clip;
-
-        audioSource.volume = volume * (withForce ? .8f : 0.2f);
-        audioSource.pitch = withForce ? 1f : Random.Range(0.6f, .8f);
-        audioSource.spatialBlend = spatialBlend;
-
-        //SteamAudioSource steamAudio = audioObject.AddComponent<SteamAudioSource>();
-        //steamAudio.directBinaural = directBinaural;
-        //steamAudio.reflections = applyReflections;
-        //steamAudio.pathing = applyPathing;
-        //steamAudio.distanceAttenuation = true;
-
-        audioSource.Play();
-
-        StartCoroutine(DestroyAudioSource(audioObject, clip.length + 0.5f));
-    }
-
-    private IEnumerator DestroyAudioSource(GameObject audioObject, float delay)
+    private IEnumerator DestroyAfterDelay(GameObject obj, float delay)
     {
         yield return new WaitForSeconds(delay);
-        if (audioObject != null)
-            Destroy(audioObject);
+        if (obj) Destroy(obj);
     }
+
+    private bool IsClosed()
+    {
+        return Quaternion.Angle(transform.rotation, closedRotation) <= rotationThreshold + 0.001f;
+    }
+
+    private void SetupTriggers()
+    {
+        SetupTrigger(frontTrigger, false);
+        SetupTrigger(backTrigger, true);
+    }
+
+    private void SetupTrigger(BoxCollider collider, bool direction)
+    {
+        if (!collider) return;
+        collider.isTrigger = true;
+
+        DoorTrigger trigger = collider.GetComponent<DoorTrigger>();
+        if (!trigger) trigger = collider.gameObject.AddComponent<DoorTrigger>();
+        trigger.Initialize(this, direction, playerTag);
+    }
+
+    public Quaternion GetOpenRotation()
+    {
+        float angle = currentOpenDirection ? -openAngle : openAngle;
+        return closedRotation * Quaternion.Euler(0f, angle, 0f);
+    }
+
+    public Quaternion GetClosedRotation() => closedRotation;
 }
 
-public class DoorAutoZone : MonoBehaviour
+public class DoorTrigger : MonoBehaviour
 {
-    Door door;
-    private FirstPersonController _firstPersonController;
-    bool openOrientation;
-    string playerTag;
+    private Door door;
+    private bool direction;
+    private string playerTag;
+    private FirstPersonController playerController;
 
-    private void Awake()
+    void Awake()
     {
-        _firstPersonController = FindFirstObjectByType<FirstPersonController>();
+        playerController = FindFirstObjectByType<FirstPersonController>();
     }
 
-
-    public void Initialize(Door door, bool openOrientation, string playerTag)
+    public void Initialize(Door door, bool direction, string playerTag)
     {
         this.door = door;
-        this.openOrientation = openOrientation;
+        this.direction = direction;
         this.playerTag = playerTag;
-        var bc = GetComponent<BoxCollider>();
-        if (bc) bc.isTrigger = true;
     }
 
     void OnTriggerEnter(Collider other)
     {
-        if (!door) return;
-        if (other.CompareTag(playerTag) && _firstPersonController.isSprinting)
-        {
-            door.TryKnockOpen(openOrientation);
-        }
+        if (!door || !other.CompareTag(playerTag) || !playerController) return;
+        if (playerController.isSprinting)
+            door.Kick(direction);
     }
 }

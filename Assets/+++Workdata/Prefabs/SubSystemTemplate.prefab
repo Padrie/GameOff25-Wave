@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 8572415556064488952}
   - component: {fileID: 7609992882651433992}
   - component: {fileID: 6719269314056879077}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: PlaceHolder3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -123,7 +123,7 @@ GameObject:
   - component: {fileID: 867360558626172760}
   - component: {fileID: 4752111542280116454}
   - component: {fileID: 6715957436742867301}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: PlaceHolder1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -231,7 +231,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8924958161889090404}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Repair Item Slot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -263,8 +263,9 @@ GameObject:
   m_Component:
   - component: {fileID: 5765552634363001735}
   - component: {fileID: 6254992383257554362}
-  - component: {fileID: 7980991490569074981}
-  m_Layer: 0
+  - component: {fileID: 6242754481080663179}
+  - component: {fileID: 4150669126855913570}
+  m_Layer: 11
   m_Name: SubSystemTemplate
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -307,7 +308,21 @@ MonoBehaviour:
   onRepaired:
     m_PersistentCalls:
       m_Calls: []
---- !u!65 &7980991490569074981
+--- !u!114 &6242754481080663179
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7271750593047979763}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b76dac034d34fef45b8444ffa83fce0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InteractableObject
+  objectName: Subsystem
+  canInteractMultipleTimes: 1
+--- !u!65 &4150669126855913570
 BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -326,8 +341,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 3.8, y: 4.77, z: 3.24}
-  m_Center: {x: 0, y: 1.1, z: -0.99}
+  m_Size: {x: 1.5, y: 3, z: 2}
+  m_Center: {x: 0, y: 1, z: 0.25}
 --- !u!1 &7581126192096674610
 GameObject:
   m_ObjectHideFlags: 0
@@ -340,7 +355,7 @@ GameObject:
   - component: {fileID: 5252188598818198281}
   - component: {fileID: 7359805178761724251}
   - component: {fileID: 2645500636499265867}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: PlaceHolder2
   m_TagString: Untagged
   m_Icon: {fileID: 0}

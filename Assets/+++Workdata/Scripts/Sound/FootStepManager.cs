@@ -1,6 +1,7 @@
-using UnityEngine;
+using EasyPeasyFirstPersonController;
 using System;
 using System.Collections;
+using UnityEngine;
 //using SteamAudio;
 using Vector3 = UnityEngine.Vector3;
 
@@ -34,14 +35,7 @@ namespace FootstepSystem
         public float WalkVolume = 1f;
         public float RunVolume = 1f;
         public float CrouchVolume = 0.6f;
-        public float AudioSourceLifetime = 2f;
         public float _spatialBlend = 1f;
-
-        [Header("Steam Audio Settings")]
-        public bool applyHRTF = true;
-        public bool applyReflections = true;
-        public bool applyPathing = false;
-        public bool directBinaural = true;
 
         [Header("Ground Detection")]
         public Transform GroundCheckOrigin;
@@ -51,7 +45,6 @@ namespace FootstepSystem
         [Header("Step Settings")]
         public float WalkStepDistance = 2.0f;
         public float RunStepDistance = 1.3f;
-        public float RunSpeedThreshold = 3.5f;
         public float MinimumSpeed = 0.1f;
 
         [Header("Player State")]
@@ -61,6 +54,7 @@ namespace FootstepSystem
         public bool debugConsole;
 
         private CharacterController characterController;
+        private FirstPersonController firstPersonController;
         private Vector3 lastPosition;
         private Vector3 lastStepPosition;
         private Vector3 velocity;
@@ -71,6 +65,7 @@ namespace FootstepSystem
         private void Awake()
         {
             characterController = GetComponent<CharacterController>();
+            firstPersonController = GetComponent<FirstPersonController>();
             lastPosition = transform.position;
             lastStepPosition = transform.position;
         }
@@ -94,7 +89,7 @@ namespace FootstepSystem
             if (!isGrounded || horizontalSpeed <= MinimumSpeed)
                 return;
 
-            bool isRunning = horizontalSpeed >= RunSpeedThreshold && !IsCrouching;
+            bool isRunning = firstPersonController.isSprinting;
 
             PhysicsMaterial currentMaterial = hitInfo.collider ? hitInfo.collider.sharedMaterial : null;
             bool surfaceChanged = currentMaterial != lastSurfaceMaterial;
@@ -190,12 +185,6 @@ namespace FootstepSystem
                 audioSource.clip = clip;
                 audioSource.volume = volume;
                 audioSource.spatialBlend = _spatialBlend;
-
-                //SteamAudioSource steamAudio = audioObject.AddComponent<SteamAudioSource>();
-                //steamAudio.directBinaural = directBinaural;
-                //steamAudio.reflections = applyReflections;
-                //steamAudio.pathing = applyPathing;
-                //steamAudio.distanceAttenuation = true;
 
                 audioSource.Play();
 

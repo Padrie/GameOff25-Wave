@@ -15,12 +15,25 @@ public class InteractionController : MonoBehaviour
 
     [Header("Render Layer Settings")]
     [SerializeField] private int outlineRenderingLayer = 0;
-    private Dictionary<IInteractable, uint> originalRenderingLayers = new Dictionary<IInteractable, uint>();
+    private Dictionary<IInteractable, List<RendererData>> originalRenderingLayers = new Dictionary<IInteractable, List<RendererData>>();
 
     [Header("Crosshair Settings")]
     public RawImage crosshairImage;
     public Texture crosshairImageDefault;
     public Texture crosshairImageOnTarget;
+
+    // Helper class to store renderer and its original rendering layer
+    private class RendererData
+    {
+        public Renderer renderer;
+        public uint originalRenderingLayerMask;
+
+        public RendererData(Renderer renderer, uint originalRenderingLayerMask)
+        {
+            this.renderer = renderer;
+            this.originalRenderingLayerMask = originalRenderingLayerMask;
+        }
+    }
 
     private void Start()
     {
@@ -37,7 +50,7 @@ public class InteractionController : MonoBehaviour
         HandleInteractionInput();
     }
 
-    // Raycast from camera to detect nultiple interactable objects in range
+    // Raycast from camera to detect multiple interactable objects in range
     private void CheckForInteractable()
     {
         Ray ray = playerCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
@@ -46,6 +59,7 @@ public class InteractionController : MonoBehaviour
         HashSet<IInteractable> newHoveredInteractables = new HashSet<IInteractable>();
         IInteractable closest = null;
         float closestDistance = float.MaxValue;
+        int closestHitIndex = -1; // Track which hit was closest
 
         // Check all hits and find the closest interactable
         for (int i = 0; i < hitCount; i++)
@@ -60,14 +74,15 @@ public class InteractionController : MonoBehaviour
                 {
                     closestDistance = raycastHits[i].distance;
                     closest = interactable;
-                }
-
-                // Update hit info for closest
-                if (interactable is IInteractableWithHit && raycastHits[i].distance == closestDistance)
-                {
-                    ((IInteractableWithHit)interactable).UpdateHitInfo(raycastHits[i]);
+                    closestHitIndex = i; // Store the index
                 }
             }
+        }
+
+        // Update hit info for the closest interactable AFTER the loop
+        if (closestHitIndex >= 0 && closest is IInteractableWithHit)
+        {
+            ((IInteractableWithHit)closest).UpdateHitInfo(raycastHits[closestHitIndex]);
         }
 
         // Handle hover exits for interactables no longer in raycast
@@ -96,7 +111,8 @@ public class InteractionController : MonoBehaviour
         currentInteractable = closest;
     }
 
-    // Add rendering layer to interactable object
+
+    // Add rendering layer to interactable object and all its children with renderers
     private void CreateOutline(IInteractable interactable)
     {
         if (originalRenderingLayers.ContainsKey(interactable))
@@ -107,35 +123,42 @@ public class InteractionController : MonoBehaviour
         if (interactableMono == null)
             return;
 
-        Renderer renderer = interactableMono.GetComponent<Renderer>();
-        if (renderer == null)
+        // Get all renderers (parent and children)
+        Renderer[] renderers = interactableMono.GetComponentsInChildren<Renderer>();
+        if (renderers.Length == 0)
             return;
 
-        // Store original rendering layer mask
-        originalRenderingLayers[interactable] = renderer.renderingLayerMask;
+        List<RendererData> rendererDataList = new List<RendererData>();
 
-        // Add outline rendering layer to existing mask
-        uint layerMask = 1u << outlineRenderingLayer;
-        renderer.renderingLayerMask |= layerMask;
+        // Store original rendering layer mask for each renderer and apply outline
+        foreach (Renderer renderer in renderers)
+        {
+            // Store original rendering layer mask
+            rendererDataList.Add(new RendererData(renderer, renderer.renderingLayerMask));
+
+            // Add outline rendering layer to existing mask
+            uint layerMask = 1u << outlineRenderingLayer;
+            renderer.renderingLayerMask |= layerMask;
+        }
+
+        originalRenderingLayers[interactable] = rendererDataList;
     }
 
-    //Remove rendering layer from interactable object
+    //Remove rendering layer from interactable object and all its children with renderers
     private void RemoveOutline(IInteractable interactable)
     {
-        if (!originalRenderingLayers.TryGetValue(interactable, out uint originalRenderingLayer))
+        if (!originalRenderingLayers.TryGetValue(interactable, out List<RendererData> rendererDataList))
             return;
 
-        //Get the GameObject from the interactable
-        MonoBehaviour interactableMono = interactable as MonoBehaviour;
-        if (interactableMono == null)
-            return;
+        // Restore original rendering layer mask for each renderer
+        foreach (RendererData rendererData in rendererDataList)
+        {
+            if (rendererData.renderer != null)
+            {
+                rendererData.renderer.renderingLayerMask = rendererData.originalRenderingLayerMask;
+            }
+        }
 
-        Renderer renderer = interactableMono.GetComponent<Renderer>();
-        if (renderer == null)
-            return;
-
-        // Restore original rendering layer mask
-        renderer.renderingLayerMask = originalRenderingLayer;
         originalRenderingLayers.Remove(interactable);
     }
 
@@ -159,13 +182,11 @@ public class InteractionController : MonoBehaviour
     {
         foreach (var kvp in originalRenderingLayers)
         {
-            MonoBehaviour interactableMono = kvp.Key as MonoBehaviour;
-            if (interactableMono != null)
+            foreach (RendererData rendererData in kvp.Value)
             {
-                Renderer renderer = interactableMono.GetComponent<Renderer>();
-                if (renderer != null)
+                if (rendererData.renderer != null)
                 {
-                    renderer.renderingLayerMask = kvp.Value;
+                    rendererData.renderer.renderingLayerMask = rendererData.originalRenderingLayerMask;
                 }
             }
         }

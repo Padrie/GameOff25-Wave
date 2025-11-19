@@ -40,6 +40,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
+    - _Alpha: 0.35
     - _AlphaClip: 0
     - _Blend: 2
     - _BlendModePreserveSpecular: 0
@@ -48,12 +49,16 @@ Material:
     - _DstBlend: 1
     - _DstBlendAlpha: 1
     - _Metallic: 0
+    - _NormalStrength: 0
+    - _ReflectionStrength: 1
     - _Smoothness: 1
     - _SrcBlend: 5
     - _SrcBlendAlpha: 1
     - _Surface: 1
+    - _Tiling: 1
     - _ZWrite: 0
-    m_Colors: []
+    m_Colors:
+    - _Albedo: {r: 1, g: 1, b: 1, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
 --- !u!114 &5536063953909750648
