@@ -196,6 +196,7 @@ GameObject:
   - component: {fileID: 8632459856971743374}
   - component: {fileID: 934671295506392160}
   - component: {fileID: 4932442722587884597}
+  - component: {fileID: 28600138373114875}
   m_Layer: 0
   m_Name: Flash Light
   m_TagString: Untagged
@@ -231,8 +232,8 @@ Light:
   m_Color: {r: 0.9372549, g: 0.9720796, b: 1, a: 1}
   m_Intensity: 30
   m_Range: 50
-  m_SpotAngle: 124.88373
-  m_InnerSpotAngle: 72.27237
+  m_SpotAngle: 96.57675
+  m_InnerSpotAngle: 1.5049248
   m_CookieSize: 10
   m_Shadows:
     m_Type: 2
@@ -312,6 +313,21 @@ MonoBehaviour:
   m_ShadowLayerMask: 1
   m_RenderingLayers: 1
   m_ShadowRenderingLayers: 1
+--- !u!114 &28600138373114875
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1353857755001856008}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5c8bca95f7c947b4db5fb152a0d693d8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: com.cqf.urpvolumetricfog.runtime::VolumetricAdditionalLight
+  anisotropy: -0.507
+  scattering: 3.1
+  radius: 0.342
 --- !u!1001 &3065696656132043080
 PrefabInstance:
   m_ObjectHideFlags: 0

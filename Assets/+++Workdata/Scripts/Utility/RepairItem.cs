@@ -1,6 +1,7 @@
 using EasyPeasyFirstPersonController;
 using System.Runtime.InteropServices.WindowsRuntime;
 using UnityEngine;
+using TMPro;
 
 public class RepairItem : MonoBehaviour, IInteractable
 {
@@ -18,6 +19,9 @@ public class RepairItem : MonoBehaviour, IInteractable
     Renderer renderer;
     Rigidbody rb;
 
+
+    [SerializeField] TextMeshProUGUI itemNameDisplayText;
+
     private void Awake()
     {
         _firstPersonController = FindFirstObjectByType<FirstPersonController>();
@@ -27,6 +31,9 @@ public class RepairItem : MonoBehaviour, IInteractable
 
         renderer = GetComponentInChildren<Renderer>();
         materials = renderer.materials;
+
+        itemNameDisplayText.enabled = false;
+        itemNameDisplayText.text = repairItem.ToString();
     }
 
     //private void OnTriggerEnter(Collider other)
@@ -74,13 +81,23 @@ public class RepairItem : MonoBehaviour, IInteractable
     {
         if (holdsItem) return;
         PickupItem();
+
+        ToggleItemTextDisplay(false);
     }
 
     public void OnHoverEnter() 
     {
+        ToggleItemTextDisplay(true);
     }
     public void OnHoverExit() 
     {
+        ToggleItemTextDisplay(false);
+    }
+
+
+    private void ToggleItemTextDisplay(bool enable)
+    {
+        itemNameDisplayText.enabled = enable;
     }
 
     private void Update()
