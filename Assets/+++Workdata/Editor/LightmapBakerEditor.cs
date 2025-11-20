@@ -2,6 +2,7 @@ using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.Rendering;
+using System.Collections.Generic;
 
 [CustomEditor(typeof(LightmapBaker))]
 public class LightmapBakerEditor : Editor
@@ -10,11 +11,21 @@ public class LightmapBakerEditor : Editor
     private SerializedProperty reflectionProbesToBakeProperty;
     private SerializedProperty lightmapSettingsProperty;
 
-    private System.Collections.Generic.Dictionary<GameObject, StaticEditorFlags> originalStaticFlags =
-        new System.Collections.Generic.Dictionary<GameObject, StaticEditorFlags>();
+    private Dictionary<GameObject, StaticEditorFlags> originalStaticFlags = new Dictionary<GameObject, StaticEditorFlags>();
+    private Dictionary<ReflectionProbe, ReflectionProbeMode> originalProbeModes = new Dictionary<ReflectionProbe, ReflectionProbeMode>();
 
-    private System.Collections.Generic.Dictionary<ReflectionProbe, ReflectionProbeMode> originalProbeModes =
-        new System.Collections.Generic.Dictionary<ReflectionProbe, ReflectionProbeMode>();
+    // Store complete lightmap data including textures
+    private Lightmapping.GIWorkflowMode originalGIWorkflowMode;
+    private LightmapData[] originalLightmaps;
+    private Dictionary<Renderer, RendererLightmapData> preservedRendererData = new Dictionary<Renderer, RendererLightmapData>();
+
+    private class RendererLightmapData
+    {
+        public int lightmapIndex;
+        public Vector4 lightmapScaleOffset;
+        public int realtimeLightmapIndex;
+        public Vector4 realtimeLightmapScaleOffset;
+    }
 
     private void OnEnable()
     {
@@ -81,11 +92,128 @@ public class LightmapBakerEditor : Editor
             return;
         }
 
+        // Store original GI workflow mode and lightmaps
+        originalGIWorkflowMode = Lightmapping.giWorkflowMode;
+        originalLightmaps = LightmapSettings.lightmaps;
+
+        // Store lightmap data for objects we want to preserve
+        StoreLightmapData(baker);
+
+        // Set to iterative mode to prevent clearing existing lightmaps
+        Lightmapping.giWorkflowMode = Lightmapping.GIWorkflowMode.Iterative;
+
+        // Prepare objects for baking
         PrepareLightmapBake(baker);
         PrepareReflectionProbes(baker);
+
+        // Perform the bake
         PerformBake();
+
+        // Restore everything
+        RestoreLightmapData();
         RestoreStaticFlags();
         RestoreReflectionProbes();
+
+        // Restore original GI workflow mode
+        Lightmapping.giWorkflowMode = originalGIWorkflowMode;
+    }
+
+    private void StoreLightmapData(LightmapBaker baker)
+    {
+        preservedRendererData.Clear();
+
+        Renderer[] allRenderers = FindObjectsOfType<Renderer>();
+
+        foreach (Renderer renderer in allRenderers)
+        {
+            if (renderer == null) continue;
+
+            GameObject obj = renderer.gameObject;
+
+            // Check if this object should be baked
+            bool shouldBakeThisObject = System.Array.Exists(baker.objectsToBake,
+                element => element != null && element.gameObject == obj && element.shouldBake);
+
+            // Check if it's a child of a bakeable object
+            bool isChildOfBakeObject = false;
+            if (!shouldBakeThisObject)
+            {
+                foreach (BakeableObject bakeableObj in baker.objectsToBake)
+                {
+                    if (bakeableObj != null && bakeableObj.shouldBake && bakeableObj.gameObject != null)
+                    {
+                        if (IsChildOf(obj.transform, bakeableObj.gameObject.transform))
+                        {
+                            isChildOfBakeObject = true;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            // If this object should NOT be baked and has existing lightmap data, store it
+            if (!shouldBakeThisObject && !isChildOfBakeObject && renderer.lightmapIndex != -1)
+            {
+                RendererLightmapData data = new RendererLightmapData
+                {
+                    lightmapIndex = renderer.lightmapIndex,
+                    lightmapScaleOffset = renderer.lightmapScaleOffset,
+                    realtimeLightmapIndex = renderer.realtimeLightmapIndex,
+                    realtimeLightmapScaleOffset = renderer.realtimeLightmapScaleOffset
+                };
+                preservedRendererData[renderer] = data;
+
+                Debug.Log($"Storing lightmap data for: {renderer.gameObject.name} (Index: {data.lightmapIndex})");
+            }
+        }
+
+        Debug.Log($"Stored lightmap data for {preservedRendererData.Count} objects to preserve");
+    }
+
+    private void RestoreLightmapData()
+    {
+        // First, ensure we have the original lightmaps available
+        if (originalLightmaps != null && originalLightmaps.Length > 0)
+        {
+            // Merge original lightmaps with new ones
+            List<LightmapData> mergedLightmaps = new List<LightmapData>(LightmapSettings.lightmaps);
+
+            // Make sure all original lightmap indices are available
+            for (int i = 0; i < originalLightmaps.Length; i++)
+            {
+                if (i >= mergedLightmaps.Count)
+                {
+                    mergedLightmaps.Add(originalLightmaps[i]);
+                }
+                else if (mergedLightmaps[i].lightmapColor == null && originalLightmaps[i].lightmapColor != null)
+                {
+                    // If the slot is empty but we have original data, use it
+                    mergedLightmaps[i] = originalLightmaps[i];
+                }
+            }
+
+            LightmapSettings.lightmaps = mergedLightmaps.ToArray();
+        }
+
+        // Restore renderer lightmap data
+        foreach (var kvp in preservedRendererData)
+        {
+            Renderer renderer = kvp.Key;
+            RendererLightmapData data = kvp.Value;
+
+            if (renderer != null)
+            {
+                renderer.lightmapIndex = data.lightmapIndex;
+                renderer.lightmapScaleOffset = data.lightmapScaleOffset;
+                renderer.realtimeLightmapIndex = data.realtimeLightmapIndex;
+                renderer.realtimeLightmapScaleOffset = data.realtimeLightmapScaleOffset;
+
+                Debug.Log($"Restored lightmap data for: {renderer.gameObject.name} (Index: {data.lightmapIndex})");
+            }
+        }
+
+        Debug.Log($"Restored lightmap data for {preservedRendererData.Count} objects");
+        EditorSceneManager.MarkSceneDirty(EditorSceneManager.GetActiveScene());
     }
 
     private void PrepareLightmapBake(LightmapBaker baker)
@@ -118,17 +246,15 @@ public class LightmapBakerEditor : Editor
                 }
             }
 
+            // Disable ContributeGI for objects that shouldn't be baked
             if (!shouldBakeThisObject && !isChildOfBakeObject)
             {
-                Renderer renderer = obj.GetComponent<Renderer>();
-                if (renderer == null || renderer.lightmapIndex == -1)
-                {
-                    StaticEditorFlags newFlags = originalFlags & ~StaticEditorFlags.ContributeGI;
-                    GameObjectUtility.SetStaticEditorFlags(obj, newFlags);
-                }
+                StaticEditorFlags newFlags = originalFlags & ~StaticEditorFlags.ContributeGI;
+                GameObjectUtility.SetStaticEditorFlags(obj, newFlags);
             }
         }
 
+        Debug.Log($"Prepared {originalStaticFlags.Count} objects for baking");
         EditorSceneManager.MarkSceneDirty(EditorSceneManager.GetActiveScene());
     }
 
@@ -146,7 +272,9 @@ public class LightmapBakerEditor : Editor
 
     private void PerformBake()
     {
+        Debug.Log("Starting lightmap bake...");
         Lightmapping.Bake();
+        Debug.Log("Lightmap bake completed");
     }
 
     private void RestoreStaticFlags()
@@ -162,6 +290,7 @@ public class LightmapBakerEditor : Editor
             }
         }
 
+        Debug.Log($"Restored static flags for {originalStaticFlags.Count} objects");
         EditorSceneManager.MarkSceneDirty(EditorSceneManager.GetActiveScene());
     }
 

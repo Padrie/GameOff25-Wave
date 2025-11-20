@@ -102,8 +102,8 @@ public class EnemyManager : MonoBehaviour
 
     public void StartScreamCooldown()
     {
-        StartCoroutine(Scream());
         waveSpawner.SpawnWaveAt(transform.position);
+        StartCoroutine(Scream());
     }
 
     private IEnumerator Scream()

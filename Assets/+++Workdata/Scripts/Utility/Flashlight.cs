@@ -2,24 +2,31 @@ using UnityEngine;
 
 public class Flashlight : MonoBehaviour
 {
-    public Light flashlight;
+    public GameObject[] flashlightGameobjects;
     public KeyCode toggleKey = KeyCode.F;
 
     void Start()
     {
-        if (flashlight == null)
+        for (int i = 0; i < flashlightGameobjects.Length; i++)
         {
-            flashlight = GetComponent<Light>();
+            if (flashlightGameobjects[i] != null)
+            {
+                flashlightGameobjects[i].SetActive(false);
+            }
         }
-
-        flashlight.enabled = false;
     }
 
     void Update()
     {
         if (Input.GetKeyDown(toggleKey))
         {
-            flashlight.enabled = !flashlight.enabled;
+            for (int i = 0; i < flashlightGameobjects.Length; i++)
+            {
+                if (flashlightGameobjects[i] != null)
+                {
+                    flashlightGameobjects[i].SetActive(!flashlightGameobjects[i].activeSelf);
+                }
+            }
         }
     }
 }
