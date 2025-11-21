@@ -44,7 +44,7 @@ public class Manager : MonoBehaviour
             gameplayCanvas.SetActive(false);
             playerCarEngine.enabled = true;
             carLight.SetActive(true);
-            enemy.SetActive(false);
+            //enemy.SetActive(false);
         }
         else
         {
@@ -54,7 +54,7 @@ public class Manager : MonoBehaviour
             gameplayCanvas.SetActive(true);
             playerCarEngine.enabled = false;
             carLight.SetActive(false);
-            enemy.SetActive(true);
+            //enemy.SetActive(true);
         }
     }
 

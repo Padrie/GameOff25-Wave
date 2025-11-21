@@ -63,6 +63,7 @@ public class PatrolPointManager : MonoBehaviour
         }
 
         GetNeighbors();
+        SelectRandomPatrolPoint();
         GetPath();
     }
 

@@ -99,10 +99,6 @@ namespace FootstepSystem
             if (surfaceChanged && lastSurfaceMaterial != null)
             {
                 PlayFootstep(hitInfo, isRunning);
-                if (isRunning)
-                {
-                    _enemySoundPerception.CalculateSoundDistance(transform.position, SoundStrength.Normal);
-                }
 
                 lastStepPosition = transform.position;
                 lastSurfaceMaterial = currentMaterial;
@@ -125,6 +121,11 @@ namespace FootstepSystem
             if (distanceMoved >= stepDistance)
             {
                 PlayFootstep(hitInfo, isRunning);
+                if (isRunning)
+                {
+                    _enemySoundPerception.CalculateSoundDistance(transform.position, SoundStrength.Normal);
+                }
+
                 lastStepPosition = transform.position;
                 if (debugConsole)
                 {
