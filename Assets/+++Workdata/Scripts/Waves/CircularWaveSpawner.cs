@@ -76,7 +76,7 @@ public class CircularWaveSpawner : MonoBehaviour
             if (player != null)
             {
                 playerTransform = player.transform;
-                Debug.Log("Auto-found player: " + player.name);
+                //Debug.Log("Auto-found player: " + player.name);
             }
         }
 
@@ -119,7 +119,7 @@ public class CircularWaveSpawner : MonoBehaviour
                         if (!foundRenderers.Contains(r))
                         {
                             foundRenderers.Add(r);
-                            Debug.Log($"Found wave material '{waveMat.name}' on: {r.gameObject.name}");
+                            //Debug.Log($"Found wave material '{waveMat.name}' on: {r.gameObject.name}");
                         }
                         break;
                     }
@@ -129,11 +129,11 @@ public class CircularWaveSpawner : MonoBehaviour
 
         if (foundRenderers.Count == 0)
         {
-            Debug.LogWarning($"⚠️ No renderers found using any of the {waveMaterials.Length} wave material(s). Make sure objects in your scene are using these materials.");
+            //Debug.LogWarning($"⚠️ No renderers found using any of the {waveMaterials.Length} wave material(s). Make sure objects in your scene are using these materials.");
         }
         else
         {
-            Debug.Log($"Auto-found {foundRenderers.Count} renderer(s) with wave materials");
+            //Debug.Log($"Auto-found {foundRenderers.Count} renderer(s) with wave materials");
         }
 
         //Create material instances for each renderer
@@ -169,11 +169,11 @@ public class CircularWaveSpawner : MonoBehaviour
 
         if (waveMaterialInstances.Count == 0)
         {
-            Debug.LogWarning("⚠️ No target renderers found! Waves will not be visible.");
+            //Debug.LogWarning("⚠️ No target renderers found! Waves will not be visible.");
         }
         else
         {
-            Debug.Log($"Created {waveMaterialInstances.Count} material instance(s) for wave rendering");
+            //Debug.Log($"Created {waveMaterialInstances.Count} material instance(s) for wave rendering");
         }
     }
 

@@ -1,5 +1,6 @@
-using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.Rendering;
 
 public class MeshSeparator : MonoBehaviour
 {
@@ -61,26 +62,36 @@ public class MeshSeparator : MonoBehaviour
     }
 
     /// <summary>
-    /// Detects loose parts in a mesh by analyzing triangle connectivity.
-    /// This is optimized to avoid per-iteration allocations.
+    /// Detects loose parts in a mesh by analyzing triangle connectivity based on shared edges and vertices.
+    /// Two triangles are considered connected if they share an edge OR share vertices (handles sharp angles).
+    /// Also checks spatial proximity for split normals (duplicate vertices at same location).
     /// </summary>
     private List<List<int>> DetectLooseParts(Mesh mesh)
     {
         int[] triangles = mesh.triangles;
+        Vector3[] vertices = mesh.vertices;
         int vertexCount = mesh.vertexCount;
         int triangleCount = triangles.Length / 3;
 
-        // vertex index -> list of triangle indices (0..triangleCount-1)
+        // Build edge -> list of triangle indices that contain this edge
+        Dictionary<long, List<int>> edgeToTriangles = new Dictionary<long, List<int>>();
+
+        // Build vertex -> list of triangle indices that contain this vertex
         List<int>[] vertexToTriangles = new List<int>[vertexCount];
 
         for (int triIndex = 0; triIndex < triangleCount; triIndex++)
         {
             int baseIndex = triIndex * 3;
-
             int v0 = triangles[baseIndex];
             int v1 = triangles[baseIndex + 1];
             int v2 = triangles[baseIndex + 2];
 
+            // Add the three edges of this triangle
+            AddEdge(edgeToTriangles, v0, v1, triIndex);
+            AddEdge(edgeToTriangles, v1, v2, triIndex);
+            AddEdge(edgeToTriangles, v2, v0, triIndex);
+
+            // Add to vertex map
             if (vertexToTriangles[v0] == null) vertexToTriangles[v0] = new List<int>();
             if (vertexToTriangles[v1] == null) vertexToTriangles[v1] = new List<int>();
             if (vertexToTriangles[v2] == null) vertexToTriangles[v2] = new List<int>();
@@ -115,54 +126,115 @@ public class MeshSeparator : MonoBehaviour
                 int v1 = triangles[baseIndex + 1];
                 int v2 = triangles[baseIndex + 2];
 
-                // For each of the three vertices, enqueue all adjacent triangles
-                List<int> list0 = vertexToTriangles[v0];
-                if (list0 != null)
-                {
-                    for (int i = 0; i < list0.Count; i++)
-                    {
-                        int neighborTri = list0[i];
-                        if (!visitedTriangles[neighborTri])
-                        {
-                            visitedTriangles[neighborTri] = true;
-                            queue.Enqueue(neighborTri);
-                        }
-                    }
-                }
+                // Check all three edges for adjacent triangles (edge-shared)
+                EnqueueAdjacentTriangles(edgeToTriangles, v0, v1, triIndex, visitedTriangles, queue);
+                EnqueueAdjacentTriangles(edgeToTriangles, v1, v2, triIndex, visitedTriangles, queue);
+                EnqueueAdjacentTriangles(edgeToTriangles, v2, v0, triIndex, visitedTriangles, queue);
 
-                List<int> list1 = vertexToTriangles[v1];
-                if (list1 != null)
-                {
-                    for (int i = 0; i < list1.Count; i++)
-                    {
-                        int neighborTri = list1[i];
-                        if (!visitedTriangles[neighborTri])
-                        {
-                            visitedTriangles[neighborTri] = true;
-                            queue.Enqueue(neighborTri);
-                        }
-                    }
-                }
+                // Also check triangles sharing vertices (for sharp angles and corners)
+                EnqueueAdjacentByVertex(vertexToTriangles, v0, triIndex, visitedTriangles, queue);
+                EnqueueAdjacentByVertex(vertexToTriangles, v1, triIndex, visitedTriangles, queue);
+                EnqueueAdjacentByVertex(vertexToTriangles, v2, triIndex, visitedTriangles, queue);
 
-                List<int> list2 = vertexToTriangles[v2];
-                if (list2 != null)
-                {
-                    for (int i = 0; i < list2.Count; i++)
-                    {
-                        int neighborTri = list2[i];
-                        if (!visitedTriangles[neighborTri])
-                        {
-                            visitedTriangles[neighborTri] = true;
-                            queue.Enqueue(neighborTri);
-                        }
-                    }
-                }
+                // Check by spatial position (handles split normals - duplicate vertices at same location)
+                EnqueueAdjacentByPosition(vertices, v0, triIndex, visitedTriangles, queue, triangles);
+                EnqueueAdjacentByPosition(vertices, v1, triIndex, visitedTriangles, queue, triangles);
+                EnqueueAdjacentByPosition(vertices, v2, triIndex, visitedTriangles, queue, triangles);
             }
 
             looseParts.Add(currentPart);
         }
 
         return looseParts;
+    }
+
+    /// <summary>
+    /// Creates a unique, order-independent key for an edge between two vertices.
+    /// </summary>
+    private long GetEdgeKey(int v0, int v1)
+    {
+        // Create a unique key for an edge (order-independent)
+        if (v0 > v1) (v0, v1) = (v1, v0);
+        return ((long)v0 << 32) | (uint)v1;
+    }
+
+    /// <summary>
+    /// Adds an edge and associates it with a triangle index.
+    /// </summary>
+    private void AddEdge(Dictionary<long, List<int>> edgeToTriangles, int v0, int v1, int triIndex)
+    {
+        long key = GetEdgeKey(v0, v1);
+        if (!edgeToTriangles.ContainsKey(key))
+            edgeToTriangles[key] = new List<int>();
+        edgeToTriangles[key].Add(triIndex);
+    }
+
+    /// <summary>
+    /// Enqueues adjacent triangles that share an edge with the current triangle.
+    /// </summary>
+    private void EnqueueAdjacentTriangles(Dictionary<long, List<int>> edgeToTriangles, int v0, int v1, int currentTri, bool[] visitedTriangles, Queue<int> queue)
+    {
+        long key = GetEdgeKey(v0, v1);
+        if (edgeToTriangles.TryGetValue(key, out List<int> adjacentTris))
+        {
+            foreach (int neighborTri in adjacentTris)
+            {
+                if (!visitedTriangles[neighborTri])
+                {
+                    visitedTriangles[neighborTri] = true;
+                    queue.Enqueue(neighborTri);
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Enqueues adjacent triangles that share a vertex with the current triangle.
+    /// This handles sharp angles where triangles might not share a full edge.
+    /// </summary>
+    private void EnqueueAdjacentByVertex(List<int>[] vertexToTriangles, int vertex, int currentTri, bool[] visitedTriangles, Queue<int> queue)
+    {
+        if (vertexToTriangles[vertex] != null)
+        {
+            foreach (int neighborTri in vertexToTriangles[vertex])
+            {
+                if (!visitedTriangles[neighborTri])
+                {
+                    visitedTriangles[neighborTri] = true;
+                    queue.Enqueue(neighborTri);
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Enqueues triangles that have vertices close to the given position (handles split normals/hard edges).
+    /// This is crucial for meshes with hard edges where duplicate vertices exist at the same location.
+    /// </summary>
+    private void EnqueueAdjacentByPosition(Vector3[] vertices, int vertex, int currentTri, bool[] visitedTriangles, Queue<int> queue, int[] triangles, float positionThreshold = 0.0001f)
+    {
+        Vector3 targetPos = vertices[vertex];
+        int triangleCount = triangles.Length / 3;
+
+        for (int triIndex = 0; triIndex < triangleCount; triIndex++)
+        {
+            if (visitedTriangles[triIndex])
+                continue;
+
+            int baseIndex = triIndex * 3;
+            int v0 = triangles[baseIndex];
+            int v1 = triangles[baseIndex + 1];
+            int v2 = triangles[baseIndex + 2];
+
+            // Check if any vertex of this triangle is at the same position
+            if (Vector3.Distance(vertices[v0], targetPos) < positionThreshold ||
+                Vector3.Distance(vertices[v1], targetPos) < positionThreshold ||
+                Vector3.Distance(vertices[v2], targetPos) < positionThreshold)
+            {
+                visitedTriangles[triIndex] = true;
+                queue.Enqueue(triIndex);
+            }
+        }
     }
 
     /// <summary>
@@ -228,8 +300,8 @@ public class MeshSeparator : MonoBehaviour
             partObject.transform.localScale = Vector3.one;
             partObject.transform.SetParent(parent);
 
-            // Set as static
-            partObject.isStatic = true;
+            // Copy static setting from original object
+            partObject.isStatic = targetObject.isStatic;
 
             // Copy layer
             partObject.layer = originalLayer;
@@ -239,10 +311,23 @@ public class MeshSeparator : MonoBehaviour
             mf.sharedMesh = newMesh;
 
             MeshRenderer mr = partObject.AddComponent<MeshRenderer>();
-            if (materials != null && materials.Length > 0)
+            CopyMeshRendererParameters(originalRenderer, mr, materials);
+
+            // Move origin to center of geometry
+            Vector3 meshCenter = newMesh.bounds.center;
+            partObject.transform.position += partObject.transform.rotation * meshCenter;
+
+            // Recenter the mesh vertices
+            Vector3[] vertices = newMesh.vertices;
+            for (int i = 0; i < vertices.Length; i++)
             {
-                mr.sharedMaterials = materials;
+                vertices[i] -= meshCenter;
             }
+            newMesh.vertices = vertices;
+            newMesh.RecalculateBounds();
+
+            // Update the mesh filter with recentered mesh
+            mf.sharedMesh = newMesh;
 
             // Add collider only if enabled and mesh is valid
             if (addMeshColliders && IsValidForCollider(newMesh))
@@ -265,6 +350,49 @@ public class MeshSeparator : MonoBehaviour
 
         // Optionally disable the original object
         targetObject.SetActive(false);
+    }
+
+    /// <summary>
+    /// Copies MeshRenderer parameters from the original renderer to the new renderer.
+    /// This includes materials, rendering settings, shadows, light probes, and reflection probes.
+    /// </summary>
+    private void CopyMeshRendererParameters(MeshRenderer sourceRenderer, MeshRenderer targetRenderer, Material[] materials)
+    {
+        // Copy materials
+        if (materials != null && materials.Length > 0)
+        {
+            targetRenderer.sharedMaterials = materials;
+        }
+
+        // If source renderer is null, we can only copy materials
+        if (sourceRenderer == null)
+            return;
+
+        // Copy rendering settings
+        targetRenderer.enabled = sourceRenderer.enabled;
+        targetRenderer.shadowCastingMode = sourceRenderer.shadowCastingMode;
+        targetRenderer.receiveShadows = sourceRenderer.receiveShadows;
+        targetRenderer.motionVectorGenerationMode = sourceRenderer.motionVectorGenerationMode;
+
+        // Copy light probe settings
+        targetRenderer.lightProbeUsage = sourceRenderer.lightProbeUsage;
+        if (sourceRenderer.lightProbeUsage == LightProbeUsage.UseProxyVolume)
+        {
+            targetRenderer.lightProbeProxyVolumeOverride = sourceRenderer.lightProbeProxyVolumeOverride;
+        }
+
+        // Copy reflection probe settings
+        targetRenderer.reflectionProbeUsage = sourceRenderer.reflectionProbeUsage;
+
+        // Copy rendering layer mask (URP/HDRP feature)
+        targetRenderer.renderingLayerMask = sourceRenderer.renderingLayerMask;
+
+        // Copy sorting settings
+        targetRenderer.sortingLayerID = sourceRenderer.sortingLayerID;
+        targetRenderer.sortingOrder = sourceRenderer.sortingOrder;
+
+        // Copy probes optimization settings
+        targetRenderer.allowOcclusionWhenDynamic = sourceRenderer.allowOcclusionWhenDynamic;
     }
 
     /// <summary>

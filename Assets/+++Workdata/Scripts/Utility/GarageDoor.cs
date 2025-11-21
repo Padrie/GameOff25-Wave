@@ -1,134 +1,204 @@
 using UnityEngine;
 using UnityEngine.Splines;
-using Unity.Mathematics;
+using System.Collections.Generic;
+using DG.Tweening;
 
 public class GarageDoor : MonoBehaviour
 {
-    [Header("Configuration")]
-    [SerializeField] private SplineContainer doorSpline;
-    [SerializeField] private SplineContainer guideSpline;
-    [SerializeField] private float openAmount = 0f;
-    [SerializeField] private float animationSpeed = 1f;
-    [SerializeField] private AnimationCurve easingCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
+    [SerializeField] private SplineContainer splineContainer;
+    [SerializeField] private Transform segmentParent;
+    [SerializeField] private float spacingBetweenObjects = 1f;
+    [SerializeField] private float speed = 5f;
+    [SerializeField] private float startOffset = 0f;
+    [SerializeField] private Vector3 rotationOffset = Vector3.zero;
 
-    private bool isAnimating = false;
-    private float targetOpenAmount = 0f;
-    private BezierKnot[] originalKnots;
-    private float doorSplineLength;
-    private float guideSplineLength;
+    [SerializeField] private AudioClip doorOpenAudio;
+    [SerializeField] private AudioSource audioSource;
+    [SerializeField] private float audioFadeDuration = 0.5f;
+    [SerializeField][Range(0f, 1f)] private float maxAudioVolume = 1f;
 
-    void Start()
+    private List<SplineFollowerComponent> followers = new List<SplineFollowerComponent>();
+    private float splineLength;
+    private bool isAudioPlaying;
+    private const float TANGENT_MAGNITUDE_THRESHOLD = 0.001f;
+
+    private void Start()
     {
-        if (doorSpline == null)
-        {
-            doorSpline = GetComponent<SplineContainer>();
-        }
+        if (!ValidateSetup())
+            return;
 
-        if (guideSpline == null)
-        {
-            CreateGuideSpline();
-        }
+        splineContainer.gameObject.GetComponent<MeshRenderer>().enabled = false;
+        splineLength = splineContainer.CalculateLength();
 
-        CacheOriginalKnots();
+        InitializeFollowers();
+        UpdateFollowerPositions();
     }
 
-    void CreateGuideSpline()
+    private bool ValidateSetup()
     {
-        GameObject guideObj = new GameObject("GuideSpline");
-        guideObj.transform.parent = transform;
-        guideObj.transform.localPosition = Vector3.zero;
-        guideObj.transform.localRotation = Quaternion.identity;
-
-        guideSpline = guideObj.AddComponent<SplineContainer>();
-        guideSpline.Spline = new Spline();
-
-        for (int i = 0; i < doorSpline.Spline.Count; i++)
+        if (splineContainer == null || segmentParent == null)
         {
-            guideSpline.Spline.Add(doorSpline.Spline[i]);
+            Debug.LogError("SplineContainer and Segment Parent must be assigned");
+            return false;
         }
 
-        Debug.Log($"Created guide spline with {guideSpline.Spline.Count} knots");
+        if (audioSource == null)
+        {
+            Debug.LogError("AudioSource not assigned");
+            return false;
+        }
+
+        audioSource.clip = doorOpenAudio;
+        audioSource.spatialBlend = 1f;
+        return true;
     }
 
-    void CacheOriginalKnots()
+    private void InitializeFollowers()
     {
-        if (doorSpline == null) return;
+        int objectCount = segmentParent.childCount;
 
-        doorSplineLength = doorSpline.Spline.GetLength();
-        guideSplineLength = guideSpline.Spline.GetLength();
-
-        int knotCount = doorSpline.Spline.Count;
-        originalKnots = new BezierKnot[knotCount];
-
-        for (int i = 0; i < knotCount; i++)
+        for (int i = 0; i < objectCount; i++)
         {
-            originalKnots[i] = doorSpline.Spline[i];
-        }
+            Transform child = segmentParent.GetChild(i);
+            SplineFollowerComponent follower = child.GetComponent<SplineFollowerComponent>() ??
+                                              child.gameObject.AddComponent<SplineFollowerComponent>();
 
-        Debug.Log($"Cached {originalKnots.Length} knots");
-    }
+            float startDistance = startOffset + (i * spacingBetweenObjects);
+            float stopDistance = splineLength - ((objectCount - 1 - i) * spacingBetweenObjects);
 
-    void Update()
-    {
-        if (isAnimating)
-        {
-            float step = animationSpeed * Time.deltaTime;
-            openAmount = Mathf.MoveTowards(openAmount, targetOpenAmount, step);
-
-            if (Mathf.Approximately(openAmount, targetOpenAmount))
-            {
-                isAnimating = false;
-            }
-        }
-
-        UpdateDoorSpline();
-
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            Toggle();
+            follower.Initialize(splineContainer, startDistance, speed, splineLength, stopDistance, rotationOffset);
+            followers.Add(follower);
         }
     }
 
-    void UpdateDoorSpline()
+    private void UpdateFollowerPositions()
     {
-        if (doorSpline == null || guideSpline == null || originalKnots == null) return;
+        foreach (var follower in followers)
+            follower.UpdatePosition();
+    }
 
-        float easedOpen = easingCurve.Evaluate(openAmount);
+    private void Update()
+    {
+        if (Input.GetKey(KeyCode.G))
+            HandleDoorOpening();
+        else if (isAudioPlaying)
+            StopAudio();
+    }
 
-        for (int i = 0; i < originalKnots.Length; i++)
+    private void HandleDoorOpening()
+    {
+        if (followers.Count == 0)
         {
-            float tOnDoor = (float)i / (originalKnots.Length - 1);
-
-            float distanceAlongDoor = tOnDoor * doorSplineLength;
-            float offsetDistance = easedOpen * doorSplineLength * 0.8f;
-            float newDistanceOnGuide = distanceAlongDoor + offsetDistance;
-            float tOnGuide = Mathf.Clamp01(newDistanceOnGuide / guideSplineLength);
-
-            float3 newPosition = guideSpline.EvaluatePosition(tOnGuide);
-
-            BezierKnot knot = originalKnots[i];
-            knot.Position = newPosition;
-            doorSpline.Spline[i] = knot;
+            return;
         }
+
+        if (!isAudioPlaying)
+        {
+            StartAudio();
+            isAudioPlaying = true;
+        }
+
+        foreach (var follower in followers)
+            follower.MoveAlongSpline();
     }
 
-    public void Open()
+    private void StartAudio()
     {
-        targetOpenAmount = 1f;
-        isAnimating = true;
+        if (audioSource == null || doorOpenAudio == null)
+            return;
+
+        DOTween.Kill(audioSource);
+
+        if (audioSource.time > 0 && !audioSource.isPlaying)
+            audioSource.UnPause();
+        else if (!audioSource.isPlaying)
+            audioSource.Play();
+
+        audioSource.volume = 0f;
+        audioSource.DOFade(maxAudioVolume, audioFadeDuration).SetEase(Ease.InOutQuad);
     }
 
-    public void Close()
+    private void StopAudio()
     {
-        targetOpenAmount = 0f;
-        isAnimating = true;
+        if (audioSource == null || !audioSource.isPlaying)
+            return;
+
+        DOTween.Kill(audioSource);
+        audioSource.DOFade(0f, audioFadeDuration).SetEase(Ease.InOutQuad)
+            .OnComplete(() => audioSource.Pause());
+
+        isAudioPlaying = false;
+    }
+}
+
+public class SplineFollowerComponent : MonoBehaviour
+{
+    private SplineContainer splineContainer;
+    private float currentDistance;
+    private float speed;
+    private float splineLength;
+    private float stopDistance;
+    private Vector3 rotationOffset;
+    private bool hasReachedEnd;
+    private const float TANGENT_THRESHOLD = 0.001f;
+
+    public void Initialize(SplineContainer container, float startDistance, float moveSpeed, float length, float stop, Vector3 rotation)
+    {
+        splineContainer = container;
+        currentDistance = startDistance;
+        speed = moveSpeed;
+        splineLength = length;
+        stopDistance = stop;
+        rotationOffset = rotation;
     }
 
-    public void Toggle()
+    public void MoveAlongSpline()
     {
-        if (targetOpenAmount > 0.5f)
-            Close();
-        else
-            Open();
+        if (hasReachedEnd || splineContainer == null)
+            return;
+
+        currentDistance += speed * Time.deltaTime;
+
+        if (currentDistance >= stopDistance)
+        {
+            currentDistance = stopDistance;
+            hasReachedEnd = true;
+        }
+
+        UpdatePosition();
+    }
+
+    public void UpdatePosition()
+    {
+        if (splineContainer == null || splineLength <= 0)
+            return;
+
+        float t = Mathf.Clamp01(currentDistance / splineLength);
+
+        var spline = splineContainer.Spline;
+        Vector3 position = SplineUtility.EvaluatePosition(spline, t);
+        Vector3 tangent = SplineUtility.EvaluateTangent(spline, t);
+
+        transform.position = splineContainer.transform.TransformPoint(position);
+        ApplyRotation(tangent);
+    }
+
+    private void ApplyRotation(Vector3 tangent)
+    {
+        if (tangent.magnitude <= TANGENT_THRESHOLD)
+            return;
+
+        Vector3 worldTangent = splineContainer.transform.TransformDirection(tangent).normalized;
+        Vector3 worldUp = Vector3.up;
+
+        Vector3 right = Vector3.Cross(worldUp, worldTangent).normalized;
+        if (right.magnitude < TANGENT_THRESHOLD)
+            right = Vector3.right;
+
+        Vector3 up = Vector3.Cross(worldTangent, right).normalized;
+
+        Quaternion baseRotation = Quaternion.LookRotation(worldTangent, up);
+        Quaternion offsetRotation = Quaternion.Euler(rotationOffset);
+        transform.rotation = baseRotation * offsetRotation;
     }
 }

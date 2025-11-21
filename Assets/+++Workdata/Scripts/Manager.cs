@@ -5,11 +5,48 @@ public class Manager : MonoBehaviour
 {
     private bool isFocused = true;
 
+    [SerializeField]
+    private bool doCutscene = true;
+
+    [SerializeField]
+    private GameObject player;
+
+    [SerializeField]
+    private GameObject cinemachineCamera;
+
+    [SerializeField]
+    private GameObject gameplayCanvas;
+
+
+    [SerializeField]
+    private GameObject playerCar;
+
+    [SerializeField]
+    private AudioSource playerCarEngine;
+
     void Start()
     {
         // Cap fps to monitor refresh rate
         Application.targetFrameRate = (int)Screen.currentResolution.refreshRateRatio.value;
         SetCursorState(true);
+
+
+        if(doCutscene)
+        {
+            player.SetActive(false);
+            cinemachineCamera.SetActive(true);
+            playerCar.GetComponent<CarAnimation>().enabled = true;
+            gameplayCanvas.SetActive(false);
+            playerCarEngine.enabled = true;
+        }
+        else
+        {
+            player.SetActive(true);
+            cinemachineCamera.SetActive(false);
+            playerCar.GetComponent<CarAnimation>().enabled = false;
+            gameplayCanvas.SetActive(true);
+            playerCarEngine.enabled = false;
+        }
     }
 
     private void Update()
