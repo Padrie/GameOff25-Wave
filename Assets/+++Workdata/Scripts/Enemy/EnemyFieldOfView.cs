@@ -48,7 +48,7 @@ public class EnemyFieldOfView : MonoBehaviour
             {
                 float dstToTarget = Vector3.Distance(transform.position, target.transform.position);
 
-                if (!Physics.Raycast(transform.position, dirToTarget, dstToTarget, obstacleMask))
+                if (!Physics.Raycast(transform.position + Vector3.up, dirToTarget, dstToTarget, obstacleMask))
                 {
                     visibleTarget = target;
                     playerTarget.transform.position = target.transform.position;
