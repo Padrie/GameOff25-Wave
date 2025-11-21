@@ -59,7 +59,7 @@ namespace EasyPeasyFirstPersonController
         private float originalCameraParentHeight;
         private Vector3 originalParentCameraPos;
         private float coyoteTimer;
-        private Camera cam;
+        public Camera cam;
         private AudioSource slideAudioSource;
         private float bobTimer;
         private float defaultPosY;

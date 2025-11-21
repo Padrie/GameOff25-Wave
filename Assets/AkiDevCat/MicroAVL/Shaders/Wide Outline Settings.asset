@@ -21,12 +21,12 @@ MonoBehaviour:
   disableWidthControl: 1
   RenderingLayer:
     serializedVersion: 0
-    m_Bits: 1
+    m_Bits: 4294967295
   layerMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 8192
   renderQueue: 0
-  occlusion: 0
+  occlusion: 2
   cullingMode: 0
   closedLoop: 0
   alphaCutout: 0
@@ -35,7 +35,7 @@ MonoBehaviour:
   alphaCutoutUVTransform: {x: 0, y: 0, z: 0, w: 0}
   gpuInstancing: 0
   vertexAnimation: 0
-  color: {r: 0, g: 1, b: 0, a: 1}
+  color: {r: 1, g: 1, b: 1, a: 1}
   width: 20
 --- !u!114 &11400000
 MonoBehaviour:
@@ -56,8 +56,8 @@ MonoBehaviour:
   materialType: 0
   customMaterial: {fileID: 2100000, guid: 1ac27f850bfe072428012ad31edfa048, type: 2}
   widthControl: 0
-  sharedWidth: 25.8
-  gap: 0.392
+  sharedWidth: 2
+  gap: 0
   blendMode: 0
   customDepthBuffer: 0
   occludedColor: {r: 1, g: 0, b: 0, a: 1}

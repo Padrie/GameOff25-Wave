@@ -5,7 +5,7 @@ using Unity.Cinemachine;
 public class CarAnimation : MonoBehaviour
 {
     [SerializeField] private SplineContainer splineContainer;
-    [SerializeField] private float maxSpeed = 10f;
+    [SerializeField] public float maxSpeed = 10f;
     [SerializeField] private float fadeOutDistance = 5f;
     [SerializeField] private AnimationCurve speedFalloff = AnimationCurve.EaseInOut(0, 1, 1, 0);
 
@@ -127,7 +127,7 @@ public class CarAnimation : MonoBehaviour
         return maxSpeed * speedFalloff.Evaluate(fadeProgress);
     }
 
-    private void HandleAnimationEnd()
+    public void HandleAnimationEnd()
     {
         if (loopAnimation)
         {
@@ -137,6 +137,24 @@ public class CarAnimation : MonoBehaviour
 
         currentDistance = totalSplineLength;
         isAnimating = false;
+        OnAnimationEnd();
+    }
+    public void TeleportToEnd()
+    {
+        currentDistance = totalSplineLength;
+
+        float t = currentDistance / totalSplineLength;
+        Vector3 splinePosition = splineContainer.EvaluatePosition(SPLINE_INDEX, t);
+        Vector3 splineTangent = splineContainer.EvaluateTangent(SPLINE_INDEX, t);
+
+        Vector3 newPosition = transform.position;
+        newPosition.x = splinePosition.x + positionOffset.x;
+        newPosition.z = splinePosition.z + positionOffset.z;
+        transform.position = newPosition;
+
+        targetRotation = CalculateRotation(splineTangent);
+        transform.rotation = targetRotation;
+
         OnAnimationEnd();
     }
 

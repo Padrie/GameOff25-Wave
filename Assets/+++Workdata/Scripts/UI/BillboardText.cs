@@ -1,19 +1,25 @@
+using EasyPeasyFirstPersonController;
 using UnityEngine;
 
 public class BillboardText : MonoBehaviour
 {
-    private Camera mainCamera;
+    private FirstPersonController firstPersonController;
+
+    private Camera playerCamera;
+
+
+    private void Awake()
+    {
+        firstPersonController = FindFirstObjectByType<FirstPersonController>();
+    }
 
     void Start()
     {
-        mainCamera = Camera.main;
+        playerCamera = firstPersonController.cam;
     }
 
     void LateUpdate()
     {
-        if (mainCamera != null)
-        {
-            transform.LookAt(transform.position + mainCamera.transform.forward);
-        }
+        transform.LookAt(transform.position + playerCamera.transform.forward);
     }
 }

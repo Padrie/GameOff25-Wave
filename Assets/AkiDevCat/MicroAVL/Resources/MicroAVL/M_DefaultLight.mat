@@ -8,7 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: M_DefaultLight
-  m_Shader: {fileID: -6465566751694194690, guid: 7a2175c68a04e84468dd4e6d5b4813f0, type: 3}
+  m_Shader: {fileID: -6465566751694194690, guid: af598b2e4844d2a45810cbcbeb77f650, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
@@ -20,8 +20,7 @@ Material:
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
-  stringTagMap:
-    RenderType: Transparent
+  stringTagMap: {}
   disabledShaderPasses:
   - DepthOnly
   - SHADOWCASTER
@@ -92,6 +91,7 @@ Material:
     - _AlphaToMask: 0
     - _Blend: 1
     - _BlendModePreserveSpecular: 1
+    - _BlinkingAmplitude: 0.5
     - _BumpScale: 1
     - _CastShadows: 0
     - _ClearCoatMask: 0
@@ -102,6 +102,7 @@ Material:
     - _DetailNormalMapScale: 1
     - _DstBlend: 10
     - _DstBlendAlpha: 0
+    - _ENABLE_BLINKING: 0
     - _ENABLE_HDR_CORRECTION: 1
     - _EnvironmentReflections: 1
     - _GlossMapScale: 0

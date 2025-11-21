@@ -61,11 +61,13 @@ namespace FootstepSystem
         private bool wasGrounded;
         private RaycastHit lastGroundHit;
         private PhysicsMaterial lastSurfaceMaterial;
+        private EnemySoundPerception _enemySoundPerception;
 
         private void Awake()
         {
             characterController = GetComponent<CharacterController>();
             firstPersonController = GetComponent<FirstPersonController>();
+            _enemySoundPerception = FindFirstObjectByType<EnemySoundPerception>();
             lastPosition = transform.position;
             lastStepPosition = transform.position;
         }
@@ -97,6 +99,11 @@ namespace FootstepSystem
             if (surfaceChanged && lastSurfaceMaterial != null)
             {
                 PlayFootstep(hitInfo, isRunning);
+                if (isRunning)
+                {
+                    _enemySoundPerception.CalculateSoundDistance(transform.position, SoundStrength.Normal);
+                }
+
                 lastStepPosition = transform.position;
                 lastSurfaceMaterial = currentMaterial;
 

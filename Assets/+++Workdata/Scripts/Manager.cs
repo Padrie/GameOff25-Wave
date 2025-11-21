@@ -17,12 +17,17 @@ public class Manager : MonoBehaviour
     [SerializeField]
     private GameObject gameplayCanvas;
 
+    [SerializeField] 
+    private GameObject carLight;
 
     [SerializeField]
     private GameObject playerCar;
 
     [SerializeField]
     private AudioSource playerCarEngine;
+
+    [SerializeField]
+    private GameObject enemy;
 
     void Start()
     {
@@ -38,6 +43,8 @@ public class Manager : MonoBehaviour
             playerCar.GetComponent<CarAnimation>().enabled = true;
             gameplayCanvas.SetActive(false);
             playerCarEngine.enabled = true;
+            carLight.SetActive(true);
+            enemy.SetActive(false);
         }
         else
         {
@@ -46,6 +53,8 @@ public class Manager : MonoBehaviour
             playerCar.GetComponent<CarAnimation>().enabled = false;
             gameplayCanvas.SetActive(true);
             playerCarEngine.enabled = false;
+            carLight.SetActive(false);
+            enemy.SetActive(true);
         }
     }
 
@@ -73,6 +82,24 @@ public class Manager : MonoBehaviour
         {
             SetCursorState(true);
         }
+
+        // Skip cutscene
+        if (Input.GetKeyDown(KeyCode.Tab) && doCutscene)
+        {
+            SkipCutscene();
+        }
+
+    }
+
+    private void SkipCutscene()
+    {
+        player.SetActive(true);
+        cinemachineCamera.SetActive(false);
+        playerCar.GetComponent<CarAnimation>().TeleportToEnd();
+        gameplayCanvas.SetActive(true);
+        playerCarEngine.enabled = false;
+        carLight.SetActive(false);
+        enemy.SetActive(true);
     }
 
     private void SetCursorState(bool locked)

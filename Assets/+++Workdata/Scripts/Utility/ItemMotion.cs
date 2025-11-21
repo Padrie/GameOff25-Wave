@@ -21,6 +21,11 @@ public class ItemMotion : MonoBehaviour
         randomSeed = Random.Range(0f, 100f);
     }
 
+    private void Awake()
+    {
+        characterController = FindFirstObjectByType<CharacterController>();
+    }
+
     private void Update()
     {
         if (characterController.velocity.magnitude > 0.1f)

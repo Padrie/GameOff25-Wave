@@ -17,6 +17,10 @@ public class GarageDoor : MonoBehaviour
     [SerializeField] private float audioFadeDuration = 0.5f;
     [SerializeField][Range(0f, 1f)] private float maxAudioVolume = 1f;
 
+
+    [SerializeField] private EnemySoundPerception _enemySoundPerception;
+
+
     private List<SplineFollowerComponent> followers = new List<SplineFollowerComponent>();
     private float splineLength;
     private bool isAudioPlaying;
@@ -32,6 +36,12 @@ public class GarageDoor : MonoBehaviour
 
         InitializeFollowers();
         UpdateFollowerPositions();
+    }
+
+
+    private void Awake()
+    {
+        _enemySoundPerception = FindFirstObjectByType<EnemySoundPerception>();
     }
 
     private bool ValidateSetup()
@@ -75,12 +85,16 @@ public class GarageDoor : MonoBehaviour
     {
         foreach (var follower in followers)
             follower.UpdatePosition();
+
     }
 
     private void Update()
     {
         if (Input.GetKey(KeyCode.G))
+        {
+            _enemySoundPerception.CalculateSoundDistance(splineContainer.transform.position, SoundStrength.VeryLoud);
             HandleDoorOpening();
+        }
         else if (isAudioPlaying)
             StopAudio();
     }
