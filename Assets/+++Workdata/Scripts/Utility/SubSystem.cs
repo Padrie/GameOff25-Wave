@@ -3,67 +3,32 @@ using System;
 using UnityEngine;
 using UnityEngine.Events;
 
+[RequireComponent(typeof(LightSystem))]
 public class SubSystem : MonoBehaviour, IInteractable
 {
-    public RepaitItemCategory repairItem;
+    public RepairItemCategory repairItem;
     public Transform repairItemSlot;
 
-    //bool isInTrigger = false;
-
-    //FirstPersonController player;
     FirstPersonController _firstPersonController;
 
     [Space(10)]
-    public UnityEvent onRepaired;
-
+    public UnityEvent CallWhenRepaired;
+    public static event Action OnRepaired;
 
     private void Awake()
     {
         _firstPersonController = FindFirstObjectByType<FirstPersonController>();
     }
 
-    //private void OnTriggerEnter(Collider other)
-    //{
-    //    if (other.TryGetComponent(out FirstPersonController p))
-    //    {
-    //        isInTrigger = true;
-    //        player = p;
-    //    }
-    //}
-
-    //private void OnTriggerExit(Collider other)
-    //{
-    //    if (other.TryGetComponent(out FirstPersonController p))
-    //    {
-    //        isInTrigger = false;
-    //        player = null;
-    //    }
-    //}
-
-    private void Update()
-    {
-        //if (isInTrigger && player.itemSlot != null && Input.GetKeyDown(KeyCode.E))
-        //{
-        //    if (player.itemSlot.repairItem == repairItem)
-        //    {
-        //        CorrectRepairItem();
-        //    }
-        //    else
-        //    {
-        //        print("Falsches Repair item du opfen");
-        //    }
-        //}
-    }
-
     public void CorrectRepairItem()
     {
         _firstPersonController.itemSlot.Reparent(repairItemSlot);
         GetComponent<Collider>().enabled = false;
-        onRepaired?.Invoke();
+        CallWhenRepaired?.Invoke();
+        OnRepaired?.Invoke();
+
         print("Inserted correct repair item");
     }
-
-
 
     public void Interact()
     {

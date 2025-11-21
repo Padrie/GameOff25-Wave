@@ -23,7 +23,7 @@ public class RoamState : IState
 
     public void OnEnter()
     {
-        Debug.Log("Entered Roam State");
+        enemyManager.currentState = "Roam State";
 
         PatrolPointManager.instance.SelectRandomPatrolPoint();
         PatrolPointManager.instance.GetPath();
@@ -39,7 +39,6 @@ public class RoamState : IState
 
     public void OnExit()
     {
-        Debug.Log("Exited Roam State");
         agent.ResetPath();
     }
 

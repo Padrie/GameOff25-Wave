@@ -15,7 +15,7 @@ public class ChasePlayerState : IState
 
     public void OnEnter()
     {
-        Debug.Log("Entered Chase State");
+        enemyManager.currentState = "Chase Player State";
         enemyManager.lostPlayer = false;
         agent.speed = enemyStats.chaseSpeed;
     }
@@ -24,7 +24,6 @@ public class ChasePlayerState : IState
     {
         enemyManager.lostPlayer = true;
         agent.speed = enemyStats.walkSpeed;
-        Debug.Log("Exited Chase State");
     }
 
     public void Tick()

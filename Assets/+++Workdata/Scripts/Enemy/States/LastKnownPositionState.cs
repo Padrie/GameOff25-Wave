@@ -9,6 +9,8 @@ public class LastKnownPositionState : IState
 
     float timeToMove = 0;
 
+    Vector3 lastPlayerPos = Vector3.zero;
+
     public LastKnownPositionState(EnemyManager enemyManager, EnemyStats enemyStats, NavMeshAgent navMeshAgent)
     {
         this.enemyManager = enemyManager;
@@ -18,19 +20,20 @@ public class LastKnownPositionState : IState
 
     public void OnEnter()
     {
-        Debug.Log("Entered LastKnownPositionState");
+        enemyManager.currentState = "Last Known Position State";
 
         agent.SetDestination(enemyManager.lastPlayerPosTarget.transform.position);
+        lastPlayerPos = enemyManager.lastPlayerPosTarget.transform.position;
     }
 
     public void OnExit()
     {
-        Debug.Log("Exited LastKnownPositionState");
+
     }
 
     public void Tick()
     {
-        if (Vector3.Distance(enemyManager.transform.position, enemyManager.lastPlayerPosTarget.position) < 1f)
+        if (Vector3.Distance(enemyManager.transform.position, lastPlayerPos) < 1f)
         {
             timeToMove += Time.deltaTime;
 

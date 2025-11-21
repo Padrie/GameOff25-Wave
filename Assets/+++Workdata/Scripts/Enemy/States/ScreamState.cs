@@ -19,14 +19,14 @@ public class ScreamState : IState
     {
         //Play Scream sound
         //enemyManager.PlaySound(enemyStats.monsterScream[Random.Range(0, enemyStats.monsterScream.Length)]);
-        Debug.Log("Entered Scream State");
+        enemyManager.currentState = "Scream State";
 
         enemyManager.StartCoroutine(StartScream());
     }
 
     public void OnExit()
     {
-        Debug.Log("Exited Scream State");
+
     }
 
     IEnumerator StartScream()
@@ -39,8 +39,11 @@ public class ScreamState : IState
 
     public void Tick()
     {
-        Vector3 direction = (enemyManager.playerTarget.transform.position - enemyManager.transform.position).normalized;
-        Quaternion lookRotation = Quaternion.LookRotation(new Vector3(direction.x, 0, direction.z));
-        enemyManager.transform.rotation = Quaternion.Slerp(enemyManager.transform.rotation, lookRotation, Time.deltaTime * 5);
+        if (enemyManager.playerTarget != null)
+        {
+            Vector3 direction = (enemyManager.playerTarget.transform.position - enemyManager.transform.position).normalized;
+            Quaternion lookRotation = Quaternion.LookRotation(new Vector3(direction.x, 0, direction.z));
+            enemyManager.transform.rotation = Quaternion.Slerp(enemyManager.transform.rotation, lookRotation, Time.deltaTime * 5);
+        }
     }
 }

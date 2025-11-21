@@ -14,13 +14,13 @@ public class IdleState : IState
 
     public void OnEnter()
     {
+        enemyManager.currentState = "Idle State";
         agent.SetDestination(enemyManager.transform.position);
         Debug.Log("Entered Idle State");
     }
 
     public void OnExit()
     {
-        Debug.Log("Exited Idle State");
 
     }
 

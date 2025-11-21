@@ -18,13 +18,12 @@ public class ChaseSoundState : IState
 
     public void OnEnter()
     {
-        Debug.Log("Entered Sound Chase State");
+        enemyManager.currentState = "Chase Sound State";
         agent.speed = enemyStats.chaseSpeed;
     }
 
     public void OnExit()
     {
-        Debug.Log("Exited Sound Chase State");
         agent.speed = enemyStats.walkSpeed;
     }
 

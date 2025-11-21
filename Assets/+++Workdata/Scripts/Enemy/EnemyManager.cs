@@ -13,6 +13,8 @@ public class EnemyManager : MonoBehaviour
 
     [HideInInspector] public bool lostPlayer = false;
 
+    public string currentState;
+
     [Header("Targets")]
     public Transform playerTarget;
     public Transform lastPlayerPosTarget;

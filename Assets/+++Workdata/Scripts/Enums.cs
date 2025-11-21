@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public enum SoundStrength
@@ -9,7 +10,7 @@ public enum SoundStrength
     VeryLoud = 5
 }
 
-public enum RepaitItemCategory
+public enum RepairItemCategory
 {
     None,
     Battery,

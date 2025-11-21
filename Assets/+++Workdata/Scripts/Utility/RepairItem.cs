@@ -5,7 +5,7 @@ using TMPro;
 
 public class RepairItem : MonoBehaviour, IInteractable
 {
-    public RepaitItemCategory repairItem;
+    public RepairItemCategory repairItem;
     [SerializeField] SoundStrength dropSoundStrength;
     [SerializeField] LayerMask dropItemLayerMask;
 
