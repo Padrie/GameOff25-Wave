@@ -48,6 +48,7 @@ public class CarAnimation : MonoBehaviour
     private bool isAnimating;
     private float delayTimer;
     private CinemachineFollow cinemachineFollow;
+    public GameObject cinemachineCamera;
 
     private const float SPLINE_END_THRESHOLD = 0.1f;
     private const float HALF_PI = Mathf.PI / 2f;
@@ -210,6 +211,8 @@ public class CarAnimation : MonoBehaviour
 
         if (deactivateCameraOnEnd && virtualCamera != null)
             virtualCamera.enabled = false;
+
+        cinemachineCamera.SetActive(false);
     }
 
     public void RestartAnimation()
