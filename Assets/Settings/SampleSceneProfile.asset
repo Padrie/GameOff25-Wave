@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b2db86121404754db890f4c8dfe81b2, type: 3}
   m_Name: Bloom
   m_EditorClassIdentifier: 
-  active: 1
+  active: 0
   skipIterations:
     m_OverrideState: 1
     m_Value: 0
@@ -46,7 +46,7 @@ MonoBehaviour:
     dimension: 1
   dirtIntensity:
     m_OverrideState: 1
-    m_Value: 1
+    m_Value: 0.2
 --- !u!114 &-4751701562819338633
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -77,7 +77,7 @@ MonoBehaviour:
     m_Value: 0
   density:
     m_OverrideState: 1
-    m_Value: 0.001
+    m_Value: 0.02
   attenuationDistance:
     m_OverrideState: 1
     m_Value: 128

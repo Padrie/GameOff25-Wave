@@ -11,14 +11,14 @@ Material:
   m_Shader: {fileID: 4800000, guid: 16f156507a218ad4488f971b7e2f087b, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
-  m_ValidKeywords:
+  m_ValidKeywords: []
+  m_InvalidKeywords:
   - _EMISSION
   - _METALLICSPECGLOSSMAP
   - _NORMALMAP
   - _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A
   - _SPECULARHIGHLIGHTS_OFF
   - _SPECULAR_SETUP
-  m_InvalidKeywords: []
   m_LightmapFlags: 2
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -30,6 +30,10 @@ Material:
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
+    - _AOMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _AlbedoMap:
         m_Texture: {fileID: 2800000, guid: 24bc7281aa589d24098d22a9223ecaa2, type: 3}
         m_Scale: {x: 1, y: 1}
@@ -139,6 +143,10 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _GradientZ:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _HeightMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
@@ -745,6 +753,7 @@ Material:
     m_Ints: []
     m_Floats:
     - _6SidedAngleContrast: 2
+    - _AOStrength: 1
     - _AddPrecomputedVelocity: 0
     - _AlbedoBrightness: 0
     - _AlbedoContrast: 1
@@ -809,6 +818,7 @@ Material:
     - _GlossMapScale: 0
     - _Glossiness: 1
     - _GlossyReflections: 0
+    - _HeightScale: 0.02
     - _HideUnused: 1
     - _Hue: 0
     - _InitialBend: 1

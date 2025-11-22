@@ -45,10 +45,10 @@ Light:
   serializedVersion: 11
   m_Type: 0
   m_Color: {r: 1, g: 0.8703732, b: 0.5896226, a: 1}
-  m_Intensity: 10
-  m_Range: 20
-  m_SpotAngle: 112.423256
-  m_InnerSpotAngle: 75.91836
+  m_Intensity: 5
+  m_Range: 25
+  m_SpotAngle: 152.38605
+  m_InnerSpotAngle: 25.132309
   m_CookieSize: 10
   m_Shadows:
     m_Type: 2
@@ -140,6 +140,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5c8bca95f7c947b4db5fb152a0d693d8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: com.cqf.urpvolumetricfog.runtime::VolumetricAdditionalLight
-  anisotropy: 0.134
-  scattering: 9.58
-  radius: 0.296
+  anisotropy: 0
+  scattering: 4
+  radius: 0.292
