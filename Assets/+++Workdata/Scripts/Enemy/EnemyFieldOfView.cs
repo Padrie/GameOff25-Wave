@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using UnityEditor;
+using Unity.AI.Navigation;
 
 public class EnemyFieldOfView : MonoBehaviour
 {

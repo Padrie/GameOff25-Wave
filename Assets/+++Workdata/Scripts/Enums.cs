@@ -16,3 +16,11 @@ public enum RepairItemCategory
     Battery,
     Ball
 }
+
+public enum uiid
+{
+    None,
+    MainMenuScene,
+    OptionsScene,
+    PauseScene
+}

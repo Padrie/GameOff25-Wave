@@ -65,6 +65,7 @@ namespace EasyPeasyFirstPersonController
         private float defaultPosY;
         private Vector3 recoil = Vector3.zero;
         private bool isLook = true, isMove = true, hasCeiling = false;
+        private bool isPauseMenuActive = false;
         private float currentCameraHeight;
         private float currentBobOffset;
         private float currentFov;
@@ -80,7 +81,6 @@ namespace EasyPeasyFirstPersonController
         private float seedY;
         private float seedZ;
         Vector3 targetOffset;
-
         public float CurrentCameraHeight => isCrouching || isSliding ? crouchCameraHeight : originalCameraParentHeight;
 
         private void Awake()
@@ -113,8 +113,17 @@ namespace EasyPeasyFirstPersonController
 
         private void Update()
         {
-            if(Input.GetKeyDown(keyCode) || isSprinting)
+            if (Input.GetKeyDown(keyCode) || isSprinting)
                 SoundManager.EmitSound(transform.position, soundStrength);
+
+            if (!UIManager.Instance.IsUIActive(uiid.PauseScene) && !UIManager.Instance.IsUIActive(uiid.OptionsScene))
+                isPauseMenuActive = false;
+
+            if (Input.GetKeyDown(KeyCode.Escape) && !isPauseMenuActive)
+            {
+                isPauseMenuActive = true;
+                UIManager.Instance.ShowUI(uiid.PauseScene);
+            }
 
             isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask, groundCheckQueryTriggerInteraction);
             if (isGrounded && moveDirection.y < 0)
@@ -275,7 +284,7 @@ namespace EasyPeasyFirstPersonController
 
             if (isGrounded || coyoteTimer > 0f)
             {
-                if (canJump && Input.GetKeyDown(KeyCode.Space) && !isSliding &&!hasCeiling)
+                if (canJump && Input.GetKeyDown(KeyCode.Space) && !isSliding && !hasCeiling)
                 {
                     moveDirection.y = jumpSpeed;
                 }

@@ -3,8 +3,6 @@ using UnityEngine.SceneManagement;
 
 public class Manager : MonoBehaviour
 {
-    private bool isFocused = true;
-
     [SerializeField]
     private bool doCutscene = true;
 
@@ -17,7 +15,7 @@ public class Manager : MonoBehaviour
     [SerializeField]
     private GameObject gameplayCanvas;
 
-    [SerializeField] 
+    [SerializeField]
     private GameObject carLight;
 
     [SerializeField]
@@ -29,14 +27,15 @@ public class Manager : MonoBehaviour
     [SerializeField]
     private GameObject enemy;
 
+    bool isPauseMenuActive = false;
+    bool isOptionsMenuActive = false;
+
     void Start()
     {
         // Cap fps to monitor refresh rate
         Application.targetFrameRate = (int)Screen.currentResolution.refreshRateRatio.value;
-        SetCursorState(true);
 
-
-        if(doCutscene)
+        if (doCutscene)
         {
             player.SetActive(false);
             cinemachineCamera.SetActive(true);
@@ -61,6 +60,15 @@ public class Manager : MonoBehaviour
     private void Update()
     {
         HandleInput();
+
+        if (UIManager.Instance.IsUIActive(uiid.PauseScene) || UIManager.Instance.IsUIActive(uiid.OptionsScene))
+        {
+            SetCursorState(false);
+        }
+        else if (!UIManager.Instance.IsUIActive(uiid.PauseScene) && !UIManager.Instance.IsUIActive(uiid.OptionsScene))
+        {
+            SetCursorState(true);
+        }
     }
 
     private void HandleInput()
@@ -72,16 +80,26 @@ public class Manager : MonoBehaviour
         }
 
         // Unfocus window
-        if (Input.GetKeyDown(KeyCode.Escape) && isFocused)
+        if (Input.GetKeyDown(KeyCode.Escape))
         {
-            SetCursorState(false);
+            if (UIManager.Instance.IsUIActive(uiid.PauseScene) || UIManager.Instance.IsUIActive(uiid.OptionsScene))
+            {
+                UIManager.Instance.HideUI(uiid.PauseScene);
+                UIManager.Instance.HideUI(uiid.OptionsScene);
+
+                return;
+            }
+
+            UIManager.Instance.ShowUI(uiid.PauseScene);
+
+            //SetCursorState(false);
         }
 
-        // Re-focus window
-        if (Input.GetMouseButtonDown(0) && !isFocused)
-        {
-            SetCursorState(true);
-        }
+        //// Re-focus window
+        //if (Input.GetMouseButtonDown(0) && !isFocused)
+        //{
+        //    SetCursorState(true);
+        //}
 
         // Skip cutscene
         if (Input.GetKeyDown(KeyCode.Tab) && doCutscene)
@@ -104,22 +122,15 @@ public class Manager : MonoBehaviour
 
     private void SetCursorState(bool locked)
     {
-        isFocused = locked;
         Cursor.lockState = locked ? CursorLockMode.Locked : CursorLockMode.None;
         Cursor.visible = !locked;
 
-        Time.timeScale = locked ? 1f : 0f;
+        //Time.timeScale = locked ? 1f : 0f;
+
     }
 
     private void ReloadScene()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-    }
-    private void OnApplicationFocus(bool hasFocus)
-    {
-        if (hasFocus && isFocused)
-        {
-            SetCursorState(true);
-        }
     }
 }
