@@ -10,9 +10,8 @@ Material:
   m_Name: Glass_MTL -Map
   m_Shader: {fileID: 4800000, guid: 933532a4fcc9baf4fa0491de14d08ed7, type: 3}
   m_Parent: {fileID: 2100000, guid: c874e7bd9c6a9614b8fb03122307b272, type: 2}
-  m_ModifiedSerializedProperties: 24
+  m_ModifiedSerializedProperties: 28
   m_ValidKeywords:
-  - _ADD_PRECOMPUTED_VELOCITY
   - _NORMALMAP
   - _SPECULARHIGHLIGHTS_OFF
   - _SURFACE_TYPE_TRANSPARENT
@@ -26,6 +25,7 @@ Material:
   disabledShaderPasses:
   - DepthOnly
   - SHADOWCASTER
+  - MOTIONVECTORS
   m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
@@ -44,7 +44,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _AddPrecomputedVelocity: 1
+    - _AddPrecomputedVelocity: 0
     - _Alpha: 0.35
     - _AlphaClip: 0
     - _Blend: 2

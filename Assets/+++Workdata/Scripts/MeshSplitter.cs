@@ -368,6 +368,7 @@ public class MeshSplitter : MonoBehaviour
                 newMr.allowOcclusionWhenDynamic = origMr.allowOcclusionWhenDynamic;
                 newMr.sortingLayerID = origMr.sortingLayerID;
                 newMr.sortingOrder = origMr.sortingOrder;
+                newMr.staticShadowCaster = origMr.staticShadowCaster;
             }
             else
             {

@@ -146,7 +146,9 @@ public class CarAnimation : MonoBehaviour
 
         float t = currentDistance / totalSplineLength;
         Vector3 splinePosition = splineContainer.EvaluatePosition(SPLINE_INDEX, t);
-        Vector3 splineTangent = splineContainer.EvaluateTangent(SPLINE_INDEX, t);
+
+        float tBefore = Mathf.Max(0, t - 0.01f);
+        Vector3 splineTangent = splineContainer.EvaluateTangent(SPLINE_INDEX, tBefore);
 
         Vector3 newPosition = transform.position;
         newPosition.x = splinePosition.x + positionOffset.x;

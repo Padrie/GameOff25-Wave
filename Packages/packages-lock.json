@@ -7,6 +7,12 @@
       "dependencies": {},
       "hash": "3f28b49218ca4c928ca0d4c3d508f0c0ddf43473"
     },
+    "com.merry-yellow.code-assist": {
+      "version": "file:com.merry-yellow.code-assist",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {}
+    },
     "com.unity.ai.navigation": {
       "version": "2.0.9",
       "depth": 0,
@@ -111,6 +117,13 @@
       "dependencies": {},
       "url": "https://packages.unity.com"
     },
+    "com.unity.nuget.newtonsoft-json": {
+      "version": "3.2.1",
+      "depth": 1,
+      "source": "registry",
+      "dependencies": {},
+      "url": "https://packages.unity.com"
+    },
     "com.unity.probuilder": {
       "version": "6.0.7",
       "depth": 0,
@@ -171,6 +184,28 @@
       "depth": 2,
       "source": "registry",
       "dependencies": {},
+      "url": "https://packages.unity.com"
+    },
+    "com.unity.services.cloud-build": {
+      "version": "2.0.6",
+      "depth": 0,
+      "source": "registry",
+      "dependencies": {
+        "com.unity.collab-proxy": "2.6.0",
+        "com.unity.services.core": "1.7.0",
+        "com.unity.nuget.newtonsoft-json": "3.0.2"
+      },
+      "url": "https://packages.unity.com"
+    },
+    "com.unity.services.core": {
+      "version": "1.14.0",
+      "depth": 1,
+      "source": "registry",
+      "dependencies": {
+        "com.unity.modules.androidjni": "1.0.0",
+        "com.unity.nuget.newtonsoft-json": "3.2.1",
+        "com.unity.modules.unitywebrequest": "1.0.0"
+      },
       "url": "https://packages.unity.com"
     },
     "com.unity.settings-manager": {
@@ -244,7 +279,7 @@
     },
     "com.unity.ugui": {
       "version": "2.0.0",
-      "depth": 0,
+      "depth": 1,
       "source": "builtin",
       "dependencies": {
         "com.unity.modules.ui": "1.0.0",
@@ -252,7 +287,7 @@
       }
     },
     "com.unity.visualscripting": {
-      "version": "1.9.7",
+      "version": "1.9.9",
       "depth": 0,
       "source": "registry",
       "dependencies": {
@@ -336,7 +371,7 @@
     },
     "com.unity.modules.imgui": {
       "version": "1.0.0",
-      "depth": 0,
+      "depth": 1,
       "source": "builtin",
       "dependencies": {}
     },
@@ -405,7 +440,7 @@
     },
     "com.unity.modules.ui": {
       "version": "1.0.0",
-      "depth": 0,
+      "depth": 1,
       "source": "builtin",
       "dependencies": {}
     },

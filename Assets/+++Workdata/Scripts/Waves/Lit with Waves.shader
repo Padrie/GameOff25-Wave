@@ -61,6 +61,12 @@ Shader "Universal Render Pipeline/Lit with Waves"
         _Wave4Speed("Wave 4 Speed", Range(0.0, 10.0)) = 1.5
         _Wave4Steepness("Wave 4 Steepness", Range(0.0, 1.0)) = 0.35
         _Wave4Direction("Wave 4 Direction (XYZ=Origin, W=SafeRadius)", Vector) = (0, 0, 0, 0)
+        
+        [Header(Wave Birth Times Internal Use)]
+        [HideInInspector] _Wave1BirthTime("Wave 1 Birth Time", Float) = 0.0
+        [HideInInspector] _Wave2BirthTime("Wave 2 Birth Time", Float) = 0.0
+        [HideInInspector] _Wave3BirthTime("Wave 3 Birth Time", Float) = 0.0
+        [HideInInspector] _Wave4BirthTime("Wave 4 Birth Time", Float) = 0.0
 
         // Hidden properties for compatibility
         [HideInInspector] _Surface("__surface", Float) = 0.0
@@ -119,7 +125,7 @@ Shader "Universal Render Pipeline/Lit with Waves"
             #pragma shader_feature_local _RECEIVE_SHADOWS_OFF
             
             // Wave Feature
-            #pragma shader_feature_local _ENABLE_WAVES
+            #pragma multi_compile _ _ENABLE_WAVES
 
             // Universal Pipeline keywords
             #pragma multi_compile _ _MAIN_LIGHT_SHADOWS _MAIN_LIGHT_SHADOWS_CASCADE _MAIN_LIGHT_SHADOWS_SCREEN
