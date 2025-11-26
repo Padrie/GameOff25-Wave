@@ -49,10 +49,17 @@ public class CarAnimation : MonoBehaviour
     private float delayTimer;
     private CinemachineFollow cinemachineFollow;
     public GameObject cinemachineCamera;
+    private Manager _manager;
 
     private const float SPLINE_END_THRESHOLD = 0.1f;
     private const float HALF_PI = Mathf.PI / 2f;
     private const int SPLINE_INDEX = 0;
+
+
+    private void Awake()
+    {
+        _manager = FindFirstObjectByType<Manager>();
+    }
 
     private void Start()
     {
@@ -157,8 +164,6 @@ public class CarAnimation : MonoBehaviour
 
         targetRotation = CalculateRotation(splineTangent);
         transform.rotation = targetRotation;
-
-        OnAnimationEnd();
     }
 
     private void UpdatePosition()
@@ -205,16 +210,7 @@ public class CarAnimation : MonoBehaviour
 
     private void OnAnimationEnd()
     {
-        if (audioSourceToDeactivate != null)
-            audioSourceToDeactivate.enabled = false;
-
-        if (playerToActivate != null)
-            playerToActivate.SetActive(true);
-
-        if (deactivateCameraOnEnd && virtualCamera != null)
-            virtualCamera.enabled = false;
-
-        cinemachineCamera.SetActive(false);
+        _manager.EnableGameplay();
     }
 
     public void RestartAnimation()

@@ -27,6 +27,7 @@ public class Manager : MonoBehaviour
     [SerializeField]
     private GameObject enemy;
 
+
     bool isPauseMenuActive = false;
     bool isOptionsMenuActive = false;
 
@@ -41,7 +42,7 @@ public class Manager : MonoBehaviour
             cinemachineCamera.SetActive(true);
             playerCar.GetComponent<CarAnimation>().enabled = true;
             gameplayCanvas.SetActive(false);
-            playerCarEngine.enabled = true;
+            playerCarEngine.gameObject.SetActive(true);
             carLight.SetActive(true);
             //enemy.SetActive(false);
         }
@@ -51,7 +52,7 @@ public class Manager : MonoBehaviour
             cinemachineCamera.SetActive(false);
             playerCar.GetComponent<CarAnimation>().enabled = false;
             gameplayCanvas.SetActive(true);
-            playerCarEngine.enabled = false;
+            playerCarEngine.gameObject.SetActive(false);
             carLight.SetActive(false);
             //enemy.SetActive(true);
         }
@@ -104,18 +105,18 @@ public class Manager : MonoBehaviour
         // Skip cutscene
         if (Input.GetKeyDown(KeyCode.Tab) && doCutscene)
         {
-            SkipCutscene();
+            playerCar.GetComponent<CarAnimation>().TeleportToEnd();
+            EnableGameplay();
         }
 
     }
 
-    private void SkipCutscene()
+    public void EnableGameplay()
     {
         player.SetActive(true);
         cinemachineCamera.SetActive(false);
-        playerCar.GetComponent<CarAnimation>().TeleportToEnd();
         gameplayCanvas.SetActive(true);
-        playerCarEngine.enabled = false;
+        playerCarEngine.gameObject.SetActive(false);
         carLight.SetActive(false);
         enemy.SetActive(true);
     }

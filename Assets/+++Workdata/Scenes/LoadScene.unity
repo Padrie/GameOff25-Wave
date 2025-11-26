@@ -26,7 +26,7 @@ RenderSettings:
   m_AmbientIntensity: 1
   m_AmbientMode: 0
   m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
-  m_SkyboxMaterial: {fileID: 10304, guid: 0000000000000000f000000000000000, type: 0}
+  m_SkyboxMaterial: {fileID: 2100000, guid: 493bfb50af5d9424da505ba945c86600, type: 2}
   m_HaloStrength: 0.5
   m_FlareStrength: 1
   m_FlareFadeSpeed: 3
@@ -130,6 +130,7 @@ GameObject:
   - component: {fileID: 1825544630}
   - component: {fileID: 1825544629}
   - component: {fileID: 1825544631}
+  - component: {fileID: 1825544632}
   m_Layer: 0
   m_Name: SceneLoader
   m_TagString: Untagged
@@ -177,6 +178,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 549a512cab5df724e8b5edb1e70432d8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UIManager
+--- !u!114 &1825544632
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1825544628}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 581111c156a69b0409ee4640e0ef72ef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CapFPS
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

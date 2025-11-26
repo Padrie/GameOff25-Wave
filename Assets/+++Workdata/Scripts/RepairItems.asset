@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ae6c533f309bf849a80e92863363ca6, type: 3}
+  m_Name: RepairItems
+  m_EditorClassIdentifier: Assembly-CSharp::RepairItemConfig
+  itemSettings:
+  - category: 1
+    prefab: {fileID: 4411490293449423645, guid: fef5d7446aaca5241b6895640ce2fd6b, type: 3}
+    textOffsetY: 0.5
+  - category: 2
+    prefab: {fileID: 1406007975887277930, guid: 1c7e26a7fa1893f4d9736fa2ea953c77, type: 3}
+    textOffsetY: 0.8

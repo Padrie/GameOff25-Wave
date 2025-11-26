@@ -18,7 +18,7 @@ EditorBuildSettings:
     path: Assets/+++Workdata/Scenes/PauseMenuScene.unity
     guid: 9576378e89ed8e747b282d16853ffecc
   - enabled: 1
-    path: Assets/+++Workdata/Scenes/MarkScene.unity
+    path: Assets/+++Workdata/Scenes/InGame.unity
     guid: 0d092eefc251c9e41a3c8e915affa9da
   - enabled: 0
     path: Assets/+++Workdata/Scenes/PatricScene.unity

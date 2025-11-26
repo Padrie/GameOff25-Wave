@@ -1,5 +1,6 @@
-﻿using UnityEngine;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using UnityEngine;
+using static UnityEngine.UI.Image;
 
 public class CircularWaveSpawner : MonoBehaviour
 {
@@ -45,6 +46,9 @@ public class CircularWaveSpawner : MonoBehaviour
     private List<Material> waveMaterialInstances = new List<Material>();
     private Camera cam;
     private bool wasPlaying = false;
+
+
+    [SerializeField] private GameObject enemy;
 
     private class CircularWave
     {
@@ -251,32 +255,13 @@ public class CircularWaveSpawner : MonoBehaviour
             {
                 SpawnWave(playerTransform.position);
             }
-            else
-            {
-                SpawnWaveAtMousePosition();
-            }
         }
     }
 
-    private void SpawnWaveAtMousePosition()
+    public void OnTriggerEnemyFootstepWave()
     {
-        if (cam == null)
-        {
-            Debug.LogError("Main camera not found!");
-            return;
-        }
-
-        Ray ray = cam.ScreenPointToRay(Input.mousePosition);
-        RaycastHit hit;
-
-        if (Physics.Raycast(ray, out hit, 1000f, raycastLayers))
-        {
-            SpawnWave(hit.point);
-        }
-        else
-        {
-            Debug.Log("No surface hit by raycast. Try clicking on geometry.");
-        }
+        Debug.Log("Enemy footstep wave triggered");
+        SpawnWave(enemy.gameObject.transform.position);
     }
 
     public void SpawnWave(Vector3 worldPosition)

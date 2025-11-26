@@ -14,7 +14,8 @@ public enum RepairItemCategory
 {
     None,
     Battery,
-    Ball
+    Generator,
+    Fuse
 }
 
 public enum uiid

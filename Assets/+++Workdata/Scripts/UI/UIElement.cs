@@ -56,12 +56,12 @@ public class UIElement : MonoBehaviour
 
     public void LoadGameplayScene()
     {
-        SceneManager.LoadSceneAsync("MarkScene", LoadSceneMode.Additive);
+        SceneManager.LoadSceneAsync("InGame", LoadSceneMode.Additive);
     }
 
     public void UnloadGameplayScene()
     {
-        SceneManager.UnloadSceneAsync("MarkScene");
+        SceneManager.UnloadSceneAsync("InGame");
     }
 
     public void QuitGame()

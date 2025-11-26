@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.Rendering;
 
 public class SceneLoader : MonoBehaviour
 {
@@ -16,7 +15,7 @@ public class SceneLoader : MonoBehaviour
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        if (scene.name == "MarkScene")
+        if (scene.name == "InGame" || scene.name == "MainMenuScene")
         {
             RenderSettings.skybox = markSceneSkybox;
             RenderSettings.ambientIntensity = 0f;
@@ -32,7 +31,7 @@ public class SceneLoader : MonoBehaviour
             "MainMenuScene",
             "OptionsMenuScene",
             "PauseMenuScene",
-            //"MarkScene"
+            //"InGame"
         };
         HashSet<string> loadedOrLoading = new HashSet<string>(System.StringComparer.OrdinalIgnoreCase);
         int sceneCount = SceneManager.sceneCount;
