@@ -1,15 +1,17 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Xml;
+using Unity.IO.LowLevel.Unsafe;
 using UnityEngine;
 using UnityEngine.AI;
 
-[RequireComponent(typeof(NavMeshAgent)), RequireComponent(typeof(EnemyStats)), RequireComponent(typeof(NavMeshAgent))]
+[RequireComponent(typeof(NavMeshAgent)), RequireComponent(typeof(EnemyStats))]
 public class EnemyManager : MonoBehaviour
 {
-    [HideInInspector] NavMeshAgent agent;
-    [HideInInspector] EnemyStats stats;
-    [HideInInspector] Animator animator;
+    [HideInInspector] public NavMeshAgent agent;
+    [HideInInspector] public EnemyStats stats;
+    public Animator animator;
 
     [HideInInspector] public bool lostPlayer = false;
 
@@ -23,27 +25,40 @@ public class EnemyManager : MonoBehaviour
     StateMachine stateMachine;
     float screamTime = 0f;
 
-
     public CircularWaveSpawner waveSpawner;
+
+    private string currentAnimation = "";
+    private const string ANIM_IDLE = "Idle";
+    private const string ANIM_WALK = "Walk";
+    private const string ANIM_CHASE = "Chase";
+    private const string ANIM_SCREAM = "Scream";
+    private const string ANIM_ATTACK = "Attack";
+
+    //state references
+    private IState idleState;
+    private IState roamState;
+    private IState screamState;
+    private IState playerChaseState;
+    private IState lastKnownPositionState;
+    private IState soundChaseState;
 
     private void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
         stats = GetComponent<EnemyStats>();
-        animator = GetComponent<Animator>();
         waveSpawner = FindFirstObjectByType<CircularWaveSpawner>();
 
         stateMachine = new StateMachine();
 
         screamTime = stats.screamCooldown;
 
-        //States
-        var idleState = new IdleState(this, agent);
-        var roamState = new RoamState(this, stats, agent);
-        var screamState = new ScreamState(this, stats, agent);
-        var playerChaseState = new ChasePlayerState(this, stats, agent);
-        var lastKnownPositionState = new LastKnownPositionState(this, stats, agent);
-        var soundChaseState = new ChaseSoundState(this, stats, agent);
+        //States - Store references
+        idleState = new IdleState(this, agent);
+        roamState = new RoamState(this, stats, agent);
+        screamState = new ScreamState(this, stats, agent);
+        playerChaseState = new ChasePlayerState(this, stats, agent);
+        lastKnownPositionState = new LastKnownPositionState(this, stats, agent);
+        soundChaseState = new ChaseSoundState(this, stats, agent);
 
         //State Transition
         stateMachine.AddTransition(idleState, roamState, HasNoTarget());
@@ -65,7 +80,6 @@ public class EnemyManager : MonoBehaviour
         stateMachine.AddTransition(roamState, soundChaseState, HasSoundTarget());
         stateMachine.AddTransition(soundChaseState, idleState, HasNoSoundTarget());
 
-        //State Transition checks
         Func<bool> HasNoTarget() => () => playerTarget == null && soundTarget == null;
 
         Func<bool> CanScream() => () => CanScreamCheck() && playerTarget != null;
@@ -87,19 +101,53 @@ public class EnemyManager : MonoBehaviour
     private void Update()
     {
         stateMachine.Tick();
+
+        if (animator != null)
+            animator.SetFloat("Speed", agent.velocity.magnitude / agent.speed);
+
+        UpdateAnimation();
     }
 
-    //private bool EvaluateTarget()
-    //{
+    private void UpdateAnimation()
+    {
+        if (stateMachine.currentState == idleState)
+        {
+            PlayAnimation(ANIM_IDLE);
+        }
+        else if (stateMachine.currentState == roamState)
+        {
+            PlayAnimation(ANIM_WALK);
+        }
+        else if (stateMachine.currentState == playerChaseState)
+        {
+            PlayAnimation(ANIM_CHASE);
+        }
+        else if (stateMachine.currentState == screamState)
+        {
+            PlayAnimation(ANIM_SCREAM);
+        }
+        else if (stateMachine.currentState == lastKnownPositionState)
+        {
+            PlayAnimation(ANIM_WALK);
+        }
+        else if (stateMachine.currentState == soundChaseState)
+        {
+            PlayAnimation(ANIM_CHASE);
+        }
+    }
 
-    //}
+    private void PlayAnimation(string animationName)
+    {
+        if (currentAnimation != animationName && animator != null)
+        {
+            currentAnimation = animationName;
+            animator.SetTrigger(animationName);
+        }
+    }
 
     public bool CanScreamCheck()
     {
-        if (screamTime >= stats.screamCooldown)
-            return true;
-        else
-            return false;
+        return screamTime >= stats.screamCooldown;
     }
 
     public void StartScreamCooldown()
@@ -110,21 +158,20 @@ public class EnemyManager : MonoBehaviour
 
     private IEnumerator Scream()
     {
-        bool stopLoop = false;
         screamTime = 0;
 
-        while (!stopLoop)
+        while (screamTime < stats.screamCooldown)
         {
             screamTime += Time.deltaTime;
-
-            if (screamTime > stats.screamCooldown)
-            {
-                screamTime = stats.screamCooldown;
-                stopLoop = true;
-            }
-
             yield return null;
         }
-        yield return null;
+
+        screamTime = stats.screamCooldown;
     }
+
+    public void PlayIdle() => PlayAnimation(ANIM_IDLE);
+    public void PlayWalk() => PlayAnimation(ANIM_WALK);
+    public void PlayChase() => PlayAnimation(ANIM_CHASE);
+    public void PlayScream() => PlayAnimation(ANIM_SCREAM);
+    public void PlayAttack() => PlayAnimation(ANIM_ATTACK);
 }

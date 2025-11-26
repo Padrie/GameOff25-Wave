@@ -118,7 +118,7 @@ public class Manager : MonoBehaviour
         gameplayCanvas.SetActive(true);
         playerCarEngine.gameObject.SetActive(false);
         carLight.SetActive(false);
-        enemy.SetActive(true);
+        //enemy.SetActive(true);
     }
 
     private void SetCursorState(bool locked)

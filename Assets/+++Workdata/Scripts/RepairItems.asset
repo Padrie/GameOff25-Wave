@@ -19,3 +19,6 @@ MonoBehaviour:
   - category: 2
     prefab: {fileID: 1406007975887277930, guid: 1c7e26a7fa1893f4d9736fa2ea953c77, type: 3}
     textOffsetY: 0.8
+  - category: 3
+    prefab: {fileID: 5860288248219988759, guid: c2b88b5640683104dac70fa608049616, type: 3}
+    textOffsetY: 0.2

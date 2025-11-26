@@ -1,16 +1,14 @@
 using System;
 using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.AI;
-using Object = System.Object;
 
 public class StateMachine
 {
-    IState currentState;
+    public IState currentState;
     Dictionary<Type, List<Transition>> transitions = new Dictionary<Type, List<Transition>>();
     List<Transition> currentTransitions = new List<Transition>();
     List<Transition> anyTransitions = new List<Transition>();
     static List<Transition> EmptyTransitions = new List<Transition>();
+
 
     public void Tick()
     {
