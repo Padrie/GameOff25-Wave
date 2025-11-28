@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 8182143651815845684}
   - component: {fileID: 3941497860199476658}
   - component: {fileID: 7981931480873739388}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: Spot Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -140,7 +140,7 @@ GameObject:
   - component: {fileID: 1852813999213197478}
   - component: {fileID: 7100774603415590181}
   - component: {fileID: 8614445262753530380}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: MicroAVL Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -195,7 +195,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: aa88ece96d679ea47962652f9df6fd9e, type: 2}
+  - {fileID: 2100000, guid: ffa5583b34b1fce4391b8be5a79f7067, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -363,6 +363,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 1366e4ae115478d438ea6987db2c59f9, type: 3}
       propertyPath: m_Name
       value: Flashlight
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 1366e4ae115478d438ea6987db2c59f9, type: 3}
+      propertyPath: m_Layer
+      value: 14
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

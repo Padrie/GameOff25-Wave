@@ -226,8 +226,7 @@ public class DoorTrigger : MonoBehaviour
         this.direction = direction;
         this.playerTag = playerTag;
     }
-
-    void OnTriggerEnter(Collider other)
+    private void OnTriggerStay(Collider other)
     {
         if (!door || !other.CompareTag(playerTag) || !playerController) return;
         if (playerController.isSprinting)

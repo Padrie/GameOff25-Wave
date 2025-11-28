@@ -1,4 +1,6 @@
+using System;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 
 public class Manager : MonoBehaviour
@@ -6,30 +8,20 @@ public class Manager : MonoBehaviour
     [SerializeField]
     private bool doCutscene = true;
 
-    [SerializeField]
-    private GameObject player;
 
-    [SerializeField]
-    private GameObject cinemachineCamera;
-
-    [SerializeField]
-    private GameObject gameplayCanvas;
-
-    [SerializeField]
-    private GameObject carLight;
-
-    [SerializeField]
-    private GameObject playerCar;
-
-    [SerializeField]
-    private AudioSource playerCarEngine;
-
-    [SerializeField]
-    private GameObject enemy;
-
+    [SerializeField] private GameObject playerCar;
 
     bool isPauseMenuActive = false;
     bool isOptionsMenuActive = false;
+
+
+    [Space(10)]
+    public UnityEvent CallCutsceneBegins;
+    public static event Action CutsceneBegins;
+
+    [Space(10)]
+    public UnityEvent CallAfterCarCutscene;
+    public static event Action AferCarCutscene;
 
     void Start()
     {
@@ -38,23 +30,13 @@ public class Manager : MonoBehaviour
 
         if (doCutscene)
         {
-            player.SetActive(false);
-            cinemachineCamera.SetActive(true);
-            playerCar.GetComponent<CarAnimation>().enabled = true;
-            gameplayCanvas.SetActive(false);
-            playerCarEngine.gameObject.SetActive(true);
-            carLight.SetActive(true);
-            //enemy.SetActive(false);
+            CallCutsceneBegins?.Invoke();
+            CutsceneBegins?.Invoke();
         }
         else
         {
-            player.SetActive(true);
-            cinemachineCamera.SetActive(false);
-            playerCar.GetComponent<CarAnimation>().enabled = false;
-            gameplayCanvas.SetActive(true);
-            playerCarEngine.gameObject.SetActive(false);
-            carLight.SetActive(false);
-            //enemy.SetActive(true);
+            CallAfterCarCutscene?.Invoke();
+            AferCarCutscene?.Invoke();
         }
     }
 
@@ -62,13 +44,16 @@ public class Manager : MonoBehaviour
     {
         HandleInput();
 
-        if (UIManager.Instance.IsUIActive(uiid.PauseScene) || UIManager.Instance.IsUIActive(uiid.OptionsScene))
+        if (UIManager.Instance != null)
         {
-            SetCursorState(false);
-        }
-        else if (!UIManager.Instance.IsUIActive(uiid.PauseScene) && !UIManager.Instance.IsUIActive(uiid.OptionsScene))
-        {
-            SetCursorState(true);
+            if (UIManager.Instance.IsUIActive(uiid.PauseScene) || UIManager.Instance.IsUIActive(uiid.OptionsScene))
+            {
+                SetCursorState(false);
+            }
+            else
+            {
+                SetCursorState(true);
+            }
         }
     }
 
@@ -113,12 +98,8 @@ public class Manager : MonoBehaviour
 
     public void EnableGameplay()
     {
-        player.SetActive(true);
-        cinemachineCamera.SetActive(false);
-        gameplayCanvas.SetActive(true);
-        playerCarEngine.gameObject.SetActive(false);
-        carLight.SetActive(false);
-        //enemy.SetActive(true);
+        CallAfterCarCutscene?.Invoke();
+        AferCarCutscene?.Invoke();
     }
 
     private void SetCursorState(bool locked)

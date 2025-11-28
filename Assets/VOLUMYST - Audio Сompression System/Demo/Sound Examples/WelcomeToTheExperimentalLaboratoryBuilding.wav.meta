@@ -1,0 +1,29 @@
+fileFormatVersion: 2
+guid: f1289ab1078106c4098b3cc812f1723b
+AudioImporter:
+  externalObjects: {}
+  serializedVersion: 6
+  defaultSettings:
+    loadType: 0
+    sampleRateSetting: 0
+    sampleRateOverride: 44100
+    compressionFormat: 1
+    quality: 1
+    conversionMode: 0
+  platformSettingOverrides: {}
+  forceToMono: 0
+  normalize: 1
+  preloadAudioData: 1
+  loadInBackground: 0
+  ambisonic: 0
+  3D: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 272868
+  packageName: VOLUMYST - Audio Interference Effects System (BETA)
+  packageVersion: 1.0.0
+  assetPath: "Assets/VOLUMYST - Audio \u0421ompression System/Demo/Sound Examples/WelcomeToTheExperimentalLaboratoryBuilding.wav"
+  uploadId: 650681

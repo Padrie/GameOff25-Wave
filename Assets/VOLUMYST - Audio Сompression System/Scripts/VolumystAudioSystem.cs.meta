@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: fed9a05d725f5114f929762f67e15d60
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 272868
+  packageName: VOLUMYST - Audio Interference Effects System (BETA)
+  packageVersion: 1.0.0
+  assetPath: "Assets/VOLUMYST - Audio \u0421ompression System/Scripts/VolumystAudioSystem.cs"
+  uploadId: 650681

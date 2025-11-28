@@ -1,0 +1,30 @@
+fileFormatVersion: 2
+guid: 599967da85720cb43a904ad1e8e82a90
+AudioImporter:
+  externalObjects: {}
+  serializedVersion: 7
+  defaultSettings:
+    serializedVersion: 2
+    loadType: 0
+    sampleRateSetting: 0
+    sampleRateOverride: 44100
+    compressionFormat: 0
+    quality: 1
+    conversionMode: 0
+    preloadAudioData: 0
+  platformSettingOverrides: {}
+  forceToMono: 0
+  normalize: 1
+  loadInBackground: 0
+  ambisonic: 0
+  3D: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 289986
+  packageName: 'Ethereal Terror: FPS Horror Sound Pack'
+  packageVersion: 1.0
+  assetPath: Assets/FPS Horror Sound Pack/Monster Sounds/Ghost 2.wav
+  uploadId: 694907

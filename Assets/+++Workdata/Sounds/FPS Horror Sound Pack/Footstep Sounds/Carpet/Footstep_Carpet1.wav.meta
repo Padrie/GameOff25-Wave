@@ -1,0 +1,30 @@
+fileFormatVersion: 2
+guid: 2ef2c0ea137aea94c823c7bf3cab0aaa
+AudioImporter:
+  externalObjects: {}
+  serializedVersion: 7
+  defaultSettings:
+    serializedVersion: 2
+    loadType: 0
+    sampleRateSetting: 0
+    sampleRateOverride: 44100
+    compressionFormat: 0
+    quality: 1
+    conversionMode: 0
+    preloadAudioData: 0
+  platformSettingOverrides: {}
+  forceToMono: 0
+  normalize: 1
+  loadInBackground: 0
+  ambisonic: 0
+  3D: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 289986
+  packageName: 'Ethereal Terror: FPS Horror Sound Pack'
+  packageVersion: 1.0
+  assetPath: Assets/FPS Horror Sound Pack/Footstep Sounds/Carpet/Footstep_Carpet1.wav
+  uploadId: 694907
