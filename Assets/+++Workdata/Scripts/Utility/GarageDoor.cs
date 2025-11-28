@@ -17,14 +17,24 @@ public class GarageDoor : MonoBehaviour
     [SerializeField] private float audioFadeDuration = 0.5f;
     [SerializeField][Range(0f, 1f)] private float maxAudioVolume = 1f;
 
-
     [SerializeField] private EnemySoundPerception _enemySoundPerception;
 
+    [Header("NavMesh Settings")]
+    [SerializeField] private BoxCollider doorCollider;
+    [SerializeField] private float openThreshold = 0.3f;
 
     private List<SplineFollowerComponent> followers = new List<SplineFollowerComponent>();
     private float splineLength;
     private bool isAudioPlaying;
+    private bool colliderDisabled = false;
+    private NavMeshRebaker navMeshRebaker;
     private const float TANGENT_MAGNITUDE_THRESHOLD = 0.001f;
+
+    private void Awake()
+    {
+        _enemySoundPerception = FindFirstObjectByType<EnemySoundPerception>();
+        navMeshRebaker = FindFirstObjectByType<NavMeshRebaker>();
+    }
 
     private void Start()
     {
@@ -36,12 +46,6 @@ public class GarageDoor : MonoBehaviour
 
         InitializeFollowers();
         UpdateFollowerPositions();
-    }
-
-
-    private void Awake()
-    {
-        _enemySoundPerception = FindFirstObjectByType<EnemySoundPerception>();
     }
 
     private bool ValidateSetup()
@@ -85,7 +89,6 @@ public class GarageDoor : MonoBehaviour
     {
         foreach (var follower in followers)
             follower.UpdatePosition();
-
     }
 
     private void Update()
@@ -97,6 +100,42 @@ public class GarageDoor : MonoBehaviour
         }
         else if (isAudioPlaying)
             StopAudio();
+
+        CheckColliderState();
+    }
+
+    private void CheckColliderState()
+    {
+        if (doorCollider == null || followers.Count == 0) return;
+
+        float progress = GetDoorProgress();
+
+        if (!colliderDisabled && progress >= openThreshold)
+        {
+            doorCollider.enabled = false;
+            colliderDisabled = true;
+
+            if (navMeshRebaker != null)
+            {
+                navMeshRebaker.TriggerImmediateRebake();
+            }
+        }
+        else if (colliderDisabled && progress < openThreshold)
+        {
+            doorCollider.enabled = true;
+            colliderDisabled = false;
+
+            if (navMeshRebaker != null)
+            {
+                navMeshRebaker.TriggerImmediateRebake();
+            }
+        }
+    }
+
+    private float GetDoorProgress()
+    {
+        if (followers.Count == 0) return 0f;
+        return followers[0].GetProgress();
     }
 
     private void HandleDoorOpening()
@@ -129,7 +168,7 @@ public class GarageDoor : MonoBehaviour
             audioSource.Play();
 
         audioSource.volume = 0f;
-        audioSource.DOFade(maxAudioVolume, audioFadeDuration).SetEase(Ease.InOutQuad);
+        DOTween.To(() => audioSource.volume, x => audioSource.volume = x, maxAudioVolume, audioFadeDuration).SetEase(Ease.InOutQuad);
     }
 
     private void StopAudio()
@@ -138,7 +177,7 @@ public class GarageDoor : MonoBehaviour
             return;
 
         DOTween.Kill(audioSource);
-        audioSource.DOFade(0f, audioFadeDuration).SetEase(Ease.InOutQuad)
+        DOTween.To(() => audioSource.volume, x => audioSource.volume = x, 0f, audioFadeDuration).SetEase(Ease.InOutQuad)
             .OnComplete(() => audioSource.Pause());
 
         isAudioPlaying = false;
@@ -195,6 +234,12 @@ public class SplineFollowerComponent : MonoBehaviour
 
         transform.position = splineContainer.transform.TransformPoint(position);
         ApplyRotation(tangent);
+    }
+
+    public float GetProgress()
+    {
+        if (splineLength <= 0) return 0f;
+        return Mathf.Clamp01(currentDistance / splineLength);
     }
 
     private void ApplyRotation(Vector3 tangent)

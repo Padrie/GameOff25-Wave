@@ -21,7 +21,7 @@ TagManager:
   - VolumetricLightSphere
   - Enemy
   - NoDOF
-  - 
+  - NoNavmesh
   - 
   - 
   - 

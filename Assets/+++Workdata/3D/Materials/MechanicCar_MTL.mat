@@ -8,22 +8,22 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: MechanicCar_MTL
-  m_Shader: {fileID: 4800000, guid: 16f156507a218ad4488f971b7e2f087b, type: 3}
+  m_Shader: {fileID: 4800000, guid: 933532a4fcc9baf4fa0491de14d08ed7, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
-  m_ValidKeywords: []
-  m_InvalidKeywords:
+  m_ValidKeywords:
   - _EMISSION
   - _METALLICSPECGLOSSMAP
   - _NORMALMAP
   - _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A
   - _SPECULARHIGHLIGHTS_OFF
-  - _SPECULAR_SETUP
+  m_InvalidKeywords: []
   m_LightmapFlags: 2
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
-  stringTagMap: {}
+  stringTagMap:
+    RenderType: Opaque
   disabledShaderPasses:
   - MOTIONVECTORS
   m_LockedProperties: 
@@ -47,11 +47,11 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BaseMap:
-        m_Texture: {fileID: 2800000, guid: 24bc7281aa589d24098d22a9223ecaa2, type: 3}
+        m_Texture: {fileID: 2800000, guid: a2f85566e2a078d4499ab2863233cab4, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BumpMap:
-        m_Texture: {fileID: 2800000, guid: 57daff0217982564bb6895514eaae1f2, type: 3}
+        m_Texture: {fileID: 2800000, guid: cc06a88fbd0be654f8df1096186ea24d, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _CheapSSSTexture:
@@ -111,7 +111,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _EmissionMap:
-        m_Texture: {fileID: 2800000, guid: c1adde19a81acdb439a15fb06105508d, type: 3}
+        m_Texture: {fileID: 2800000, guid: 41374e58ac4fe6a45a3f9017a92f36fc, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _EmissionMap_P1:
@@ -543,7 +543,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: 21a2d633ff6ce6e469bd550c8b5552f0, type: 3}
+        m_Texture: {fileID: 2800000, guid: a2f85566e2a078d4499ab2863233cab4, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MaskMap:
@@ -559,7 +559,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
-        m_Texture: {fileID: 2800000, guid: 09a58913718c3c9468298fb7482acba6, type: 3}
+        m_Texture: {fileID: 2800000, guid: 55b8d4519b3c1b74494ba79b839e4cc6, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicMap:
@@ -587,7 +587,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _ParallaxMap:
-        m_Texture: {fileID: 2800000, guid: 38cd808a160223845a4b7d14e934d320, type: 3}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _PuddleNoiseTex:
@@ -635,7 +635,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _SpecGlossMap:
-        m_Texture: {fileID: 2800000, guid: e7ff65fc3b3099d49a6c3b1c8f5b4c73, type: 3}
+        m_Texture: {fileID: 2800000, guid: 55b8d4519b3c1b74494ba79b839e4cc6, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _SpecularMap:
@@ -1067,7 +1067,7 @@ Material:
     - _WireSmoothing: 0.5
     - _WireThickness: 0.5
     - _WireUseEffector: 0
-    - _WorkflowMode: 0
+    - _WorkflowMode: 1
     - _WriteTransparentMotionVector: 0
     - _XRMotionVectorsPass: 1
     - _ZWrite: 1

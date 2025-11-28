@@ -115,4 +115,10 @@ public class Manager : MonoBehaviour
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
+
+    public void PlayerDeath()
+    {
+        //DEATHSCREEN LOGIC HERE
+        ReloadScene();
+    }
 }

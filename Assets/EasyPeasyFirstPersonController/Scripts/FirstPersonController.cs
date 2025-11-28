@@ -50,6 +50,7 @@ namespace EasyPeasyFirstPersonController
         private bool isGrounded;
         private Vector2 moveInput;
         public bool isSprinting;
+        public bool isWalking;
         public bool isCrouching;
         public bool isSliding;
         private float slideTimer;
@@ -113,9 +114,6 @@ namespace EasyPeasyFirstPersonController
 
         private void Update()
         {
-            if (Input.GetKeyDown(keyCode) || isSprinting)
-                SoundManager.EmitSound(transform.position, soundStrength);
-
             if (!UIManager.Instance.IsUIActive(uiid.PauseScene) && !UIManager.Instance.IsUIActive(uiid.OptionsScene))
                 isPauseMenuActive = false;
 
@@ -274,6 +272,7 @@ namespace EasyPeasyFirstPersonController
             moveInput.x = Input.GetAxis("Horizontal");
             moveInput.y = Input.GetAxis("Vertical");
             isSprinting = canSprint && ShouldSprintWhileHoldingItem() && Input.GetKey(KeyCode.LeftShift) && moveInput.y > 0.1f && isGrounded && !isCrouching && !isSliding;
+            isWalking = moveInput.magnitude > 0.1f && !isSprinting && !isCrouching;
 
             float currentSpeed = isCrouching ? crouchSpeed : (isSprinting ? sprintSpeed : walkSpeed);
             if (!isMove) currentSpeed = 0f;

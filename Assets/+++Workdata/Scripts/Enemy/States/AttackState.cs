@@ -9,6 +9,7 @@ public class AttackState : IState
     EnemyManager enemyManager;
     EnemyStats enemyStats;
     NavMeshAgent agent;
+    Manager manager;
 
     private bool hasInitiatedGrab = false;
     private bool isGrabbing = false;
@@ -106,12 +107,6 @@ public class AttackState : IState
         if (firstPersonController == null && enemyManager.playerTarget != null)
         {
             firstPersonController = enemyManager.playerTarget.GetComponent<MonoBehaviour>();
-            if (firstPersonController == null)
-            {
-                var controller = enemyManager.playerTarget.GetComponent(System.Type.GetType("FirstPersonController"));
-                if (controller != null)
-                    firstPersonController = controller as MonoBehaviour;
-            }
         }
 
         if (playerController != null)
@@ -189,6 +184,10 @@ public class AttackState : IState
 
         isGrabbing = false;
         hasInitiatedGrab = false;
+
+        manager = GameObject.FindFirstObjectByType<Manager>();
+
+        manager.PlayerDeath();
     }
 
     public bool IsAttackFinished()

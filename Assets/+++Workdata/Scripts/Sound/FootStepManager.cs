@@ -23,8 +23,8 @@ namespace FootstepSystem
 
     public enum FootstepMode
     {
-        Player,      // Distance-based system
-        Enemy        // Animation event-based system
+        Player,
+        Enemy
     }
 
     [RequireComponent(typeof(CharacterController))]
@@ -65,22 +65,16 @@ namespace FootstepSystem
         [Header("Debug")]
         [SerializeField] private bool debugConsole;
 
-        #endregion
-
-        #region Private Fields
-
         private CharacterController characterController;
         private FirstPersonController firstPersonController;
         private EnemySoundPerception enemySoundPerception;
 
-        // Player-specific fields
         private Vector3 lastPosition;
         private Vector3 lastStepPosition;
         private Vector3 velocity;
         private float currentStepDistance;
         private Vector2 horizontalVelocity;
 
-        // Shared fields
         private bool wasGrounded;
         private RaycastHit lastGroundHit;
         private PhysicsMaterial lastSurfaceMaterial;
@@ -104,13 +98,13 @@ namespace FootstepSystem
         {
             if (!characterController) return;
 
-            // Only use distance-based system for players
+            //Only use distance-based system for players
             if (footstepMode == FootstepMode.Player)
             {
                 UpdatePlayerFootsteps();
             }
 
-            // Both player and enemy need jump/land detection
+            //Both player and enemy need jump/land detection
             CheckJumpAndLanding();
         }
 
@@ -228,25 +222,27 @@ namespace FootstepSystem
 
         private void PlayFootstepOnDistance(RaycastHit hitInfo)
         {
-            bool isRunning = firstPersonController && firstPersonController.isSprinting;
+            bool isRunning = firstPersonController.isSprinting;
+            bool isWalking = firstPersonController.isWalking;
             PlayFootstep(hitInfo, isRunning);
+
+            lastStepPosition = transform.position;
 
             if (isRunning)
             {
-                AlertEnemyToSound();
+                AlertEnemyToSound(SoundStrength.Normal);
             }
-
-            lastStepPosition = transform.position;
+            else if (isWalking)
+            {
+                AlertEnemyToSound(SoundStrength.Quiet);
+            }
         }
 
-        private void AlertEnemyToSound()
+        private void AlertEnemyToSound(SoundStrength soundStrength)
         {
             if (enemySoundPerception != null)
             {
-                enemySoundPerception.CalculateSoundDistance(
-                    transform.position,
-                    SoundStrength.Normal
-                );
+                enemySoundPerception.CalculateSoundDistance(transform.position,soundStrength);
             }
         }
 
@@ -261,11 +257,6 @@ namespace FootstepSystem
         {
             if (footstepMode != FootstepMode.Enemy) return;
 
-            if (debugConsole)
-            {
-                Debug.Log("Walk footstep animation event triggered");
-            }
-
             PlayFootstepAtCurrentPosition(false);
         }
 
@@ -275,11 +266,6 @@ namespace FootstepSystem
         public void OnFootstepRun()
         {
             if (footstepMode != FootstepMode.Enemy) return;
-
-            if (debugConsole)
-            {
-                Debug.Log("Run footstep animation event triggered");
-            }
 
             PlayFootstepAtCurrentPosition(true);
         }
@@ -292,11 +278,6 @@ namespace FootstepSystem
             if (footstepMode != FootstepMode.Enemy) return;
 
             bool isRunning = IsEnemyRunning();
-
-            if (debugConsole)
-            {
-                Debug.Log($"Footstep animation event triggered (Running: {isRunning})");
-            }
 
             PlayFootstepAtCurrentPosition(isRunning);
         }
@@ -314,7 +295,6 @@ namespace FootstepSystem
             if (stateMachine == null || stateMachine.currentState == null)
                 return false;
 
-            // Adjust this logic based on your state machine implementation
             return stateMachine.currentState.ToString().Contains("Chase");
         }
 
@@ -347,7 +327,7 @@ namespace FootstepSystem
         {
             if (!IsGrounded(out RaycastHit hitInfo, out bool grounded)) return;
 
-            // Jumped
+            //Jumped
             if (wasGrounded && !grounded)
             {
                 if (FindSurface(lastGroundHit, out SurfaceAudio surface))
@@ -355,7 +335,7 @@ namespace FootstepSystem
                     PlayRandomSound(surface.FootstepSounds.JumpClips, masterVolume);
                 }
             }
-            // Landed
+            //Landed
             else if (!wasGrounded && grounded)
             {
                 if (FindSurface(hitInfo, out SurfaceAudio surface))
@@ -433,19 +413,10 @@ namespace FootstepSystem
             audioSource.clip = clip;
             audioSource.volume = volume;
             audioSource.spatialBlend = spatialBlend;
+            audioSource.playOnAwake = false;
             audioSource.Play();
 
-            StartCoroutine(DestroyWhenFinished(audioObject, clip.length));
-        }
-
-        private IEnumerator DestroyWhenFinished(GameObject audioObject, float clipLength)
-        {
-            yield return new WaitForSeconds(clipLength + 0.5f);
-
-            if (audioObject != null)
-            {
-                Destroy(audioObject);
-            }
+            Destroy(audioObject, clip.length + 0.2f);
         }
 
         #endregion

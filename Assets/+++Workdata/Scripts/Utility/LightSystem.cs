@@ -24,6 +24,12 @@ public class LightSystem : MonoBehaviour
 
     private IEnumerator TurnOnLights(Light light)
     {
+
+        foreach (Light L in lightsConnectedToSubSystem)
+        {
+            L.gameObject.SetActive(true);
+        }
+
         light.DOIntensity(20, 3f);
 
         yield return new WaitForSeconds(3f);
