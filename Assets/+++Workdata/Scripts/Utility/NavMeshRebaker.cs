@@ -17,6 +17,7 @@ public class NavMeshRebaker : MonoBehaviour
     private Dictionary<Door, bool> doorStates = new Dictionary<Door, bool>();
     private Coroutine rebakeCoroutine;
     private bool rebakePending = false;
+    private bool isCurrentlyBaking = false;
 
     void Start()
     {
@@ -67,7 +68,6 @@ public class NavMeshRebaker : MonoBehaviour
             if (door == null) continue;
 
             bool currentState = IsDoorOpen(door);
-
             if (doorStates.ContainsKey(door) && doorStates[door] != currentState)
             {
                 doorStates[door] = currentState;
@@ -75,7 +75,7 @@ public class NavMeshRebaker : MonoBehaviour
             }
         }
 
-        if (stateChanged && !rebakePending)
+        if (stateChanged && !rebakePending && !isCurrentlyBaking)
         {
             TriggerRebake();
         }
@@ -93,7 +93,6 @@ public class NavMeshRebaker : MonoBehaviour
         {
             StopCoroutine(rebakeCoroutine);
         }
-
         rebakeCoroutine = StartCoroutine(RebakeAfterDelay());
     }
 
@@ -101,8 +100,26 @@ public class NavMeshRebaker : MonoBehaviour
     {
         rebakePending = true;
         yield return new WaitForSeconds(rebakeDelay);
-        RebakeNavMesh();
+
+        yield return StartCoroutine(RebakeNavMeshAsync());
+
         rebakePending = false;
+    }
+
+    private IEnumerator RebakeNavMeshAsync()
+    {
+        if (navMeshSurface == null || isCurrentlyBaking) yield break;
+
+        isCurrentlyBaking = true;
+
+        AsyncOperation asyncOp = navMeshSurface.UpdateNavMesh(navMeshSurface.navMeshData);
+
+        while (!asyncOp.isDone)
+        {
+            yield return null;
+        }
+
+        isCurrentlyBaking = false;
     }
 
     private void RebakeNavMesh()
@@ -118,8 +135,7 @@ public class NavMeshRebaker : MonoBehaviour
             StopCoroutine(rebakeCoroutine);
             rebakePending = false;
         }
-
-        RebakeNavMesh();
+        StartCoroutine(RebakeNavMeshAsync());
     }
 
     public void AddDoor(Door door)
