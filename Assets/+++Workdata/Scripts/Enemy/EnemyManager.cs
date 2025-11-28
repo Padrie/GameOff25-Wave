@@ -58,11 +58,7 @@ public class EnemyManager : MonoBehaviour
 
         if (audioSource == null)
         {
-            audioSource = GetComponent<AudioSource>();
-            if (audioSource == null)
-            {
-                audioSource = gameObject.AddComponent<AudioSource>();
-            }
+            audioSource = GetComponentInChildren<AudioSource>();
         }
 
         stateMachine = new StateMachine();
@@ -82,6 +78,8 @@ public class EnemyManager : MonoBehaviour
         stateMachine.AddTransition(screamState, playerChaseState, ScreamFinished());
         stateMachine.AddTransition(idleState, playerChaseState, HasPlayerTarget());
         stateMachine.AddTransition(roamState, playerChaseState, HasPlayerTarget());
+        stateMachine.AddTransition(lastKnownPositionState, playerChaseState, HasPlayerTarget());
+        stateMachine.AddTransition(soundChaseState, playerChaseState, HasPlayerTarget());
         stateMachine.AddTransition(playerChaseState, attackState, IsCloseToPlayer());
         stateMachine.AddTransition(playerChaseState, idleState, HasPlayerNoTarget());
         stateMachine.AddTransition(attackState, idleState, AttackFinished());
