@@ -15,6 +15,9 @@ public class Manager : MonoBehaviour
     bool isOptionsMenuActive = false;
 
 
+    private LightSaver lightSaver;
+
+
     [Space(10)]
     public UnityEvent CallCutsceneBegins;
     public static event Action CutsceneBegins;
@@ -22,6 +25,12 @@ public class Manager : MonoBehaviour
     [Space(10)]
     public UnityEvent CallAfterCarCutscene;
     public static event Action AferCarCutscene;
+
+
+    private void Awake()
+    {
+        lightSaver = FindFirstObjectByType<LightSaver>();
+    }
 
     void Start()
     {
@@ -118,7 +127,7 @@ public class Manager : MonoBehaviour
 
     public void PlayerDeath()
     {
-        //DEATHSCREEN LOGIC HERE
+        lightSaver.SaveAllLightCollections();
         ReloadScene();
     }
 }

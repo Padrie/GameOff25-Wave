@@ -24,10 +24,11 @@ public class LightSystem : MonoBehaviour
 
     private IEnumerator TurnOnLights(Light light)
     {
+        GameObject collectionGameObject = light.gameObject.transform.parent.gameObject;
 
-        foreach (Light L in lightsConnectedToSubSystem)
+        if (!collectionGameObject.activeSelf)
         {
-            L.gameObject.SetActive(true);
+            collectionGameObject.SetActive(true);
         }
 
         light.DOIntensity(20, 3f);
