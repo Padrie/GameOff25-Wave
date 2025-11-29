@@ -5,42 +5,51 @@ using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.UI;
 using UnityEngine.Rendering;
-using UnityEngine.Rendering.Universal;
 
 public class Options : MonoBehaviour
 {
+    [Header("Audio")]
     public AudioMixer mixer;
     public Slider audioSlider;
+
+    [Header("Display")]
     public Toggle fullscreenToggle;
     public TMP_Dropdown resolutionDropdown;
-    [Space(10)]
+
+    [Header("Graphics")]
     public Toggle dofToggle;
     public Toggle volumetricFogToggle;
-    [Space(10)]
+    public Toggle vsyncToggle;
     public VolumeProfile volumeProfile;
-    [Space(10)]
+
+    [Header("Graphics Defaults")]
+    public bool fullscreenDefault = true;
+    public bool dofDefault = true;
+    public bool volumetricFogDefault = false;
+    public bool vsyncDefault = true;
+
+    [Header("Tabs")]
     public GameObject graphicsTab;
     public GameObject audioTab;
     public GameObject controlsTab;
-
     public TMP_Text graphicsTabText;
     public TMP_Text audioTabText;
     public TMP_Text controlsTabText;
 
+    [Header("Tab Colors")]
     public Color normalTabColor;
     public Color hoverTabColor;
     public Color selectedTabColor;
 
-    int normalFontSize = 48;
-    int selectedFontSize = 64;
+    private const int NormalFontSize = 48;
+    private const int SelectedFontSize = 64;
 
-    private enum TabState { Graphics, Audio, Controls }
-    private TabState currentTab = TabState.Graphics;
+    private const string FULLSCREEN_KEY = "Display_Fullscreen";
+    private const string DOF_KEY = "Graphics_DOF";
+    private const string VOLUMETRIC_FOG_KEY = "Graphics_VolumetricFog";
+    private const string VSYNC_KEY = "Graphics_VSync";
 
-    private const string DOF_SETTING_KEY = "Graphics_DOF_Enabled";
-    private const string VOLUMETRIC_FOG_SETTING_KEY = "Graphics_VolumetricFog_Enabled";
-
-    private static readonly Dictionary<string, (int width, int height)> Resolutions = new Dictionary<string, (int, int)>
+    private static readonly Dictionary<string, (int width, int height)> Resolutions = new()
     {
         { "2160p", (3840, 2160) },
         { "1440p", (2560, 1440) },
@@ -48,23 +57,44 @@ public class Options : MonoBehaviour
         { "720p", (1280, 720) }
     };
 
+    private enum TabState { Graphics, Audio, Controls }
+    private TabState currentTab = TabState.Graphics;
+
+
+    private void Awake()
+    {
+        LoadAndApplySettings();
+    }
+
     private void Start()
     {
-        audioSlider.onValueChanged.AddListener(delegate { OnSliderValueChanged(); });
-        fullscreenToggle.onValueChanged.AddListener(delegate { OnFullscreenToggleChanged(); });
-        resolutionDropdown.onValueChanged.AddListener(OnResolutionChanged);
-        dofToggle.onValueChanged.AddListener(delegate { OnDOFToggleChanged(); });
-        volumetricFogToggle.onValueChanged.AddListener(delegate { OnVolumetricFogToggleChanged(); });
-
-        SelectTab(TabState.Graphics);
         SetupResolutionOptions();
-        LoadAndApplySettings();
+        RegisterListeners();
+        SelectTab(TabState.Graphics);
+    }
+
+
+    private void RegisterListeners()
+    {
+        audioSlider.onValueChanged.AddListener(_ => OnSliderValueChanged());
+        fullscreenToggle.onValueChanged.AddListener(_ => OnFullscreenToggleChanged());
+        resolutionDropdown.onValueChanged.AddListener(OnResolutionChanged);
+        dofToggle.onValueChanged.AddListener(_ => OnDOFToggleChanged());
+        volumetricFogToggle.onValueChanged.AddListener(_ => OnVolumetricFogToggleChanged());
+        vsyncToggle.onValueChanged.AddListener(_ => OnVSyncToggleChanged());
     }
 
     private void LoadAndApplySettings()
     {
-        dofToggle.isOn = PlayerPrefs.GetInt(DOF_SETTING_KEY, 1) == 1;
-        volumetricFogToggle.isOn = PlayerPrefs.GetInt(VOLUMETRIC_FOG_SETTING_KEY, 1) == 1;
+        fullscreenToggle.SetIsOnWithoutNotify(PlayerPrefs.GetInt(FULLSCREEN_KEY, fullscreenDefault ? 1 : 0) == 1);
+        dofToggle.SetIsOnWithoutNotify(PlayerPrefs.GetInt(DOF_KEY, dofDefault ? 1 : 0) == 1);
+        volumetricFogToggle.SetIsOnWithoutNotify(PlayerPrefs.GetInt(VOLUMETRIC_FOG_KEY, volumetricFogDefault ? 1 : 0) == 1);
+        vsyncToggle.SetIsOnWithoutNotify(PlayerPrefs.GetInt(VSYNC_KEY, vsyncDefault ? 1 : 0) == 1);
+
+        Screen.fullScreen = fullscreenToggle.isOn;
+        ToggleVolumeComponent("Beautify", "depthOfField", dofToggle.isOn);
+        ToggleVolumeComponent("VolumetricFog", "enabled", volumetricFogToggle.isOn);
+        ApplyVSync(vsyncToggle.isOn);
     }
 
     #region Audio & Resolution
@@ -76,6 +106,8 @@ public class Options : MonoBehaviour
 
     public void OnFullscreenToggleChanged()
     {
+        PlayerPrefs.SetInt(FULLSCREEN_KEY, fullscreenToggle.isOn ? 1 : 0);
+        PlayerPrefs.Save();
         Screen.fullScreen = fullscreenToggle.isOn;
     }
 
@@ -97,7 +129,7 @@ public class Options : MonoBehaviour
 
         resolutionDropdown.ClearOptions();
 
-        List<string> options = new List<string>();
+        List<string> options = new();
         foreach (var res in Resolutions)
         {
             if (width >= res.Value.width && height >= res.Value.height)
@@ -127,22 +159,36 @@ public class Options : MonoBehaviour
 
     #region Graphics Settings
 
-    public void OnDOFToggleChanged() => ToggleSetting(DOF_SETTING_KEY, dofToggle.isOn, "Beautify", "depthOfField");
-
-    public void OnVolumetricFogToggleChanged() => ToggleSetting(VOLUMETRIC_FOG_SETTING_KEY, volumetricFogToggle.isOn, "VolumetricFog", "enabled");
-
-    private void ToggleSetting(string settingKey, bool enabled, string componentName, string fieldName)
+    public void OnDOFToggleChanged()
     {
-        if (volumeProfile == null) return;
-
-        PlayerPrefs.SetInt(settingKey, enabled ? 1 : 0);
+        PlayerPrefs.SetInt(DOF_KEY, dofToggle.isOn ? 1 : 0);
         PlayerPrefs.Save();
+        ToggleVolumeComponent("Beautify", "depthOfField", dofToggle.isOn);
+    }
 
-        ToggleVolumeComponent(componentName, fieldName, enabled);
+    public void OnVolumetricFogToggleChanged()
+    {
+        PlayerPrefs.SetInt(VOLUMETRIC_FOG_KEY, volumetricFogToggle.isOn ? 1 : 0);
+        PlayerPrefs.Save();
+        ToggleVolumeComponent("VolumetricFog", "enabled", volumetricFogToggle.isOn);
+    }
+
+    public void OnVSyncToggleChanged()
+    {
+        PlayerPrefs.SetInt(VSYNC_KEY, vsyncToggle.isOn ? 1 : 0);
+        PlayerPrefs.Save();
+        ApplyVSync(vsyncToggle.isOn);
+    }
+
+    private void ApplyVSync(bool enabled)
+    {
+        QualitySettings.vSyncCount = enabled ? 1 : 0;
     }
 
     private void ToggleVolumeComponent(string componentName, string fieldName, bool enabled)
     {
+        if (volumeProfile == null) return;
+
         try
         {
             VolumeComponent foundComponent = null;
@@ -234,13 +280,13 @@ public class Options : MonoBehaviour
     private void ResetTab(TMP_Text tabText)
     {
         if (IsTabSelected(tabText)) return;
-        tabText.fontSize = normalFontSize;
+        tabText.fontSize = NormalFontSize;
         tabText.color = normalTabColor;
     }
 
     private void HighlightTab(TMP_Text tabText)
     {
-        tabText.fontSize = selectedFontSize;
+        tabText.fontSize = SelectedFontSize;
         tabText.color = selectedTabColor;
     }
 

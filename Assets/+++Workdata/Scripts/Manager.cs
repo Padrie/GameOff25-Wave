@@ -1,4 +1,5 @@
 using System;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
@@ -32,12 +33,15 @@ public class Manager : MonoBehaviour
         lightSaver = FindFirstObjectByType<LightSaver>();
     }
 
+
     void Start()
     {
+#if Unity_Editor
         // Cap fps to monitor refresh rate
         Application.targetFrameRate = (int)Screen.currentResolution.refreshRateRatio.value;
+#endif
 
-        if (doCutscene)
+        if (doCutscene || !Application.isEditor)
         {
             CallCutsceneBegins?.Invoke();
             CutsceneBegins?.Invoke();
@@ -48,6 +52,7 @@ public class Manager : MonoBehaviour
             AferCarCutscene?.Invoke();
         }
     }
+
 
     private void Update()
     {
