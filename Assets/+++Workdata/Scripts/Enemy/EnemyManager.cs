@@ -126,6 +126,7 @@ public class EnemyManager : MonoBehaviour
             previousState = stateMachine.currentState;
         }
     }
+
     private void HandleStateExit(IState exitingState)
     {
         if (exitingState == null) return;

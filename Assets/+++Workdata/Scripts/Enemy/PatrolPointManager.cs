@@ -42,9 +42,7 @@ public class PatrolPointManager : MonoBehaviour
     {
         instance = this;
 
-        GameObject[] a = GameObject.FindGameObjectsWithTag("PatrolPoint");
-        for (int i = 0; i < a.Length; i++)
-            patrolPoints.Add(a[i].GetComponent<PatrolPoint>());
+        RefreshPatrolPoints();
 
         enemyManager = GetComponent<EnemyManager>();
         player = GameObject.FindGameObjectWithTag("Player").GetComponent<FirstPersonController>();
@@ -82,6 +80,13 @@ public class PatrolPointManager : MonoBehaviour
         ResetPatrolPoints();
         //StartCoroutine(CalculatePath());
         CalculatePath();
+    }
+
+    public void RefreshPatrolPoints()
+    {
+        GameObject[] a = GameObject.FindGameObjectsWithTag("PatrolPoint");
+        for (int i = 0; i < a.Length; i++)
+            patrolPoints.Add(a[i].GetComponent<PatrolPoint>());
     }
 
     public void SelectRandomPatrolPoint()
