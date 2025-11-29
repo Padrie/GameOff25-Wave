@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using EasyPeasyFirstPersonController;
+using UnityEngine.Events;
 
 public class Door : MonoBehaviour, IInteractableWithHit
 {
@@ -29,7 +30,10 @@ public class Door : MonoBehaviour, IInteractableWithHit
     public string playerTag = "Player";
     public float kickSpeedMultiplier = 2.5f;
 
-    private bool isOpen;
+    [Header("Events")]
+    public UnityEvent refreshBuildingPatrolPoints;
+
+    public bool isOpen;
     private bool isMoving;
     private Quaternion targetRotation;
     private float currentSpeed;
@@ -65,6 +69,7 @@ public class Door : MonoBehaviour, IInteractableWithHit
     {
         if (isMoving) return;
         Toggle();
+        refreshBuildingPatrolPoints?.Invoke();
     }
 
     public void OnHoverEnter() { }
@@ -104,6 +109,7 @@ public class Door : MonoBehaviour, IInteractableWithHit
         SetRotationTarget();
         PlaySound(kickSound, true);
         currentSpeed = openSpeed * kickSpeedMultiplier;
+        refreshBuildingPatrolPoints?.Invoke();
 
         if (pairedDoors.Count > 0)
             KickPairedDoors(direction);
@@ -226,6 +232,7 @@ public class DoorTrigger : MonoBehaviour
         this.direction = direction;
         this.playerTag = playerTag;
     }
+
     private void OnTriggerStay(Collider other)
     {
         if (!door || !other.CompareTag(playerTag) || !playerController) return;

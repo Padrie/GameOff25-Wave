@@ -87,6 +87,8 @@ public class PatrolPointManager : MonoBehaviour
         GameObject[] a = GameObject.FindGameObjectsWithTag("PatrolPoint");
         for (int i = 0; i < a.Length; i++)
             patrolPoints.Add(a[i].GetComponent<PatrolPoint>());
+
+        Debug.Log("Patrol Points refreshed. Total points: " + patrolPoints.Count);
     }
 
     public void SelectRandomPatrolPoint()
