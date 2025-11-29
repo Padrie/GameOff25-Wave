@@ -39,7 +39,7 @@ public class SubSystemEventManager : MonoBehaviour
         SubSystem.OnRepaired -= AddToRepaired;
     }
 
-    public void AddToRepaired()
+    public void AddToRepaired(RepairItemCategory repair)
     {
         amountOfSystemsRepaired++;
     }

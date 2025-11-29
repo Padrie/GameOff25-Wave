@@ -5,8 +5,9 @@ namespace EasyPeasyFirstPersonController
 
     public partial class FirstPersonController : MonoBehaviour
     {
-        public RepairItem itemSlot;
+        public GameObject itemSlot;
         public Transform itemHolder;
+        public CheckList checkListObject;
         public bool preventSprintWhenHoldingItem = true;
         public SoundStrength soundStrength = SoundStrength.Faint;
         public KeyCode keyCode = KeyCode.O;
@@ -67,6 +68,8 @@ namespace EasyPeasyFirstPersonController
         private Vector3 recoil = Vector3.zero;
         private bool isLook = true, isMove = true, hasCeiling = false;
         private bool isPauseMenuActive = false;
+        private bool isHoldingItem = false;
+        [HideInInspector] public bool isHoldingCheckList = false;
         private float currentCameraHeight;
         private float currentBobOffset;
         private float currentFov;
@@ -114,13 +117,29 @@ namespace EasyPeasyFirstPersonController
 
         private void Update()
         {
-            if (!UIManager.Instance.IsUIActive(uiid.PauseScene) && !UIManager.Instance.IsUIActive(uiid.OptionsScene))
-                isPauseMenuActive = false;
-
-            if (Input.GetKeyDown(KeyCode.Escape) && !isPauseMenuActive)
+            if (UIManager.Instance != null)
             {
-                isPauseMenuActive = true;
-                UIManager.Instance.ShowUI(uiid.PauseScene);
+                if (!UIManager.Instance.IsUIActive(uiid.PauseScene) && !UIManager.Instance.IsUIActive(uiid.OptionsScene))
+                    isPauseMenuActive = false;
+
+                if (Input.GetKeyDown(KeyCode.Escape) && !isPauseMenuActive)
+                {
+                    isPauseMenuActive = true;
+                    UIManager.Instance.ShowUI(uiid.PauseScene);
+                }
+            }
+
+            if (Input.GetKeyDown(KeyCode.Tab))
+            {
+                if (isHoldingItem)
+                {
+                    if (isHoldingCheckList)
+                        DeactivateCheckList();
+                    else
+                        ActivateCheckList();
+                }
+                else
+                    ActivateCheckList();
             }
 
             isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask, groundCheckQueryTriggerInteraction);
@@ -133,6 +152,11 @@ namespace EasyPeasyFirstPersonController
             {
                 coyoteTimer -= Time.deltaTime;
             }
+
+            if (itemSlot != null)
+                isHoldingItem = true;
+            else
+                isHoldingItem = false;
 
             if (isLook)
             {
@@ -334,6 +358,34 @@ namespace EasyPeasyFirstPersonController
                 return false;
             else
                 return true;
+        }
+
+        public void ActivateCheckList()
+        {
+            isHoldingCheckList = true;
+            if (itemSlot == null)
+            {
+                itemSlot = checkListObject.GetCheckListObject();
+                itemSlot.SetActive(true);
+            }
+            else
+            {
+                if (itemSlot.TryGetComponent<RepairItem>(out RepairItem repairItem))
+                    repairItem.DropItem();
+
+                itemSlot = checkListObject.GetCheckListObject();
+                itemSlot.SetActive(true);
+            }
+        }
+
+        public void DeactivateCheckList()
+        {
+            isHoldingCheckList = false;
+            if (itemSlot.GetComponent<CheckList>())
+            {
+                itemSlot.SetActive(false);
+                itemSlot = null;
+            }
         }
     }
 }

@@ -7,7 +7,7 @@ public class RepairItemSpawner : MonoBehaviour
 {
     public List<RepairItemSpawnLocation> repairItemSpawnLocations;
 
-    private void Awake()
+    private void Start()
     {
         foreach (RepairItemSpawnLocation location in repairItemSpawnLocations)
         {

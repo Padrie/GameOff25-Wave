@@ -161,10 +161,19 @@ public class RepairItem : MonoBehaviour, IInteractable
     public void PickupItem()
     {
         var player = _firstPersonController;
+
         if (player.itemSlot != null)
-            player.itemSlot.DropItem();
+        {
+            if (player.isHoldingCheckList)
+            {
+                player.DeactivateCheckList();
+            }
+            else
+                player.itemSlot.GetComponent<RepairItem>().DropItem();
+        }
+
         holdsItem = true;
-        player.itemSlot = this;
+        player.itemSlot = gameObject;
         transform.SetParent(player.itemHolder);
         transform.localPosition = Vector3.zero;
         transform.localRotation = Quaternion.identity;

@@ -13,7 +13,7 @@ public class SubSystem : MonoBehaviour, IInteractable
 
     [Space(10)]
     public UnityEvent CallWhenRepaired;
-    public static event Action OnRepaired;
+    public static event Action<RepairItemCategory> OnRepaired;
 
     private void Awake()
     {
@@ -22,10 +22,10 @@ public class SubSystem : MonoBehaviour, IInteractable
 
     public void CorrectRepairItem()
     {
-        _firstPersonController.itemSlot.Reparent(repairItemSlot);
+        _firstPersonController.itemSlot.GetComponent<RepairItem>().Reparent(repairItemSlot);
         GetComponent<Collider>().enabled = false;
         CallWhenRepaired?.Invoke();
-        OnRepaired?.Invoke();
+        OnRepaired?.Invoke(repairItem);
 
         print("Inserted correct repair item");
     }
@@ -35,7 +35,7 @@ public class SubSystem : MonoBehaviour, IInteractable
         // Skip if player holds no item
         if (_firstPersonController.itemSlot == null) return;
 
-        if (_firstPersonController.itemSlot.repairItem == repairItem)
+        if (_firstPersonController.itemSlot.GetComponent<RepairItem>().repairItem == repairItem)
         {
             CorrectRepairItem();
         }
