@@ -6,95 +6,47 @@ using UnityEditor;
 #endif
 
 [System.Serializable]
-public class WireConnection
+public class UtilityPoleGroup
 {
-    [Header("Connection Points")]
-    [Tooltip("The starting pole for this wire connection")]
-    public Transform sourcePole;
-
-    [Tooltip("The poles to connect to from the source")]
-    public Transform[] targetPoles;
-
-    [Header("Line Configuration")]
-    [Tooltip("Number of lines per target pole")]
-    [Range(1, 10)]
-    public int lineCountPerPole = 1;
-
-    [Tooltip("Offset variance between multiple lines per pole")]
-    [Range(0f, 1f)]
-    public float lineOffsetVariance = 0.2f;
-
-    [Header("Wire Sag")]
-    [Tooltip("Use sag for this connection")]
-    public bool useSag = true;
-
-    [Tooltip("Amount of sag in the wires")]
-    public float sagAmount = 0.3f;
-
-    [Tooltip("Number of segments for sag calculation")]
-    [Range(5, 50)]
-    public int sagSegments = 20;
-
-    [Header("Visual")]
-    [Tooltip("Height offset from pole base")]
-    public float heightOffset = 0f;
-
-    // Runtime data (not serialized)
-    [System.NonSerialized]
-    public GameObject wireContainer;
-    [System.NonSerialized]
-    public List<LineRenderer> lineRenderers = new List<LineRenderer>();
-    [System.NonSerialized]
-    public List<Vector3[]> originalPositions = new List<Vector3[]>();
-    [System.NonSerialized]
-    public List<float> randomOffsets = new List<float>();
-
-    public bool IsValid()
-    {
-        return sourcePole != null && targetPoles != null && targetPoles.Length > 0;
-    }
-
-    public int GetValidPoleCount()
-    {
-        if (targetPoles == null) return 0;
-        int count = 0;
-        foreach (Transform pole in targetPoles)
-        {
-            if (pole != null) count++;
-        }
-        return count;
-    }
+    public string groupName = "Group";
+    public UtilityPoleConnector[] poles;
 }
 
 [ExecuteAlways]
 public class WireController : MonoBehaviour
 {
-    [Header("Wire Connections")]
-    [Tooltip("Array of wire connections to manage")]
-    public WireConnection[] wireConnections;
+    [Header("Utility Pole Groups")]
+    public UtilityPoleGroup[] poleGroups;
 
-    [Header("Global Wire Appearance")]
+    [Header("Wire Appearance")]
     public Material wireMaterial;
     public float wireWidth = 0.05f;
 
-    [Header("Wind Animation (Runtime Only)")]
-    [Tooltip("Enable wind sway effect")]
-    public bool enableWind = true;
+    [Header("Line Configuration")]
+    [Range(1, 10)]
+    public int linesPerConnector = 1;
+    [Range(0f, 1f)]
+    public float lineOffsetVariance = 0.2f;
 
-    [Tooltip("Wind strength")]
+    [Header("Wire Sag")]
+    public bool useSag = true;
+    public float sagAmount = 0.3f;
+    [Range(5, 50)]
+    public int sagSegments = 20;
+
+    [Header("Wind Animation (Runtime Only)")]
+    public bool enableWind = true;
     [Range(0f, 1f)]
     public float windStrength = 0.15f;
-
-    [Tooltip("Wind speed")]
     [Range(0f, 5f)]
     public float windSpeed = 1f;
-
-    [Tooltip("Wind direction (XZ plane)")]
     public Vector2 windDirection = new Vector2(1f, 0.5f);
 
     private GameObject mainContainer;
+    private List<LineRenderer> allLineRenderers = new List<LineRenderer>();
+    private List<Vector3[]> allOriginalPositions = new List<Vector3[]>();
+    private List<float> allRandomOffsets = new List<float>();
     private bool wiresCreated = false;
-    private bool isPlayMode = false;
 
     private void OnEnable()
     {
@@ -121,7 +73,6 @@ public class WireController : MonoBehaviour
     {
         if (Application.isPlaying)
         {
-            isPlayMode = true;
             CreateAllWires();
         }
     }
@@ -135,18 +86,13 @@ public class WireController : MonoBehaviour
         }
         else if (state == PlayModeStateChange.EnteredEditMode)
         {
-            isPlayMode = false;
             CreateAllWires();
-        }
-        else if (state == PlayModeStateChange.EnteredPlayMode)
-        {
-            isPlayMode = true;
         }
     }
 
     private void EditorUpdate()
     {
-        if (!Application.isPlaying && HasChanged())
+        if (!Application.isPlaying && !wiresCreated)
         {
             CreateAllWires();
         }
@@ -156,7 +102,7 @@ public class WireController : MonoBehaviour
     {
         if (!Application.isPlaying)
         {
-            UnityEditor.EditorApplication.delayCall += () =>
+            EditorApplication.delayCall += () =>
             {
                 if (this != null)
                 {
@@ -164,13 +110,6 @@ public class WireController : MonoBehaviour
                 }
             };
         }
-    }
-
-    private bool HasChanged()
-    {
-        if (wireConnections == null || wireConnections.Length == 0) return false;
-        if (!wiresCreated) return true;
-        return false;
     }
 #endif
 
@@ -185,10 +124,8 @@ public class WireController : MonoBehaviour
     [ContextMenu("Create All Wires")]
     public void CreateAllWires()
     {
-        if (wireConnections == null || wireConnections.Length == 0)
-        {
+        if (poleGroups == null || poleGroups.Length == 0)
             return;
-        }
 
         if (wireMaterial == null)
         {
@@ -196,10 +133,8 @@ public class WireController : MonoBehaviour
             return;
         }
 
-        // Clear existing wires
         ClearAllWires();
 
-        // Create main container
         mainContainer = new GameObject($"WireController_{gameObject.name}");
         mainContainer.transform.SetParent(transform);
         mainContainer.transform.localPosition = Vector3.zero;
@@ -211,10 +146,44 @@ public class WireController : MonoBehaviour
         }
 #endif
 
-        // Create wires for each connection
-        for (int i = 0; i < wireConnections.Length; i++)
+        allLineRenderers.Clear();
+        allOriginalPositions.Clear();
+        allRandomOffsets.Clear();
+
+        for (int groupIndex = 0; groupIndex < poleGroups.Length; groupIndex++)
         {
-            CreateConnectionWires(wireConnections[i], i);
+            UtilityPoleGroup group = poleGroups[groupIndex];
+            if (group.poles == null || group.poles.Length < 2)
+                continue;
+
+            GameObject groupContainer = new GameObject($"Group_{groupIndex}_{group.groupName}");
+            groupContainer.transform.SetParent(mainContainer.transform);
+
+            for (int poleIndex = 0; poleIndex < group.poles.Length - 1; poleIndex++)
+            {
+                UtilityPoleConnector currentPole = group.poles[poleIndex];
+                UtilityPoleConnector nextPole = group.poles[poleIndex + 1];
+
+                if (currentPole == null || nextPole == null)
+                    continue;
+
+                currentPole.FindConnectors();
+                nextPole.FindConnectors();
+
+                for (int connectorIndex = 0; connectorIndex < 2; connectorIndex++)
+                {
+                    Transform sourceConnector = currentPole.GetConnector(connectorIndex);
+                    Transform targetConnector = nextPole.GetConnector(connectorIndex);
+
+                    if (sourceConnector == null || targetConnector == null)
+                        continue;
+
+                    for (int lineNum = 0; lineNum < linesPerConnector; lineNum++)
+                    {
+                        CreateSingleWire(groupContainer.transform, sourceConnector, targetConnector, groupIndex, poleIndex, connectorIndex, lineNum);
+                    }
+                }
+            }
         }
 
         wiresCreated = true;
@@ -227,84 +196,30 @@ public class WireController : MonoBehaviour
         {
 #if UNITY_EDITOR
             if (Application.isPlaying)
-            {
                 Destroy(mainContainer);
-            }
             else
-            {
                 DestroyImmediate(mainContainer);
-            }
 #else
             Destroy(mainContainer);
 #endif
         }
 
         mainContainer = null;
-
-        // Clear runtime data from all connections
-        if (wireConnections != null)
-        {
-            foreach (WireConnection connection in wireConnections)
-            {
-                connection.wireContainer = null;
-                connection.lineRenderers.Clear();
-                connection.originalPositions.Clear();
-                connection.randomOffsets.Clear();
-            }
-        }
-
+        allLineRenderers.Clear();
+        allOriginalPositions.Clear();
+        allRandomOffsets.Clear();
         wiresCreated = false;
     }
 
-    private void CreateConnectionWires(WireConnection connection, int connectionIndex)
+    private void CreateSingleWire(Transform parent, Transform source, Transform target, int groupIndex, int poleIndex, int connectorIndex, int lineNumber)
     {
-        if (!connection.IsValid())
-        {
-            return;
-        }
-
-        int validPoleCount = connection.GetValidPoleCount();
-        if (validPoleCount == 0)
-        {
-            return;
-        }
-
-        // Create container for this connection
-        connection.wireContainer = new GameObject($"Connection_{connectionIndex}_{connection.sourcePole.name}");
-        connection.wireContainer.transform.SetParent(mainContainer.transform);
-        connection.wireContainer.transform.localPosition = Vector3.zero;
-
-        // Clear previous runtime data
-        connection.lineRenderers.Clear();
-        connection.originalPositions.Clear();
-        connection.randomOffsets.Clear();
-
-        // Create wires for each valid target pole
-        int wireIndex = 0;
-        for (int i = 0; i < connection.targetPoles.Length; i++)
-        {
-            if (connection.targetPoles[i] != null)
-            {
-                // Create multiple lines for this pole
-                for (int lineNum = 0; lineNum < connection.lineCountPerPole; lineNum++)
-                {
-                    CreateSingleWire(connection, connection.targetPoles[i], wireIndex, lineNum, connection.lineCountPerPole);
-                    connection.randomOffsets.Add(Random.Range(0f, 100f));
-                    wireIndex++;
-                }
-            }
-        }
-    }
-
-    private void CreateSingleWire(WireConnection connection, Transform targetPole, int wireIndex, int lineNumber, int totalLinesForPole)
-    {
-        GameObject wireObj = new GameObject($"Wire_{wireIndex}_to_{targetPole.name}_line{lineNumber + 1}");
-        wireObj.transform.SetParent(connection.wireContainer.transform);
+        string connectorName = connectorIndex == 0 ? "A" : "B";
+        GameObject wireObj = new GameObject($"Wire_Pole{poleIndex}_Connector{connectorName}_Line{lineNumber}");
+        wireObj.transform.SetParent(parent);
 
         LineRenderer lr = wireObj.AddComponent<LineRenderer>();
-        connection.lineRenderers.Add(lr);
+        allLineRenderers.Add(lr);
 
-        // Setup line renderer
         lr.material = wireMaterial;
         lr.startWidth = wireWidth;
         lr.endWidth = wireWidth;
@@ -312,46 +227,41 @@ public class WireController : MonoBehaviour
         lr.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
         lr.receiveShadows = false;
 
-        // Calculate offsets for messy appearance
-        Vector3 startOffset = GetLineOffset(lineNumber, totalLinesForPole, connection.lineOffsetVariance);
-        Vector3 endOffset = GetLineOffset(lineNumber, totalLinesForPole, connection.lineOffsetVariance);
+        Vector3 startOffset = GetLineOffset(lineNumber, linesPerConnector, lineOffsetVariance);
+        Vector3 endOffset = GetLineOffset(lineNumber, linesPerConnector, lineOffsetVariance);
 
-        Vector3 startPos = connection.sourcePole.position + Vector3.up * connection.heightOffset + startOffset;
-        Vector3 endPos = targetPole.position + Vector3.up * connection.heightOffset + endOffset;
+        Vector3 startPos = source.position + startOffset;
+        Vector3 endPos = target.position + endOffset;
 
-        // Create the wire with or without sag
-        if (connection.useSag)
+        if (useSag)
         {
-            lr.positionCount = connection.sagSegments + 1;
-            Vector3[] positions = new Vector3[connection.sagSegments + 1];
+            lr.positionCount = sagSegments + 1;
+            Vector3[] positions = new Vector3[sagSegments + 1];
 
-            for (int i = 0; i <= connection.sagSegments; i++)
+            for (int i = 0; i <= sagSegments; i++)
             {
-                float t = i / (float)connection.sagSegments;
+                float t = i / (float)sagSegments;
                 Vector3 point = Vector3.Lerp(startPos, endPos, t);
-
-                // Add sag using parabolic curve
-                float sag = connection.sagAmount * (1f - Mathf.Pow(2f * t - 1f, 2f));
+                float sag = sagAmount * (1f - Mathf.Pow(2f * t - 1f, 2f));
                 point.y -= sag;
-
                 lr.SetPosition(i, point);
                 positions[i] = point;
             }
 
-            connection.originalPositions.Add(positions);
+            allOriginalPositions.Add(positions);
         }
         else
         {
             lr.positionCount = 2;
             Vector3[] positions = new Vector3[2];
-
             lr.SetPosition(0, startPos);
             lr.SetPosition(1, endPos);
             positions[0] = startPos;
             positions[1] = endPos;
-
-            connection.originalPositions.Add(positions);
+            allOriginalPositions.Add(positions);
         }
+
+        allRandomOffsets.Add(Random.Range(0f, 100f));
     }
 
     private Vector3 GetLineOffset(int lineNumber, int totalLines, float variance)
@@ -359,60 +269,41 @@ public class WireController : MonoBehaviour
         if (totalLines <= 1 || variance == 0)
             return Vector3.zero;
 
-        // Distribute lines evenly around the center
         float distribution = (lineNumber - (totalLines - 1) * 0.5f) / Mathf.Max(1, totalLines - 1);
-
         Vector3 offset = Vector3.zero;
-
-        // Horizontal spread (X axis)
         offset.x = distribution * variance;
-
-        // Slight vertical variation
         offset.y = Mathf.Sin(lineNumber * 12.9898f) * variance * 0.5f;
-
-        // Depth variation (Z axis)
         offset.z = Mathf.Cos(lineNumber * 78.233f) * variance * 0.3f;
-
         return offset;
     }
 
     private void AnimateWind()
     {
-        if (wireConnections == null) return;
-
         float time = Time.time * windSpeed;
         Vector3 windDir = new Vector3(windDirection.x, 0, windDirection.y).normalized;
 
-        foreach (WireConnection connection in wireConnections)
+        for (int wireIndex = 0; wireIndex < allLineRenderers.Count; wireIndex++)
         {
-            if (connection.lineRenderers == null || connection.originalPositions == null) continue;
+            if (allLineRenderers[wireIndex] == null)
+                continue;
 
-            for (int wireIndex = 0; wireIndex < connection.lineRenderers.Count; wireIndex++)
+            LineRenderer lr = allLineRenderers[wireIndex];
+            float offset = allRandomOffsets[wireIndex];
+
+            for (int i = 0; i < lr.positionCount; i++)
             {
-                if (connection.lineRenderers[wireIndex] == null) continue;
+                float t = i / (float)(lr.positionCount - 1);
+                float middleEffect = Mathf.Sin(Mathf.PI * t);
 
-                LineRenderer lr = connection.lineRenderers[wireIndex];
-                float offset = connection.randomOffsets[wireIndex];
+                float windWave1 = Mathf.Sin(time + offset + i * 0.3f);
+                float windWave2 = Mathf.Sin(time * 0.7f + offset + i * 0.5f);
+                float windWave3 = Mathf.Cos(time * 1.3f + offset + i * 0.2f);
 
-                for (int i = 0; i < lr.positionCount; i++)
-                {
-                    // Calculate wind effect (more in the middle of the wire)
-                    float t = i / (float)(lr.positionCount - 1);
-                    float middleEffect = Mathf.Sin(Mathf.PI * t); // 0 at ends, 1 in middle
+                Vector3 windOffset = windDir * windWave1 * middleEffect * windStrength;
+                windOffset.y += windWave2 * middleEffect * windStrength * 0.3f;
+                windOffset += Vector3.Cross(windDir, Vector3.up) * windWave3 * middleEffect * windStrength * 0.5f;
 
-                    // Combine multiple sine waves for natural movement
-                    float windWave1 = Mathf.Sin(time + offset + i * 0.3f);
-                    float windWave2 = Mathf.Sin(time * 0.7f + offset + i * 0.5f);
-                    float windWave3 = Mathf.Cos(time * 1.3f + offset + i * 0.2f);
-
-                    // Calculate wind offset
-                    Vector3 windOffset = windDir * windWave1 * middleEffect * windStrength;
-                    windOffset.y += windWave2 * middleEffect * windStrength * 0.3f; // Vertical sway
-                    windOffset += Vector3.Cross(windDir, Vector3.up) * windWave3 * middleEffect * windStrength * 0.5f; // Perpendicular sway
-
-                    // Apply wind to original position
-                    lr.SetPosition(i, connection.originalPositions[wireIndex][i] + windOffset);
-                }
+                lr.SetPosition(i, allOriginalPositions[wireIndex][i] + windOffset);
             }
         }
     }
@@ -425,21 +316,30 @@ public class WireController : MonoBehaviour
 #if UNITY_EDITOR
     private void OnDrawGizmosSelected()
     {
-        if (wireConnections == null) return;
+        if (poleGroups == null)
+            return;
 
-        // Draw connection lines in editor for visualization
-        Gizmos.color = Color.yellow;
-        foreach (WireConnection connection in wireConnections)
+        Color[] groupColors = { Color.yellow, Color.cyan, Color.magenta, Color.green, Color.red };
+
+        for (int g = 0; g < poleGroups.Length; g++)
         {
-            if (!connection.IsValid()) continue;
+            UtilityPoleGroup group = poleGroups[g];
+            if (group.poles == null || group.poles.Length < 2)
+                continue;
 
-            foreach (Transform targetPole in connection.targetPoles)
+            Gizmos.color = groupColors[g % groupColors.Length];
+
+            for (int i = 0; i < group.poles.Length - 1; i++)
             {
-                if (targetPole != null && connection.sourcePole != null)
+                if (group.poles[i] == null || group.poles[i + 1] == null)
+                    continue;
+
+                for (int c = 0; c < 2; c++)
                 {
-                    Vector3 start = connection.sourcePole.position + Vector3.up * connection.heightOffset;
-                    Vector3 end = targetPole.position + Vector3.up * connection.heightOffset;
-                    Gizmos.DrawLine(start, end);
+                    Transform source = group.poles[i].GetConnector(c);
+                    Transform target = group.poles[i + 1].GetConnector(c);
+                    if (source != null && target != null)
+                        Gizmos.DrawLine(source.position, target.position);
                 }
             }
         }
