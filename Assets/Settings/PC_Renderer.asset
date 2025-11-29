@@ -85,14 +85,14 @@ MonoBehaviour:
     probeSamplingDebugTexture: {fileID: 2800000, guid: 24ec0e140fb444a44ab96ee80844e18e, type: 3}
     probeVolumeBlendStatesCS: {fileID: 7200000, guid: b9a23f869c4fd45f19c5ada54dd82176, type: 3}
   m_RendererFeatures:
-  - {fileID: -7687515392871023383}
   - {fileID: 1065984157931247492}
   - {fileID: -4020926858050451184}
   - {fileID: 1997403587394009203}
   - {fileID: 4492364948512001696}
-  - {fileID: 465984926979499267}
   - {fileID: -2518040973514287863}
-  m_RendererFeatureMap: e93c93fa7a7550958497af9df122cb0e1049138e53cc32c873f8b5e3fa33b81ba04e797d1e16583e03a54c7bd28277060955cd63131f0edd
+  - {fileID: 465984926979499267}
+  - {fileID: -7687515392871023383}
+  m_RendererFeatureMap: 8497af9df122cb0e1049138e53cc32c873f8b5e3fa33b81ba04e797d1e16583e0955cd63131f0edd03a54c7bd2827706e93c93fa7a755095
   m_UseNativeRenderPass: 1
   xrSystemData: {fileID: 0}
   postProcessData: {fileID: 11400000, guid: 41439944d30ece34e96484bdb6645b55, type: 2}
@@ -135,7 +135,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::Beautify.Universal.BeautifyRendererFeature
   m_Active: 1
   shader: {fileID: 4800000, guid: 55d70ca4ea7504a38b66170bbe587b2f, type: 3}
-  renderPassEvent: 500
+  renderPassEvent: 450
   ignorePostProcessingOption: 0
   clearXRColorBuffer: 0
   cameraLayerMask:
@@ -144,7 +144,7 @@ MonoBehaviour:
   stripBeautifyTonemappingACES: 0
   stripBeautifyTonemappingACESFitted: 0
   stripBeautifyTonemappingAGX: 0
-  stripBeautifySharpen: 0
+  stripBeautifySharpen: 1
   stripBeautifyDithering: 0
   stripBeautifyEdgeAA: 0
   stripBeautifyLUT: 0

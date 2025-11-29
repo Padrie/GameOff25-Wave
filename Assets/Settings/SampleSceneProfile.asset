@@ -71,7 +71,7 @@ MonoBehaviour:
     m_Value: 222
   enableGround:
     m_OverrideState: 1
-    m_Value: 1
+    m_Value: 0
   groundHeight:
     m_OverrideState: 1
     m_Value: 0
@@ -104,10 +104,10 @@ MonoBehaviour:
     m_Value: 1
   maxSteps:
     m_OverrideState: 1
-    m_Value: 128
+    m_Value: 64
   blurIterations:
     m_OverrideState: 1
-    m_Value: 1
+    m_Value: 4
   enabled:
     m_OverrideState: 1
     m_Value: 1
@@ -160,8 +160,8 @@ MonoBehaviour:
   - {fileID: 7391319092446245454}
   - {fileID: -3357603926938260329}
   - {fileID: 6066606407764309988}
-  - {fileID: -4751701562819338633}
   - {fileID: 4537645966078966896}
+  - {fileID: -4751701562819338633}
 --- !u!114 &849379129802519247
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -244,10 +244,10 @@ MonoBehaviour:
     m_Value: 0
   turboMode:
     m_OverrideState: 1
-    m_Value: 0
+    m_Value: 1
   directWrite:
     m_OverrideState: 1
-    m_Value: 0
+    m_Value: 1
   ignoreDepthTexture:
     m_OverrideState: 1
     m_Value: 0
@@ -255,16 +255,16 @@ MonoBehaviour:
     m_OverrideState: 1
     m_Value: 0
   downsamplingMode:
-    m_OverrideState: 0
-    m_Value: 0
-  downsamplingMultiplier:
-    m_OverrideState: 0
-    m_Value: 1
-  downsamplingBilinear:
-    m_OverrideState: 0
-    m_Value: 0
-  sharpenIntensity:
     m_OverrideState: 1
+    m_Value: 10
+  downsamplingMultiplier:
+    m_OverrideState: 1
+    m_Value: 13.3
+  downsamplingBilinear:
+    m_OverrideState: 1
+    m_Value: 1
+  sharpenIntensity:
+    m_OverrideState: 0
     m_Value: 2
   sharpenDepthThreshold:
     m_OverrideState: 0
@@ -491,7 +491,7 @@ MonoBehaviour:
       m_Bits: 0
   anamorphicFlaresAntiflicker:
     m_OverrideState: 1
-    m_Value: 1
+    m_Value: 0
   anamorphicFlaresResolution:
     m_OverrideState: 0
     m_Value: 1
@@ -716,7 +716,7 @@ MonoBehaviour:
     m_Value: 1
   depthOfFieldForegroundBlurHQ:
     m_OverrideState: 1
-    m_Value: 1
+    m_Value: 0
   depthOfFieldForegroundBlurHQSpread:
     m_OverrideState: 0
     m_Value: 0
@@ -782,7 +782,7 @@ MonoBehaviour:
     m_Value: {fileID: 0}
     dimension: 1
   purkinje:
-    m_OverrideState: 0
+    m_OverrideState: 1
     m_Value: 0
   purkinjeAmount:
     m_OverrideState: 0
@@ -870,15 +870,15 @@ MonoBehaviour:
     m_Value: 0
   outlineIntensityMultiplier:
     m_OverrideState: 1
-    m_Value: 1
+    m_Value: 8
   outlineDistanceFade:
     m_OverrideState: 1
-    m_Value: 80
-  outlineUsesOptimizedShader:
-    m_OverrideState: 0
     m_Value: 0
+  outlineUsesOptimizedShader:
+    m_OverrideState: 1
+    m_Value: 1
   outlineLayerCutOff:
-    m_OverrideState: 0
+    m_OverrideState: 1
     m_Value: 0
   nightVision:
     m_OverrideState: 0

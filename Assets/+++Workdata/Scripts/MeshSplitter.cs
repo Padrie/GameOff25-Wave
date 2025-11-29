@@ -369,6 +369,10 @@ public class MeshSplitter : MonoBehaviour
                 newMr.sortingLayerID = origMr.sortingLayerID;
                 newMr.sortingOrder = origMr.sortingOrder;
                 newMr.staticShadowCaster = origMr.staticShadowCaster;
+                newMr.lightmapScaleOffset = origMr.lightmapScaleOffset;
+#if UNITY_EDITOR
+                newMr.scaleInLightmap = origMr.scaleInLightmap;
+#endif
             }
             else
             {

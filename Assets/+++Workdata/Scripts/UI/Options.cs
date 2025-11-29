@@ -1,10 +1,11 @@
-using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.UI;
+using UnityEngine.Rendering;
+using UnityEngine.Rendering.Universal;
 
 public class Options : MonoBehaviour
 {
@@ -12,6 +13,11 @@ public class Options : MonoBehaviour
     public Slider audioSlider;
     public Toggle fullscreenToggle;
     public TMP_Dropdown resolutionDropdown;
+    [Space(10)]
+    public Toggle dofToggle;
+    public Toggle volumetricFogToggle;
+    [Space(10)]
+    public VolumeProfile volumeProfile;
     [Space(10)]
     public GameObject graphicsTab;
     public GameObject audioTab;
@@ -25,60 +31,43 @@ public class Options : MonoBehaviour
     public Color hoverTabColor;
     public Color selectedTabColor;
 
-    bool graphicsTabSelected = true;
-    bool audioTabSelected = false;
-    bool controlsTabSelected = false;
-
     int normalFontSize = 48;
     int selectedFontSize = 64;
+
+    private enum TabState { Graphics, Audio, Controls }
+    private TabState currentTab = TabState.Graphics;
+
+    private const string DOF_SETTING_KEY = "Graphics_DOF_Enabled";
+    private const string VOLUMETRIC_FOG_SETTING_KEY = "Graphics_VolumetricFog_Enabled";
+
+    private static readonly Dictionary<string, (int width, int height)> Resolutions = new Dictionary<string, (int, int)>
+    {
+        { "2160p", (3840, 2160) },
+        { "1440p", (2560, 1440) },
+        { "1080p", (1920, 1080) },
+        { "720p", (1280, 720) }
+    };
 
     private void Start()
     {
         audioSlider.onValueChanged.AddListener(delegate { OnSliderValueChanged(); });
         fullscreenToggle.onValueChanged.AddListener(delegate { OnFullscreenToggleChanged(); });
         resolutionDropdown.onValueChanged.AddListener(OnResolutionChanged);
+        dofToggle.onValueChanged.AddListener(delegate { OnDOFToggleChanged(); });
+        volumetricFogToggle.onValueChanged.AddListener(delegate { OnVolumetricFogToggleChanged(); });
 
-        OnGraphicsSelected();
+        SelectTab(TabState.Graphics);
         SetupResolutionOptions();
+        LoadAndApplySettings();
     }
 
-    void SetupResolutionOptions()
+    private void LoadAndApplySettings()
     {
-        int width = Display.main.systemWidth;
-        int height = Display.main.systemHeight;
-
-        resolutionDropdown.ClearOptions();
-
-        List<string> options = new List<string>();
-
-        if (width >= 3840 && height >= 2160) options.Add("2160p");
-        if (width >= 2560 && height >= 1440) options.Add("1440p");
-        if (width >= 1920 && height >= 1080) options.Add("1080p");
-        if (width >= 1280 && height >= 720) options.Add("720p");
-
-        resolutionDropdown.AddOptions(options);
-
-        int currentResolutionIndex = GetCurrentResolutionIndex(options);
-        resolutionDropdown.value = currentResolutionIndex;
-        resolutionDropdown.RefreshShownValue();
+        dofToggle.isOn = PlayerPrefs.GetInt(DOF_SETTING_KEY, 1) == 1;
+        volumetricFogToggle.isOn = PlayerPrefs.GetInt(VOLUMETRIC_FOG_SETTING_KEY, 1) == 1;
     }
 
-    int GetCurrentResolutionIndex(List<string> options)
-    {
-        int currentWidth = Screen.currentResolution.width;
-        int currentHeight = Screen.currentResolution.height;
-
-        if (currentWidth >= 3840 && currentHeight >= 2160 && options.Contains("2160p"))
-            return options.IndexOf("2160p");
-        else if (currentWidth >= 2560 && currentHeight >= 1440 && options.Contains("1440p"))
-            return options.IndexOf("1440p");
-        else if (currentWidth >= 1920 && currentHeight >= 1080 && options.Contains("1080p"))
-            return options.IndexOf("1080p");
-        else if (currentWidth >= 1280 && currentHeight >= 720 && options.Contains("720p"))
-            return options.IndexOf("720p");
-
-        return 0;
-    }
+    #region Audio & Resolution
 
     public void OnSliderValueChanged()
     {
@@ -92,121 +81,175 @@ public class Options : MonoBehaviour
 
     public void OnResolutionChanged(int resolutionIndex)
     {
-        if (!Application.isEditor)
-        {
-            string resolution = resolutionDropdown.options[resolutionIndex].text;
+        if (Application.isEditor) return;
 
-            switch (resolution)
-            {
-                case "2160p":
-                    Screen.SetResolution(3840, 2160, fullscreenToggle.isOn);
-                    break;
-                case "1440p":
-                    Screen.SetResolution(2560, 1440, fullscreenToggle.isOn);
-                    break;
-                case "1080p":
-                    Screen.SetResolution(1920, 1080, fullscreenToggle.isOn);
-                    break;
-                case "720p":
-                    Screen.SetResolution(1280, 720, fullscreenToggle.isOn);
-                    break;
-            }
+        string resolution = resolutionDropdown.options[resolutionIndex].text;
+        if (Resolutions.TryGetValue(resolution, out var res))
+        {
+            Screen.SetResolution(res.width, res.height, fullscreenToggle.isOn);
         }
     }
 
-    public void OnGraphicsSelected()
+    private void SetupResolutionOptions()
     {
-        graphicsTabText.fontSize = selectedFontSize;
-        graphicsTabText.color = selectedTabColor;
+        int width = Display.main.systemWidth;
+        int height = Display.main.systemHeight;
 
-        graphicsTabSelected = true;
-        audioTabSelected = false;
-        controlsTabSelected = false;
+        resolutionDropdown.ClearOptions();
 
-        graphicsTab.SetActive(true);
-        audioTab.SetActive(false);
-        controlsTab.SetActive(false);
+        List<string> options = new List<string>();
+        foreach (var res in Resolutions)
+        {
+            if (width >= res.Value.width && height >= res.Value.height)
+                options.Add(res.Key);
+        }
 
-        AudioReset();
-        ControlsReset();
+        resolutionDropdown.AddOptions(options);
+        resolutionDropdown.value = GetCurrentResolutionIndex(options);
+        resolutionDropdown.RefreshShownValue();
     }
 
-    public void OnGraphicsHover()
+    private int GetCurrentResolutionIndex(List<string> options)
     {
-        if (graphicsTabSelected) return;
+        int currentWidth = Screen.currentResolution.width;
+        int currentHeight = Screen.currentResolution.height;
 
-        graphicsTabText.color = hoverTabColor;
+        foreach (var res in Resolutions)
+        {
+            if (currentWidth >= res.Value.width && currentHeight >= res.Value.height && options.Contains(res.Key))
+                return options.IndexOf(res.Key);
+        }
+
+        return 0;
     }
 
-    public void GraphicsReset()
-    {
-        if (graphicsTabSelected) return;
+    #endregion
 
-        graphicsTabText.fontSize = normalFontSize;
-        graphicsTabText.color = normalTabColor;
+    #region Graphics Settings
+
+    public void OnDOFToggleChanged() => ToggleSetting(DOF_SETTING_KEY, dofToggle.isOn, "Beautify", "depthOfField");
+
+    public void OnVolumetricFogToggleChanged() => ToggleSetting(VOLUMETRIC_FOG_SETTING_KEY, volumetricFogToggle.isOn, "VolumetricFog", "enabled");
+
+    private void ToggleSetting(string settingKey, bool enabled, string componentName, string fieldName)
+    {
+        if (volumeProfile == null) return;
+
+        PlayerPrefs.SetInt(settingKey, enabled ? 1 : 0);
+        PlayerPrefs.Save();
+
+        ToggleVolumeComponent(componentName, fieldName, enabled);
     }
 
-    public void OnAudioSelected()
+    private void ToggleVolumeComponent(string componentName, string fieldName, bool enabled)
     {
-        audioTabText.fontSize = selectedFontSize;
-        audioTabText.color = selectedTabColor;
+        try
+        {
+            VolumeComponent foundComponent = null;
+            foreach (var component in volumeProfile.components)
+            {
+                if (component.GetType().Name.Contains(componentName))
+                {
+                    foundComponent = component;
+                    break;
+                }
+            }
 
-        graphicsTabSelected = false;
-        audioTabSelected = true;
-        controlsTabSelected = false;
+            if (foundComponent == null) return;
 
-        graphicsTab.SetActive(false);
-        audioTab.SetActive(true);
-        controlsTab.SetActive(false);
+            var field = foundComponent.GetType().GetField(fieldName,
+                System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
 
-        GraphicsReset();
-        ControlsReset();
+            if (field == null) return;
+
+            var param = field.GetValue(foundComponent);
+            if (param == null) return;
+
+            var mValueField = param.GetType().GetField("m_Value",
+                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+
+            if (mValueField != null)
+            {
+                mValueField.SetValue(param, enabled);
+            }
+            else
+            {
+                var valueProperty = param.GetType().GetProperty("value",
+                    System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
+                valueProperty?.SetValue(param, enabled);
+            }
+
+#if UNITY_EDITOR
+            UnityEditor.EditorUtility.SetDirty(volumeProfile);
+#endif
+        }
+        catch (Exception) { }
     }
 
-    public void OnAudioHover()
-    {
-        if (audioTabSelected) return;
+    #endregion
 
-        audioTabText.color = hoverTabColor;
+    #region Tab Management
+
+    public void OnGraphicsSelected() => SelectTab(TabState.Graphics);
+    public void OnGraphicsHover() => HoverTab(graphicsTabText);
+    public void GraphicsReset() => ResetTab(graphicsTabText);
+
+    public void OnAudioSelected() => SelectTab(TabState.Audio);
+    public void OnAudioHover() => HoverTab(audioTabText);
+    public void AudioReset() => ResetTab(audioTabText);
+
+    public void OnControlsSelected() => SelectTab(TabState.Controls);
+    public void OnControlsHover() => HoverTab(controlsTabText);
+    public void ControlsReset() => ResetTab(controlsTabText);
+
+    private void SelectTab(TabState tabState)
+    {
+        currentTab = tabState;
+
+        graphicsTab.SetActive(tabState == TabState.Graphics);
+        audioTab.SetActive(tabState == TabState.Audio);
+        controlsTab.SetActive(tabState == TabState.Controls);
+
+        ResetTab(graphicsTabText);
+        ResetTab(audioTabText);
+        ResetTab(controlsTabText);
+
+        TMP_Text selectedText = tabState switch
+        {
+            TabState.Graphics => graphicsTabText,
+            TabState.Audio => audioTabText,
+            TabState.Controls => controlsTabText,
+            _ => null
+        };
+
+        if (selectedText != null) HighlightTab(selectedText);
     }
 
-    public void AudioReset()
+    private void HoverTab(TMP_Text tabText)
     {
-        if (audioTabSelected) return;
-
-        audioTabText.fontSize = normalFontSize;
-        audioTabText.color = normalTabColor;
+        if (!IsTabSelected(tabText))
+            tabText.color = hoverTabColor;
     }
 
-    public void OnControlsSelected()
+    private void ResetTab(TMP_Text tabText)
     {
-        controlsTabText.fontSize = selectedFontSize;
-        controlsTabText.color = selectedTabColor;
-
-        graphicsTabSelected = false;
-        audioTabSelected = false;
-        controlsTabSelected = true;
-
-        graphicsTab.SetActive(false);
-        audioTab.SetActive(false);
-        controlsTab.SetActive(true);
-
-        GraphicsReset();
-        AudioReset();
+        if (IsTabSelected(tabText)) return;
+        tabText.fontSize = normalFontSize;
+        tabText.color = normalTabColor;
     }
 
-    public void OnControlsHover()
+    private void HighlightTab(TMP_Text tabText)
     {
-        if (controlsTabSelected) return;
-
-        controlsTabText.color = hoverTabColor;
+        tabText.fontSize = selectedFontSize;
+        tabText.color = selectedTabColor;
     }
 
-    public void ControlsReset()
+    private bool IsTabSelected(TMP_Text tabText)
     {
-        if (controlsTabSelected) return;
-
-        controlsTabText.fontSize = normalFontSize;
-        controlsTabText.color = normalTabColor;
+        return (tabText == graphicsTabText && currentTab == TabState.Graphics) ||
+               (tabText == audioTabText && currentTab == TabState.Audio) ||
+               (tabText == controlsTabText && currentTab == TabState.Controls);
     }
+
+    #endregion
 }

@@ -42,7 +42,7 @@ public class AttackState : IState
         isFollowingTarget = false;
         lookAtWeight = 0f;
 
-        attackDuration = 5f;
+        attackDuration = 3f;
 
         StartAttack();
     }

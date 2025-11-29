@@ -25,7 +25,7 @@ LightingSettings:
   m_AO: 1
   m_AOMaxDistance: 1
   m_CompAOExponent: 2
-  m_CompAOExponentDirect: 1
+  m_CompAOExponentDirect: 2
   m_ExtractAO: 0
   m_MixedBakeMode: 2
   m_LightmapsBakeMode: 1
