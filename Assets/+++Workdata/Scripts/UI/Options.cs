@@ -32,8 +32,6 @@ public class Options : MonoBehaviour
     int normalFontSize = 48;
     int selectedFontSize = 64;
 
-    Resolution[] resolutions;
-
     private void Start()
     {
         audioSlider.onValueChanged.AddListener(delegate { OnSliderValueChanged(); });
@@ -46,30 +44,40 @@ public class Options : MonoBehaviour
 
     void SetupResolutionOptions()
     {
-        resolutions = Screen.resolutions;
+        int width = Display.main.systemWidth;
+        int height = Display.main.systemHeight;
 
         resolutionDropdown.ClearOptions();
 
         List<string> options = new List<string>();
-        int currentResolutionIndex = 0;
 
-        for (int i = 0; i < resolutions.Length; i++)
-        {
-            string option = resolutions[i].width + " x " + resolutions[i].height;
-
-            if (!options.Contains(option))
-                options.Add(option);
-
-            if (resolutions[i].width == Screen.currentResolution.width &&
-                resolutions[i].height == Screen.currentResolution.height)
-            {
-                currentResolutionIndex = i;
-            }
-        }
+        if (width >= 3840 && height >= 2160) options.Add("2160p");
+        if (width >= 2560 && height >= 1440) options.Add("1440p");
+        if (width >= 1920 && height >= 1080) options.Add("1080p");
+        if (width >= 1280 && height >= 720) options.Add("720p");
 
         resolutionDropdown.AddOptions(options);
+
+        int currentResolutionIndex = GetCurrentResolutionIndex(options);
         resolutionDropdown.value = currentResolutionIndex;
         resolutionDropdown.RefreshShownValue();
+    }
+
+    int GetCurrentResolutionIndex(List<string> options)
+    {
+        int currentWidth = Screen.currentResolution.width;
+        int currentHeight = Screen.currentResolution.height;
+
+        if (currentWidth >= 3840 && currentHeight >= 2160 && options.Contains("2160p"))
+            return options.IndexOf("2160p");
+        else if (currentWidth >= 2560 && currentHeight >= 1440 && options.Contains("1440p"))
+            return options.IndexOf("1440p");
+        else if (currentWidth >= 1920 && currentHeight >= 1080 && options.Contains("1080p"))
+            return options.IndexOf("1080p");
+        else if (currentWidth >= 1280 && currentHeight >= 720 && options.Contains("720p"))
+            return options.IndexOf("720p");
+
+        return 0;
     }
 
     public void OnSliderValueChanged()
@@ -82,10 +90,28 @@ public class Options : MonoBehaviour
         Screen.fullScreen = fullscreenToggle.isOn;
     }
 
-    public void OnResolutionChanged(int index)
+    public void OnResolutionChanged(int resolutionIndex)
     {
-        Resolution resolution = resolutions[index];
-        Screen.SetResolution(resolution.width, resolution.height, fullscreenToggle.isOn);
+        if (!Application.isEditor)
+        {
+            string resolution = resolutionDropdown.options[resolutionIndex].text;
+
+            switch (resolution)
+            {
+                case "2160p":
+                    Screen.SetResolution(3840, 2160, fullscreenToggle.isOn);
+                    break;
+                case "1440p":
+                    Screen.SetResolution(2560, 1440, fullscreenToggle.isOn);
+                    break;
+                case "1080p":
+                    Screen.SetResolution(1920, 1080, fullscreenToggle.isOn);
+                    break;
+                case "720p":
+                    Screen.SetResolution(1280, 720, fullscreenToggle.isOn);
+                    break;
+            }
+        }
     }
 
     public void OnGraphicsSelected()
