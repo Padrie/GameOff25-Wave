@@ -27,13 +27,11 @@ public class GarageDoor : MonoBehaviour
     private float splineLength;
     private bool isAudioPlaying;
     private bool colliderDisabled = false;
-    private NavMeshRebaker navMeshRebaker;
     private const float TANGENT_MAGNITUDE_THRESHOLD = 0.001f;
 
     private void Awake()
     {
         _enemySoundPerception = FindFirstObjectByType<EnemySoundPerception>();
-        navMeshRebaker = FindFirstObjectByType<NavMeshRebaker>();
     }
 
     private void Start()
@@ -114,21 +112,11 @@ public class GarageDoor : MonoBehaviour
         {
             doorCollider.enabled = false;
             colliderDisabled = true;
-
-            if (navMeshRebaker != null)
-            {
-                navMeshRebaker.TriggerImmediateRebake();
-            }
         }
         else if (colliderDisabled && progress < openThreshold)
         {
             doorCollider.enabled = true;
             colliderDisabled = false;
-
-            if (navMeshRebaker != null)
-            {
-                navMeshRebaker.TriggerImmediateRebake();
-            }
         }
     }
 
