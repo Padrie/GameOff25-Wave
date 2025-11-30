@@ -55,6 +55,8 @@ public class CarAnimation : MonoBehaviour
     private const float HALF_PI = Mathf.PI / 2f;
     private const int SPLINE_INDEX = 0;
 
+    public static bool inCutscene = false;
+
 
     private void Awake()
     {
@@ -71,6 +73,8 @@ public class CarAnimation : MonoBehaviour
 
         if (autoStart)
             delayTimer = startDelay;
+
+        inCutscene = true;
     }
 
     private bool ValidateSetup()
@@ -211,6 +215,7 @@ public class CarAnimation : MonoBehaviour
     private void OnAnimationEnd()
     {
         _manager.EnableGameplay();
+        inCutscene = false;
     }
 
     public void RestartAnimation()

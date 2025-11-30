@@ -1,4 +1,6 @@
+using EasyPeasyFirstPersonController;
 using System;
+using Unity.Cinemachine;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Events;
@@ -27,10 +29,13 @@ public class Manager : MonoBehaviour
     public UnityEvent CallAfterCarCutscene;
     public static event Action AferCarCutscene;
 
+    FirstPersonController player;
+
 
     private void Awake()
     {
         lightSaver = FindFirstObjectByType<LightSaver>();
+        player = FindFirstObjectByType<FirstPersonController>();
     }
 
 
@@ -114,6 +119,7 @@ public class Manager : MonoBehaviour
     {
         CallAfterCarCutscene?.Invoke();
         AferCarCutscene?.Invoke();
+        CarAnimation.inCutscene = false;
     }
 
     private void SetCursorState(bool locked)

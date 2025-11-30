@@ -30,13 +30,13 @@ public class RepairItem : MonoBehaviour, IInteractable
     private GameObject spawnedModel;
     [SerializeField] private RepairItemConfig itemConfig;
 
-    private void Awake()
+    private void Start()
     {
         _firstPersonController = FindFirstObjectByType<FirstPersonController>();
         rb = GetComponent<Rigidbody>();
         colliders = GetComponents<Collider>();
         renderer = GetComponentInChildren<Renderer>();
-        materials = renderer.materials;
+        //materials = renderer.materials;
         itemNameDisplayText.enabled = false;
         itemNameDisplayText.text = repairItem.ToString();
 

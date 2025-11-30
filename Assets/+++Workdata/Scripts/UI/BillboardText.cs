@@ -7,15 +7,9 @@ public class BillboardText : MonoBehaviour
 
     private Camera playerCamera;
 
-
-    private void Awake()
+    private void Start()
     {
-        firstPersonController = FindFirstObjectByType<FirstPersonController>();
-    }
-
-    void Start()
-    {
-        playerCamera = firstPersonController.cam;
+        playerCamera = Camera.main;
     }
 
     void LateUpdate()

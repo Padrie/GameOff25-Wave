@@ -117,6 +117,8 @@ namespace EasyPeasyFirstPersonController
 
         private void Update()
         {
+            if (CarAnimation.inCutscene) return;
+
             if (UIManager.Instance != null)
             {
                 if (!UIManager.Instance.IsUIActive(uiid.PauseScene) && !UIManager.Instance.IsUIActive(uiid.OptionsScene))
