@@ -1,4 +1,3 @@
-using System.Net.Sockets;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -44,6 +43,30 @@ public class UIElement : MonoBehaviour
         UIManager.Instance.HideUI(uiid.PauseScene);
     }
 
+    public void LoadDeathScreen()
+    {
+        UIManager.Instance.ShowUI(uiid.DeathScreenScene);
+        Time.timeScale = 0f;
+    }
+
+    public void UnloadDeathScreen()
+    {
+        UIManager.Instance.HideUI(uiid.DeathScreenScene);
+        Time.timeScale = 1f;
+    }
+
+    public void LoadWinScreen()
+    {
+        UIManager.Instance.ShowUI(uiid.DeathScreenScene);
+        Time.timeScale = 0f;
+    }
+
+    public void UnloadWinScreen()
+    {
+        UIManager.Instance.HideUI(uiid.DeathScreenScene);
+        Time.timeScale = 1f;
+    }
+
     public void LoadMainMenuScene()
     {
         SceneManager.LoadSceneAsync("MainMenuScene", LoadSceneMode.Additive);
@@ -52,6 +75,11 @@ public class UIElement : MonoBehaviour
     public void UnloadMainMenuScene()
     {
         SceneManager.UnloadSceneAsync("MainMenuScene");
+    }
+
+    public void ReloadGameplayScene()
+    {
+        SceneManager.LoadScene("Ingame");
     }
 
     public void LoadGameplayScene()

@@ -31,7 +31,8 @@ public class SceneLoader : MonoBehaviour
             "MainMenuScene",
             "OptionsMenuScene",
             "PauseMenuScene",
-            //"InGame"
+            "DeathScreenScene",
+            "WinScreenScene"
         };
         HashSet<string> loadedOrLoading = new HashSet<string>(System.StringComparer.OrdinalIgnoreCase);
         int sceneCount = SceneManager.sceneCount;

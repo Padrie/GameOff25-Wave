@@ -33,10 +33,10 @@ namespace EasyPeasyFirstPersonController
         public float bobbingAmount = 0.05f;
         private float sprintBobMultiplier = 1.5f;
         private float recoilReturnSpeed = 8f;
-        public bool canSlide = true;
-        public bool canJump = true;
+        public bool canSlide = false;
+        public bool canJump = false;
         public bool canSprint = true;
-        public bool canCrouch = true;
+        public bool canCrouch = false;
         public QueryTriggerInteraction ceilingCheckQueryTriggerInteraction = QueryTriggerInteraction.Ignore;
         public QueryTriggerInteraction groundCheckQueryTriggerInteraction = QueryTriggerInteraction.Ignore;
         public Transform groundCheck;
@@ -67,9 +67,10 @@ namespace EasyPeasyFirstPersonController
         private float defaultPosY;
         private Vector3 recoil = Vector3.zero;
         private bool isLook = true, isMove = true, hasCeiling = false;
-        private bool isPauseMenuActive = false;
         private bool isHoldingItem = false;
         [HideInInspector] public bool isHoldingCheckList = false;
+        public bool isDead = false;
+        public bool isPauseMenuActive = false;
         private float currentCameraHeight;
         private float currentBobOffset;
         private float currentFov;
@@ -89,6 +90,7 @@ namespace EasyPeasyFirstPersonController
 
         private void Awake()
         {
+            isDead = false;
             characterController = GetComponent<CharacterController>();
             cam = playerCamera.GetComponent<Camera>();
             originalHeight = characterController.height;
@@ -117,17 +119,20 @@ namespace EasyPeasyFirstPersonController
 
         private void Update()
         {
-            if (CarAnimation.inCutscene) return;
+            if (CarAnimation.inCutscene || isDead) return;
 
             if (UIManager.Instance != null)
             {
                 if (!UIManager.Instance.IsUIActive(uiid.PauseScene) && !UIManager.Instance.IsUIActive(uiid.OptionsScene))
-                    isPauseMenuActive = false;
-
-                if (Input.GetKeyDown(KeyCode.Escape) && !isPauseMenuActive)
                 {
+                    isLook = true;
+                    isPauseMenuActive = false;
+                }
+
+                if (Input.GetKeyDown(KeyCode.Escape) && !isPauseMenuActive && !isDead)
+                {
+                    isLook = false;
                     isPauseMenuActive = true;
-                    UIManager.Instance.ShowUI(uiid.PauseScene);
                 }
             }
 

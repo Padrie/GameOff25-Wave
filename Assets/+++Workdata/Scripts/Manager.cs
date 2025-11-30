@@ -50,11 +50,23 @@ public class Manager : MonoBehaviour
         {
             CallCutsceneBegins?.Invoke();
             CutsceneBegins?.Invoke();
+
+            // Ensure player controller is disabled while cutscene runs so its Update won't execute
+            if (player != null)
+            {
+                player.enabled = false;
+            }
         }
         else
         {
             CallAfterCarCutscene?.Invoke();
             AferCarCutscene?.Invoke();
+
+            // Ensure player controller is enabled when not running a cutscene
+            if (player != null)
+            {
+                player.enabled = true;
+            }
         }
     }
 
@@ -65,7 +77,13 @@ public class Manager : MonoBehaviour
 
         if (UIManager.Instance != null)
         {
-            if (UIManager.Instance.IsUIActive(uiid.PauseScene) || UIManager.Instance.IsUIActive(uiid.OptionsScene))
+            if (UIManager.Instance.IsUIActive(uiid.DeathScreenScene))
+            {
+                SetCursorState(false);
+                UIManager.Instance.HideUI(uiid.OptionsScene);
+                UIManager.Instance.HideUI(uiid.PauseScene);
+            }
+            else if (UIManager.Instance.IsUIActive(uiid.PauseScene) || UIManager.Instance.IsUIActive(uiid.OptionsScene))
             {
                 SetCursorState(false);
             }
@@ -87,7 +105,11 @@ public class Manager : MonoBehaviour
         // Unfocus window
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            if (UIManager.Instance.IsUIActive(uiid.PauseScene) || UIManager.Instance.IsUIActive(uiid.OptionsScene))
+            if (player != null && player.isDead)
+                return;
+            
+
+            if (UIManager.Instance != null && (UIManager.Instance.IsUIActive(uiid.PauseScene) || UIManager.Instance.IsUIActive(uiid.OptionsScene)))
             {
                 UIManager.Instance.HideUI(uiid.PauseScene);
                 UIManager.Instance.HideUI(uiid.OptionsScene);
@@ -95,7 +117,10 @@ public class Manager : MonoBehaviour
                 return;
             }
 
-            UIManager.Instance.ShowUI(uiid.PauseScene);
+            if (UIManager.Instance != null)
+            {
+                UIManager.Instance.ShowUI(uiid.PauseScene);
+            }
 
             //SetCursorState(false);
         }
@@ -120,6 +145,12 @@ public class Manager : MonoBehaviour
         CallAfterCarCutscene?.Invoke();
         AferCarCutscene?.Invoke();
         CarAnimation.inCutscene = false;
+
+        // Re-enable player controller when gameplay is enabled
+        if (player != null)
+        {
+            player.enabled = true;
+        }
     }
 
     private void SetCursorState(bool locked)
@@ -139,6 +170,8 @@ public class Manager : MonoBehaviour
     public void PlayerDeath()
     {
         lightSaver.SaveAllLightCollections();
-        ReloadScene();
+        player.isDead = true;
+        UIManager.Instance.ShowUI(uiid.DeathScreenScene);
+        Time.timeScale = 0f;
     }
 }

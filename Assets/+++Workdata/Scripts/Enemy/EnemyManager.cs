@@ -18,6 +18,7 @@ public class EnemyManager : MonoBehaviour
     [HideInInspector] public bool isAttacking = false;
 
     public string currentState;
+    public Transform spawnPoint;
 
     [Header("Targets")]
     public Transform playerTarget;
@@ -41,6 +42,8 @@ public class EnemyManager : MonoBehaviour
     public float grabReachDistance = 3f;
     public AnimationCurve grabCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
 
+    PatrolPointManager patrolPointManager;
+
     private IState previousState = null;
 
     private IState idleState;
@@ -55,6 +58,7 @@ public class EnemyManager : MonoBehaviour
     {
         agent = GetComponent<NavMeshAgent>();
         stats = GetComponent<EnemyStats>();
+        patrolPointManager = GetComponent<PatrolPointManager>();
 
         if (audioSource == null)
         {
@@ -219,5 +223,11 @@ public class EnemyManager : MonoBehaviour
         }
 
         screamTime = stats.screamCooldown;
+    }
+
+    public void TeleportEnemy()
+    {
+        gameObject.transform.position = spawnPoint.position;
+        patrolPointManager.SelectRandomPatrolPoint();
     }
 }

@@ -23,5 +23,7 @@ public enum uiid
     None,
     MainMenuScene,
     OptionsScene,
-    PauseScene
+    PauseScene,
+    DeathScreenScene,
+    WinScreenScene
 }

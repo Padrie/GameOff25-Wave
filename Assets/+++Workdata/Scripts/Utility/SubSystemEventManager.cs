@@ -47,5 +47,6 @@ public class SubSystemEventManager : MonoBehaviour
     public void RepairedAllSystems()
     {
         print("Repaired all Systems");
+        UIManager.Instance.ShowUI(uiid.WinScreenScene);
     }
 }

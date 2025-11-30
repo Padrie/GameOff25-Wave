@@ -7,10 +7,14 @@ public class BuildingPatrolPointsRefresh : MonoBehaviour
     private PatrolPoint[] buildingPatrolPoints;
 
     private PatrolPointManager _patrolPointManager;
+    EnemyManager enemy;
+
+    bool isRepaired = false;
 
     private void Awake()
     {
         _patrolPointManager = FindFirstObjectByType<PatrolPointManager>();
+        enemy = FindFirstObjectByType<EnemyManager>();
     }
 
     private void Start()
@@ -47,6 +51,8 @@ public class BuildingPatrolPointsRefresh : MonoBehaviour
 
     public void RefreshPatrolPoints()
     {
+        if (isRepaired) return;
+
         CheckIfAtLeastOneDoorIsOpen();
         _patrolPointManager.RefreshPatrolPoints();
     }
@@ -70,6 +76,8 @@ public class BuildingPatrolPointsRefresh : MonoBehaviour
 
     private void TogglePatrolPoints(bool oneDoorIsOpen)
     {
+        if (isRepaired) return;
+
         if (oneDoorIsOpen)
         {
             buildingPatrolPointsParent.SetActive(true);
@@ -78,5 +86,16 @@ public class BuildingPatrolPointsRefresh : MonoBehaviour
         {
             buildingPatrolPointsParent.SetActive(false);
         }
+    }
+
+    public void OfficeSubSystemRepaired()
+    {
+        buildingPatrolPointsParent.SetActive(false);
+        _patrolPointManager.RefreshPatrolPoints();
+        isRepaired = true;
+        enemy.TeleportEnemy();
+        enemy.playerTarget = null;
+        enemy.soundTarget = null;
+        enemy.lastPlayerPosTarget = null;
     }
 }
