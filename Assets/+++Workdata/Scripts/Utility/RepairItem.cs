@@ -61,6 +61,8 @@ public class RepairItem : MonoBehaviour, IInteractable
             lastRepairItem = repairItem;
 
 #if UNITY_EDITOR
+
+            return;
             //In edit mode, update the model after new frame to avoid prefab issues
             EditorApplication.delayCall += () =>
             {

@@ -32,6 +32,7 @@ public class PrefabSpawner : MonoBehaviour
         }
 
         int totalSpawned = 0;
+        int totalRealigned = 0;
 
         foreach (var rule in prefabRules)
         {
@@ -41,41 +42,110 @@ public class PrefabSpawner : MonoBehaviour
                 continue;
             }
 
-            totalSpawned += SpawnPrefabsForRule(rule);
+            var result = SpawnPrefabsForRule(rule);
+            totalSpawned += result.spawned;
+            totalRealigned += result.realigned;
         }
 
         if (showDebugLogs)
         {
-            Debug.Log($"<color=green>Prefab spawning complete! Total Prefabs spawned: {totalSpawned}</color>");
+            Debug.Log($"<color=green>Prefab spawning complete! Spawned: {totalSpawned}, Realigned: {totalRealigned}</color>");
         }
     }
 
-    private int SpawnPrefabsForRule(PrefabSpawnRule rule)
+    private (int spawned, int realigned) SpawnPrefabsForRule(PrefabSpawnRule rule)
     {
         GameObject[] spawnPoints = FindSpawnPoints(rule.spawnPointPrefix);
         int spawnedCount = 0;
+        int realignedCount = 0;
 
         foreach (GameObject spawnPoint in spawnPoints)
         {
-            if (clearExistingPrefabs)
-            {
-                ClearChildPrefabs(spawnPoint);
-            }
+            // Check if a matching prefab already exists as a child
+            GameObject existingPrefab = FindExistingPrefab(spawnPoint, rule.Prefab);
 
-            GameObject spawnedPrefab = InstantiatePrefab(rule, spawnPoint);
-
-            if (spawnedPrefab != null)
+            if (existingPrefab != null)
             {
-                spawnedCount++;
+                // Realign existing prefab instead of spawning a new one
+                RealignPrefab(existingPrefab, rule.Prefab);
+                realignedCount++;
 
                 if (showDebugLogs)
                 {
-                    Debug.Log($"Spawned '{rule.Prefab.name}' at '{spawnPoint.name}'");
+                    Debug.Log($"<color=cyan>Realigned existing '{existingPrefab.name}' at '{spawnPoint.name}'</color>");
+                }
+            }
+            else
+            {
+                // No existing prefab found, clear others if needed and spawn new one
+                if (clearExistingPrefabs)
+                {
+                    ClearChildPrefabs(spawnPoint);
+                }
+
+                GameObject spawnedPrefab = InstantiatePrefab(rule, spawnPoint);
+
+                if (spawnedPrefab != null)
+                {
+                    spawnedCount++;
+
+                    if (showDebugLogs)
+                    {
+                        Debug.Log($"Spawned '{rule.Prefab.name}' at '{spawnPoint.name}'");
+                    }
                 }
             }
         }
 
-        return spawnedCount;
+        return (spawnedCount, realignedCount);
+    }
+
+    private GameObject FindExistingPrefab(GameObject spawnPoint, GameObject prefabToMatch)
+    {
+        string prefabName = prefabToMatch.name;
+
+        for (int i = 0; i < spawnPoint.transform.childCount; i++)
+        {
+            Transform child = spawnPoint.transform.GetChild(i);
+
+            // Check if the child's name matches the prefab name (with or without "(Clone)" suffix)
+            if (child.name == prefabName ||
+                child.name == prefabName + "(Clone)" ||
+                child.name.StartsWith(prefabName))
+            {
+#if UNITY_EDITOR
+                // In editor, also verify it's actually an instance of the prefab
+                if (!Application.isPlaying)
+                {
+                    GameObject prefabSource = PrefabUtility.GetCorrespondingObjectFromSource(child.gameObject);
+                    if (prefabSource == prefabToMatch)
+                    {
+                        return child.gameObject;
+                    }
+                    // If no prefab link, fall back to name matching
+                    if (prefabSource == null && child.name.StartsWith(prefabName))
+                    {
+                        return child.gameObject;
+                    }
+                }
+                else
+                {
+                    return child.gameObject;
+                }
+#else
+                return child.gameObject;
+#endif
+            }
+        }
+
+        return null;
+    }
+
+    private void RealignPrefab(GameObject existingPrefab, GameObject originalPrefab)
+    {
+        existingPrefab.transform.localPosition = Vector3.zero;
+        existingPrefab.transform.localRotation = Quaternion.identity;
+        existingPrefab.transform.localScale = originalPrefab.transform.localScale;
     }
 
     private GameObject[] FindSpawnPoints(string prefix)

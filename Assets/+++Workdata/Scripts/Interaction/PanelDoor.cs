@@ -7,9 +7,9 @@ public class PanelDoor : InteractableObject, IInteractableWithHit
     public float openSpeed = 180f;
     public float closeSpeed = 180f;
     public float rotationThreshold = 0.5f;
-
     public enum RotationAxis { X, Y, Z }
     public RotationAxis rotationAxis = RotationAxis.Y;
+    public bool reverseDirection = false;
 
     [Header("Audio")]
     public AudioClip openSound;
@@ -21,13 +21,10 @@ public class PanelDoor : InteractableObject, IInteractableWithHit
     private Quaternion targetRotation;
     private float currentSpeed;
     private Quaternion closedRotation;
-    private RaycastHit lastHit;
-    private bool currentOpenDirection;
 
     void Awake()
     {
         closedRotation = transform.rotation;
-        Debug.Log("Closed rotation saved: " + closedRotation.eulerAngles);
     }
 
     void Update()
@@ -36,20 +33,17 @@ public class PanelDoor : InteractableObject, IInteractableWithHit
         {
             transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, currentSpeed * Time.deltaTime);
 
-            float remainingAngle = Quaternion.Angle(transform.rotation, targetRotation);
-
-            if (remainingAngle <= rotationThreshold)
+            if (Quaternion.Angle(transform.rotation, targetRotation) <= rotationThreshold)
             {
                 transform.rotation = targetRotation;
                 isMoving = false;
-                Debug.Log("Finished rotating");
             }
         }
     }
 
     public void UpdateHitInfo(RaycastHit hit)
     {
-        lastHit = hit;
+        // No longer needed, but kept for interface compatibility
     }
 
     protected override void OnInteracted()
@@ -58,24 +52,9 @@ public class PanelDoor : InteractableObject, IInteractableWithHit
         Toggle();
     }
 
-    private bool DetermineDirectionFromHit()
-    {
-        float dot = Vector3.Dot(transform.forward, lastHit.normal);
-        return dot < 0;
-    }
-
     public void Toggle()
     {
-        if (!isOpen)
-        {
-            currentOpenDirection = DetermineDirectionFromHit();
-            isOpen = true;
-        }
-        else
-        {
-            isOpen = false;
-        }
-
+        isOpen = !isOpen;
         SetRotationTarget();
         PlaySound(isOpen ? openSound : closeSound);
     }
@@ -86,11 +65,10 @@ public class PanelDoor : InteractableObject, IInteractableWithHit
         {
             targetRotation = closedRotation;
             currentSpeed = closeSpeed;
-            Debug.Log("Closing to: " + targetRotation.eulerAngles);
         }
         else
         {
-            float angle = currentOpenDirection ? -openAngle : openAngle;
+            float angle = reverseDirection ? -openAngle : openAngle;
 
             Vector3 eulerOffset = rotationAxis switch
             {
@@ -102,11 +80,9 @@ public class PanelDoor : InteractableObject, IInteractableWithHit
 
             targetRotation = closedRotation * Quaternion.Euler(eulerOffset);
             currentSpeed = openSpeed;
-            Debug.Log("Opening to: " + targetRotation.eulerAngles + " (axis: " + rotationAxis + ", angle: " + angle + ")");
         }
 
         isMoving = true;
-        Debug.Log("isMoving set to true, currentSpeed: " + currentSpeed);
     }
 
     private void PlaySound(AudioClip clip)

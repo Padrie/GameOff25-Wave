@@ -6,17 +6,91 @@ using UnityEditor;
 #endif
 
 [System.Serializable]
-public class UtilityPoleGroup
+public class WireNode
+{
+    [Tooltip("Drag any GameObject here - can be a UtilityPoleConnector OR RooftopElectrical")]
+    public GameObject target;
+
+    // Cached connectors
+    [HideInInspector] public Transform connectorA;
+    [HideInInspector] public Transform connectorB;
+    [HideInInspector] public Transform connectorC; // For connecting to RooftopElectrical
+    [HideInInspector] public bool isSingleConnector;
+
+    public void FindConnectors()
+    {
+        connectorA = null;
+        connectorB = null;
+        connectorC = null;
+        isSingleConnector = false;
+
+        if (target == null)
+            return;
+
+        // First, try to find UtilityPoleConnector component
+        UtilityPoleConnector poleConnector = target.GetComponent<UtilityPoleConnector>();
+        if (poleConnector != null)
+        {
+            poleConnector.FindConnectors();
+            connectorA = poleConnector.GetConnector(0);
+            connectorB = poleConnector.GetConnector(1);
+            // Look for Wire Connector C
+            connectorC = target.transform.Find("Wire Connector C");
+            isSingleConnector = false;
+            return;
+        }
+
+        // Check for dual/triple connectors (Wire Connector A / B / C)
+        Transform foundA = target.transform.Find("Wire Connector A");
+        Transform foundB = target.transform.Find("Wire Connector B");
+        Transform foundC = target.transform.Find("Wire Connector C");
+
+        if (foundA != null || foundB != null)
+        {
+            connectorA = foundA;
+            connectorB = foundB;
+            connectorC = foundC;
+            isSingleConnector = false;
+            return;
+        }
+
+        // Check for single connector (RooftopElectrical style - "Wire Connector")
+        Transform singleConnector = target.transform.Find("Wire Connector");
+        if (singleConnector != null)
+        {
+            connectorA = singleConnector;
+            connectorB = singleConnector;
+            connectorC = singleConnector;
+            isSingleConnector = true;
+            return;
+        }
+
+        // Fallback: use the target transform itself
+        connectorA = target.transform;
+        connectorB = target.transform;
+        connectorC = target.transform;
+        isSingleConnector = true;
+    }
+
+    public Transform GetConnector(int index)
+    {
+        if (index == 2) return connectorC;
+        return index == 0 ? connectorA : connectorB;
+    }
+}
+
+[System.Serializable]
+public class WirePoleGroup
 {
     public string groupName = "Group";
-    public UtilityPoleConnector[] poles;
+    public WireNode[] nodes;
 }
 
 [ExecuteAlways]
 public class WireController : MonoBehaviour
 {
-    [Header("Utility Pole Groups")]
-    public UtilityPoleGroup[] poleGroups;
+    [Header("Pole Groups (Supports Both Utility Poles & Rooftop Electrical)")]
+    public WirePoleGroup[] poleGroups;
 
     [Header("Wire Appearance")]
     public Material wireMaterial;
@@ -124,14 +198,14 @@ public class WireController : MonoBehaviour
     [ContextMenu("Create All Wires")]
     public void CreateAllWires()
     {
-        if (poleGroups == null || poleGroups.Length == 0)
-            return;
-
         if (wireMaterial == null)
         {
             Debug.LogWarning("Wire material is not assigned!");
             return;
         }
+
+        if (poleGroups == null || poleGroups.Length == 0)
+            return;
 
         ClearAllWires();
 
@@ -150,43 +224,98 @@ public class WireController : MonoBehaviour
         allOriginalPositions.Clear();
         allRandomOffsets.Clear();
 
+        CreateWiresFromPoleGroups();
+
+        wiresCreated = true;
+    }
+
+    private void CreateWiresFromPoleGroups()
+    {
         for (int groupIndex = 0; groupIndex < poleGroups.Length; groupIndex++)
         {
-            UtilityPoleGroup group = poleGroups[groupIndex];
-            if (group.poles == null || group.poles.Length < 2)
+            WirePoleGroup group = poleGroups[groupIndex];
+            if (group.nodes == null || group.nodes.Length < 2)
                 continue;
 
             GameObject groupContainer = new GameObject($"Group_{groupIndex}_{group.groupName}");
             groupContainer.transform.SetParent(mainContainer.transform);
 
-            for (int poleIndex = 0; poleIndex < group.poles.Length - 1; poleIndex++)
+            // Find all connectors first
+            foreach (var node in group.nodes)
             {
-                UtilityPoleConnector currentPole = group.poles[poleIndex];
-                UtilityPoleConnector nextPole = group.poles[poleIndex + 1];
+                node.FindConnectors();
+            }
 
-                if (currentPole == null || nextPole == null)
+            for (int nodeIndex = 0; nodeIndex < group.nodes.Length - 1; nodeIndex++)
+            {
+                WireNode currentNode = group.nodes[nodeIndex];
+                WireNode nextNode = group.nodes[nodeIndex + 1];
+
+                if (currentNode.target == null || nextNode.target == null)
                     continue;
 
-                currentPole.FindConnectors();
-                nextPole.FindConnectors();
+                if (currentNode.connectorA == null || nextNode.connectorA == null)
+                    continue;
 
-                for (int connectorIndex = 0; connectorIndex < 2; connectorIndex++)
+                // Determine connection strategy
+                bool currentIsSingle = currentNode.isSingleConnector;
+                bool nextIsSingle = nextNode.isSingleConnector;
+
+                if (!currentIsSingle && !nextIsSingle)
                 {
-                    Transform sourceConnector = currentPole.GetConnector(connectorIndex);
-                    Transform targetConnector = nextPole.GetConnector(connectorIndex);
-
-                    if (sourceConnector == null || targetConnector == null)
-                        continue;
-
-                    for (int lineNum = 0; lineNum < linesPerConnector; lineNum++)
+                    // Both have dual connectors - connect A to A, B to B
+                    for (int connectorIndex = 0; connectorIndex < 2; connectorIndex++)
                     {
-                        CreateSingleWire(groupContainer.transform, sourceConnector, targetConnector, groupIndex, poleIndex, connectorIndex, lineNum);
+                        Transform sourceConnector = currentNode.GetConnector(connectorIndex);
+                        Transform targetConnector = nextNode.GetConnector(connectorIndex);
+
+                        if (sourceConnector == null || targetConnector == null)
+                            continue;
+
+                        string connName = connectorIndex == 0 ? "A" : "B";
+                        for (int lineNum = 0; lineNum < linesPerConnector; lineNum++)
+                        {
+                            CreateSingleWire(groupContainer.transform, sourceConnector, targetConnector,
+                                $"Wire_Node{nodeIndex}_Conn{connName}_Line{lineNum}");
+                        }
+                    }
+                }
+                else
+                {
+                    // At least one is single connector - use Connector C from utility poles
+                    Transform sourceConnector;
+                    Transform targetConnector;
+
+                    if (currentIsSingle && nextIsSingle)
+                    {
+                        // Both single (rooftop to rooftop) - connect them directly
+                        sourceConnector = currentNode.connectorA;
+                        targetConnector = nextNode.connectorA;
+                    }
+                    else if (currentIsSingle)
+                    {
+                        // Current is single (rooftop), next is dual (pole) - use pole's connector C
+                        sourceConnector = currentNode.connectorA;
+                        targetConnector = nextNode.connectorC;
+                    }
+                    else
+                    {
+                        // Current is dual (pole), next is single (rooftop) - use pole's connector C
+                        sourceConnector = currentNode.connectorC;
+                        targetConnector = nextNode.connectorA;
+                    }
+
+                    if (sourceConnector != null && targetConnector != null)
+                    {
+                        for (int lineNum = 0; lineNum < linesPerConnector; lineNum++)
+                        {
+                            CreateSingleWire(groupContainer.transform, sourceConnector, targetConnector,
+                                $"Wire_Node{nodeIndex}_ConnC_Line{lineNum}");
+                        }
                     }
                 }
             }
         }
-
-        wiresCreated = true;
     }
 
     [ContextMenu("Clear All Wires")]
@@ -211,10 +340,9 @@ public class WireController : MonoBehaviour
         wiresCreated = false;
     }
 
-    private void CreateSingleWire(Transform parent, Transform source, Transform target, int groupIndex, int poleIndex, int connectorIndex, int lineNumber)
+    private void CreateSingleWire(Transform parent, Transform source, Transform target, string wireName)
     {
-        string connectorName = connectorIndex == 0 ? "A" : "B";
-        GameObject wireObj = new GameObject($"Wire_Pole{poleIndex}_Connector{connectorName}_Line{lineNumber}");
+        GameObject wireObj = new GameObject(wireName);
         wireObj.transform.SetParent(parent);
 
         LineRenderer lr = wireObj.AddComponent<LineRenderer>();
@@ -226,6 +354,14 @@ public class WireController : MonoBehaviour
         lr.useWorldSpace = true;
         lr.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
         lr.receiveShadows = false;
+
+        int lineNumber = 0;
+        if (wireName.Contains("_Line"))
+        {
+            string[] parts = wireName.Split(new string[] { "_Line" }, System.StringSplitOptions.None);
+            if (parts.Length > 1)
+                int.TryParse(parts[1], out lineNumber);
+        }
 
         Vector3 startOffset = GetLineOffset(lineNumber, linesPerConnector, lineOffsetVariance);
         Vector3 endOffset = GetLineOffset(lineNumber, linesPerConnector, lineOffsetVariance);
@@ -316,30 +452,75 @@ public class WireController : MonoBehaviour
 #if UNITY_EDITOR
     private void OnDrawGizmosSelected()
     {
+        Color[] groupColors = { Color.yellow, Color.cyan, Color.magenta, Color.green, Color.red };
+
         if (poleGroups == null)
             return;
 
-        Color[] groupColors = { Color.yellow, Color.cyan, Color.magenta, Color.green, Color.red };
-
         for (int g = 0; g < poleGroups.Length; g++)
         {
-            UtilityPoleGroup group = poleGroups[g];
-            if (group.poles == null || group.poles.Length < 2)
+            WirePoleGroup group = poleGroups[g];
+            if (group.nodes == null || group.nodes.Length < 2)
                 continue;
 
             Gizmos.color = groupColors[g % groupColors.Length];
 
-            for (int i = 0; i < group.poles.Length - 1; i++)
+            foreach (var node in group.nodes)
             {
-                if (group.poles[i] == null || group.poles[i + 1] == null)
+                node.FindConnectors();
+            }
+
+            for (int i = 0; i < group.nodes.Length - 1; i++)
+            {
+                WireNode current = group.nodes[i];
+                WireNode next = group.nodes[i + 1];
+
+                if (current.target == null || next.target == null)
                     continue;
 
-                for (int c = 0; c < 2; c++)
+                bool currentIsSingle = current.isSingleConnector;
+                bool nextIsSingle = next.isSingleConnector;
+
+                if (!currentIsSingle && !nextIsSingle)
                 {
-                    Transform source = group.poles[i].GetConnector(c);
-                    Transform target = group.poles[i + 1].GetConnector(c);
+                    // Both dual - draw A-A and B-B lines
+                    for (int c = 0; c < 2; c++)
+                    {
+                        Transform source = current.GetConnector(c);
+                        Transform target = next.GetConnector(c);
+                        if (source != null && target != null)
+                            Gizmos.DrawLine(source.position, target.position);
+                    }
+                }
+                else
+                {
+                    // At least one single - use connector C from poles
+                    Transform source, target;
+                    if (currentIsSingle && nextIsSingle)
+                    {
+                        source = current.connectorA;
+                        target = next.connectorA;
+                    }
+                    else if (currentIsSingle)
+                    {
+                        source = current.connectorA;
+                        target = next.connectorC;
+                    }
+                    else
+                    {
+                        source = current.connectorC;
+                        target = next.connectorA;
+                    }
+
                     if (source != null && target != null)
+                    {
                         Gizmos.DrawLine(source.position, target.position);
+                        // Draw spheres to indicate single connectors
+                        if (currentIsSingle)
+                            Gizmos.DrawWireSphere(source.position, 0.15f);
+                        if (nextIsSingle)
+                            Gizmos.DrawWireSphere(target.position, 0.15f);
+                    }
                 }
             }
         }
