@@ -57,13 +57,12 @@ public class UIElement : MonoBehaviour
 
     public void LoadWinScreen()
     {
-        UIManager.Instance.ShowUI(uiid.DeathScreenScene);
-        Time.timeScale = 0f;
+        UIManager.Instance.ShowUI(uiid.WinScreenScene);
     }
 
     public void UnloadWinScreen()
     {
-        UIManager.Instance.HideUI(uiid.DeathScreenScene);
+        UIManager.Instance.HideUI(uiid.WinScreenScene);
         Time.timeScale = 1f;
     }
 

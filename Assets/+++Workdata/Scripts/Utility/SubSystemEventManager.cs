@@ -1,3 +1,4 @@
+using EasyPeasyFirstPersonController;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -7,6 +8,7 @@ public class SubSystemEventManager : MonoBehaviour
 {
     int systemAmount;
     public GameObject levelFinishTrigger;
+    public CheckList checkList;
 
     public int amountOfSystemsRepaired
     {
@@ -49,5 +51,6 @@ public class SubSystemEventManager : MonoBehaviour
     {
         print("Repaired all Systems");
         levelFinishTrigger.SetActive(true);
+        checkList.LevelFinished();
     }
 }

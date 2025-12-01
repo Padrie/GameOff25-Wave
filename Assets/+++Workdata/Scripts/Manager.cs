@@ -85,7 +85,7 @@ public class Manager : MonoBehaviour
 
         if (UIManager.Instance != null)
         {
-            if (UIManager.Instance.IsUIActive(uiid.DeathScreenScene))
+            if (UIManager.Instance.IsUIActive(uiid.DeathScreenScene) || UIManager.Instance.IsUIActive(uiid.WinScreenScene))
             {
                 SetCursorState(false);
                 UIManager.Instance.HideUI(uiid.OptionsScene);

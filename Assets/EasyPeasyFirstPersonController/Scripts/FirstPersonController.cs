@@ -70,6 +70,7 @@ namespace EasyPeasyFirstPersonController
         private bool isHoldingItem = false;
         [HideInInspector] public bool isHoldingCheckList = false;
         public bool isDead = false;
+        public bool isFinished = false;
         public bool isPauseMenuActive = false;
         private float currentCameraHeight;
         private float currentBobOffset;
@@ -124,7 +125,7 @@ namespace EasyPeasyFirstPersonController
 
         private void Update()
         {
-            if (CarAnimation.inCutscene || isDead) return;
+            if (CarAnimation.inCutscene || isDead || isFinished) return;
 
             if (UIManager.Instance != null)
             {

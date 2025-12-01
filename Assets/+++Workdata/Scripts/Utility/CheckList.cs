@@ -7,9 +7,11 @@ public class CheckList : MonoBehaviour
     public TMP_Text batteryText;
     public TMP_Text generatorText;
     public TMP_Text fuseText;
+    public TMP_Text goToCarText;
 
     private void Awake()
     {
+        goToCarText.gameObject.SetActive(false);
         CheckListObject.SetActive(false);
     }
 
@@ -31,12 +33,15 @@ public class CheckList : MonoBehaviour
                 break;
             case RepairItemCategory.Battery:
                 batteryText.fontStyle = FontStyles.Strikethrough;
+                batteryText.color = Color.gray;
                 break;
             case RepairItemCategory.Generator:
                 generatorText.fontStyle = FontStyles.Strikethrough;
+                generatorText.color = Color.gray;
                 break;
             case RepairItemCategory.Fuse:
                 fuseText.fontStyle = FontStyles.Strikethrough;
+                fuseText.color = Color.gray;
                 break;
         }
     }
@@ -44,5 +49,10 @@ public class CheckList : MonoBehaviour
     public GameObject GetCheckListObject()
     {
         return CheckListObject;
+    }
+
+    public void LevelFinished()
+    {
+        goToCarText.gameObject.SetActive(true);
     }
 }

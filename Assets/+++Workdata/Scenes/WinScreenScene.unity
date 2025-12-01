@@ -462,7 +462,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1572197875}
         m_TargetAssemblyTypeName: UIElement, Assembly-CSharp
-        m_MethodName: UnloadDeathSceen
+        m_MethodName: UnloadWinScreen
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
