@@ -56,7 +56,7 @@ public class LightSaver : MonoBehaviour
     private void Update()
     {
         //debug delete all light playerprefs
-        if (Input.GetKeyDown(KeyCode.P))
+        if (Input.GetKeyDown(KeyCode.P) && DisableDebugControls.debugControlsEnabled)
         {
             PlayerPrefs.DeleteKey(officeLights.name);
             PlayerPrefs.DeleteKey(mechanicLights.name);

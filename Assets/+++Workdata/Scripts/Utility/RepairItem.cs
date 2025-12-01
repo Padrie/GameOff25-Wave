@@ -200,10 +200,13 @@ public class RepairItem : MonoBehaviour, IInteractable
         var player = _firstPersonController;
         holdsItem = false;
         player.itemSlot = null;
+        player = null;
+
+        Destroy(gameObject);
+        return;
         transform.SetParent(newParent);
         transform.localPosition = Vector3.zero;
         transform.localRotation = Quaternion.identity;
-        player = null;
     }
 
     public void EnableGravity()

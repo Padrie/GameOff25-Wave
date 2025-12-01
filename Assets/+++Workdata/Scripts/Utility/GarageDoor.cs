@@ -23,6 +23,9 @@ public class GarageDoor : MonoBehaviour
     [SerializeField] private BoxCollider doorCollider;
     [SerializeField] private float openThreshold = 0.3f;
 
+    [Header("Initial State")]
+    [SerializeField] private bool startOpened = false;
+
     private List<SplineFollowerComponent> followers = new List<SplineFollowerComponent>();
     private float splineLength;
     private bool isAudioPlaying;
@@ -44,6 +47,11 @@ public class GarageDoor : MonoBehaviour
 
         InitializeFollowers();
         UpdateFollowerPositions();
+
+        if (startOpened)
+        {
+            SetDoorFullyOpen();
+        }
     }
 
     private bool ValidateSetup()
@@ -81,6 +89,17 @@ public class GarageDoor : MonoBehaviour
             follower.Initialize(splineContainer, startDistance, speed, splineLength, stopDistance, rotationOffset);
             followers.Add(follower);
         }
+    }
+
+    private void SetDoorFullyOpen()
+    {
+        foreach (var follower in followers)
+        {
+            follower.SetToEndPosition();
+        }
+
+        // Let CheckColliderState handle the collider based on openThreshold
+        CheckColliderState();
     }
 
     private void UpdateFollowerPositions()
@@ -191,6 +210,13 @@ public class SplineFollowerComponent : MonoBehaviour
         splineLength = length;
         stopDistance = stop;
         rotationOffset = rotation;
+    }
+
+    public void SetToEndPosition()
+    {
+        currentDistance = stopDistance;
+        hasReachedEnd = true;
+        UpdatePosition();
     }
 
     public void MoveAlongSpline()
