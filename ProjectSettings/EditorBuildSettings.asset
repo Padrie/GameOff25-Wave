@@ -26,6 +26,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/+++Workdata/Scenes/WinScreenScene.unity
     guid: 74b543be1679d244bbf3b98241166900
+  - enabled: 1
+    path: Assets/+++Workdata/Scenes/CreditsScene.unity
+    guid: 7a7ebc32e2c2293429f282f699578474
   - enabled: 0
     path: Assets/+++Workdata/Scenes/PatricScene.unity
     guid: 1b73b8b7eff33ac43b83eba7d8777704

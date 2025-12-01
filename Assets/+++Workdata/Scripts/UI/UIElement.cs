@@ -66,6 +66,16 @@ public class UIElement : MonoBehaviour
         Time.timeScale = 1f;
     }
 
+    public void LoadCreditsScreen()
+    {
+        UIManager.Instance.ShowUI(uiid.CreditsScene);
+    }
+
+    public void UnloadCreditsScreen()
+    {
+        UIManager.Instance.HideUI(uiid.CreditsScene);
+    }
+
     public void LoadMainMenuScene()
     {
         SceneManager.LoadSceneAsync("MainMenuScene", LoadSceneMode.Additive);

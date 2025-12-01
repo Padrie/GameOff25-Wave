@@ -24,6 +24,7 @@ public enum uiid
     MainMenuScene,
     OptionsScene,
     PauseScene,
+    CreditsScene,
     DeathScreenScene,
     WinScreenScene
 }

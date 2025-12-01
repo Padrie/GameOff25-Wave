@@ -595,8 +595,8 @@ MonoBehaviour:
 
 '
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: e697e0ee5265d7246ae7a7b2e672b04b, type: 2}
-  m_sharedMaterial: {fileID: 6014784220508495664, guid: e697e0ee5265d7246ae7a7b2e672b04b, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 1b722d3e2d967924fb3f3bcd2e08d6a7, type: 2}
+  m_sharedMaterial: {fileID: 6014784220508495664, guid: 1b722d3e2d967924fb3f3bcd2e08d6a7, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -952,8 +952,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: By restoring the power, you scared the Monster away
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: e697e0ee5265d7246ae7a7b2e672b04b, type: 2}
-  m_sharedMaterial: {fileID: 6014784220508495664, guid: e697e0ee5265d7246ae7a7b2e672b04b, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 1b722d3e2d967924fb3f3bcd2e08d6a7, type: 2}
+  m_sharedMaterial: {fileID: 6014784220508495664, guid: 1b722d3e2d967924fb3f3bcd2e08d6a7, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
