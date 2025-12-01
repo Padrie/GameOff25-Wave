@@ -6,6 +6,9 @@ public class AudioPlayer : MonoBehaviour
     public AudioClip falseRepairItemClip;
     public AudioClip correctRepairItemClip;
 
+    [Header("Gate SFX")]
+    public AudioClip gateclosingClip;
+
     [Header("Settings")]
     [Range(0f, 1f)]
     public float volume = 1f;
@@ -53,5 +56,10 @@ public class AudioPlayer : MonoBehaviour
     public void PlayCorrectRepairItemSFX(Vector3 position)
     {
         PlayClipAtPoint(correctRepairItemClip, position);
+    }
+
+    public void PlayGateClosing(GameObject gameObjectVector3)
+    {
+        PlayClipAtPoint(gateclosingClip, gameObjectVector3.transform.position);
     }
 }
