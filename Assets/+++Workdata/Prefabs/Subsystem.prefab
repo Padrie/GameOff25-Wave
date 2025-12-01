@@ -662,6 +662,7 @@ MonoBehaviour:
   closeSpeed: 180
   rotationThreshold: 0.5
   rotationAxis: 1
+  reverseDirection: 0
   openSound: {fileID: 8300000, guid: 94944a6ff53b010468e640f04d865515, type: 3}
   closeSound: {fileID: 8300000, guid: 90dfd7f2403835444841b8a7d6e2fcf3, type: 3}
   volume: 0.5

@@ -2,7 +2,7 @@
 - Project name: GameOff25-Wave
 - Unity version: Unity 6000.2.8f1
 - Active game object:
-  - Name: OfficeTable
+  - Name: Road_AreaPart_98
   - Tag: Untagged
-  - Layer: Default
+  - Layer: Ground
 <!-- UNITY CODE ASSIST INSTRUCTIONS END -->
