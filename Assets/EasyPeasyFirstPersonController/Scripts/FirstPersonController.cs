@@ -118,11 +118,6 @@ namespace EasyPeasyFirstPersonController
             seedZ = UnityEngine.Random.value * 100f;
         }
 
-        private void Start()
-        {
-            ActivateCheckList();
-        }
-
         private void Update()
         {
             if (CarAnimation.inCutscene || isDead || isFinished) return;
