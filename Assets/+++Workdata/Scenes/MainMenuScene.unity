@@ -16318,10 +16318,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LightShadowResolutionManager
   autoApply: 1
   includeInactiveLights: 1
-  directionalTier: 0
-  spotTier: 0
-  pointTier: 0
-  areaTier: 0
+  directionalTier: 2
+  spotTier: 2
+  pointTier: 2
+  areaTier: 2
   shadowQualityDropdown: {fileID: 0}
   urpAsset: {fileID: 11400000, guid: 4b83569d67af61e458304325a23e5dfd, type: 2}
 --- !u!43 &440189690
@@ -25946,9 +25946,41 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 206265511590355516, guid: 3bff5fdc04b68134389c84567ed73509, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 1479796781123949948, guid: 3bff5fdc04b68134389c84567ed73509, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 1556420018144485088, guid: 3bff5fdc04b68134389c84567ed73509, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 1914113294413859022, guid: 3bff5fdc04b68134389c84567ed73509, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 1958005317980998231, guid: 3bff5fdc04b68134389c84567ed73509, type: 3}
       propertyPath: m_Name
       value: Lights
+      objectReference: {fileID: 0}
+    - target: {fileID: 1958005317980998231, guid: 3bff5fdc04b68134389c84567ed73509, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 1965589776435744420, guid: 3bff5fdc04b68134389c84567ed73509, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 2694221721452366168, guid: 3bff5fdc04b68134389c84567ed73509, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 2872400174486348291, guid: 3bff5fdc04b68134389c84567ed73509, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 3367280085209261682, guid: 3bff5fdc04b68134389c84567ed73509, type: 3}
       propertyPath: m_LocalPosition.x
@@ -25990,13 +26022,57 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3633776312057288433, guid: 3bff5fdc04b68134389c84567ed73509, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 3767689801506899806, guid: 3bff5fdc04b68134389c84567ed73509, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 3892793405866808576, guid: 3bff5fdc04b68134389c84567ed73509, type: 3}
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3892793405866808576, guid: 3bff5fdc04b68134389c84567ed73509, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 4357737398403622871, guid: 3bff5fdc04b68134389c84567ed73509, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 5823179539920070025, guid: 3bff5fdc04b68134389c84567ed73509, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 6073689252239873787, guid: 3bff5fdc04b68134389c84567ed73509, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 6928869166094184555, guid: 3bff5fdc04b68134389c84567ed73509, type: 3}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6928869166094184555, guid: 3bff5fdc04b68134389c84567ed73509, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 7019678844179905933, guid: 3bff5fdc04b68134389c84567ed73509, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 7180909411281107290, guid: 3bff5fdc04b68134389c84567ed73509, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 8137828700099191952, guid: 3bff5fdc04b68134389c84567ed73509, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 8433754448340296107, guid: 3bff5fdc04b68134389c84567ed73509, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -63566,8 +63642,30 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 3880212609973204789, guid: f1dbe816b42775f478c55db6d0f1df6a, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1665740745}
   m_SourcePrefab: {fileID: 100100000, guid: f1dbe816b42775f478c55db6d0f1df6a, type: 3}
+--- !u!1 &1665740744 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3880212609973204789, guid: f1dbe816b42775f478c55db6d0f1df6a, type: 3}
+  m_PrefabInstance: {fileID: 1665740743}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1665740745
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1665740744}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4b900b6d691ae49f8a12753b63b449e7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::Beautify.Universal.BeautifySettings
+  sun: {fileID: 0}
+  depthOfFieldTarget: {fileID: 0}
 --- !u!1 &1667064508
 GameObject:
   m_ObjectHideFlags: 0
@@ -79827,7 +79925,7 @@ GameObject:
   - component: {fileID: 2080064674}
   - component: {fileID: 2080064673}
   m_Layer: 5
-  m_Name: GameName
+  m_Name: Title - Text
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

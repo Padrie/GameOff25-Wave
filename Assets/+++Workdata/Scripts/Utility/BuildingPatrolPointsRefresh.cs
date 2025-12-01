@@ -19,6 +19,8 @@ public class BuildingPatrolPointsRefresh : MonoBehaviour
 
     private void Start()
     {
+        if(gameObject.scene.name == "MainMenuScene") return;
+
         buildingPatrolPointsParent.SetActive(false);
 
         int childCount = buildingPatrolPointsParent.transform.childCount;

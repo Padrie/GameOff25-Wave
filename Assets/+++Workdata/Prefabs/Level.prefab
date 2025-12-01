@@ -111,7 +111,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.UniversalAdditionalLightData
   m_UsePipelineSettings: 0
-  m_AdditionalLightsShadowResolutionTier: 0
+  m_AdditionalLightsShadowResolutionTier: 2
   m_CustomShadowLayers: 1
   m_LightCookieSize: {x: 1, y: 1}
   m_LightCookieOffset: {x: 0, y: 0}
@@ -318,7 +318,7 @@ MonoBehaviour:
   m_OverrideVoxelSize: 0
   m_VoxelSize: 0.083333336
   m_MinRegionArea: 2
-  m_NavMeshData: {fileID: 23800000, guid: 3bcf280db169ca945af72fbea360a3b1, type: 2}
+  m_NavMeshData: {fileID: 23800000, guid: c6c0115c9ebf2da4d8b2fd55eede5472, type: 2}
   m_BuildHeightMesh: 0
 --- !u!1001 &315489861815970503
 PrefabInstance:
@@ -579,7 +579,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1879881367105776614, guid: b70865235db126d41a1d25219cabc79a, type: 3}
       propertyPath: m_AdditionalLightsShadowResolutionTier
-      value: 0
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 8918630065786188585, guid: b70865235db126d41a1d25219cabc79a, type: 3}
       propertyPath: m_Name
@@ -835,7 +835,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1879881367105776614, guid: b70865235db126d41a1d25219cabc79a, type: 3}
       propertyPath: m_AdditionalLightsShadowResolutionTier
-      value: 0
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 8918630065786188585, guid: b70865235db126d41a1d25219cabc79a, type: 3}
       propertyPath: m_Name
@@ -2082,7 +2082,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1879881367105776614, guid: b70865235db126d41a1d25219cabc79a, type: 3}
       propertyPath: m_AdditionalLightsShadowResolutionTier
-      value: 0
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 8918630065786188585, guid: b70865235db126d41a1d25219cabc79a, type: 3}
       propertyPath: m_Name
@@ -3167,6 +3167,9 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 3312290042759435834}
     m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: -3610382427895173525, guid: 3a97208cc740a8c49af973f5784c1fbf, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4974018013105044026}
     - targetCorrespondingSourceObject: {fileID: -9092079857460838331, guid: 3a97208cc740a8c49af973f5784c1fbf, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1477906401743419105}
@@ -3221,6 +3224,28 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -3716476293862304863, guid: 3a97208cc740a8c49af973f5784c1fbf, type: 3}
   m_PrefabInstance: {fileID: 4808350226439889534}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1107860500271631381 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: -3610382427895173525, guid: 3a97208cc740a8c49af973f5784c1fbf, type: 3}
+  m_PrefabInstance: {fileID: 4808350226439889534}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &4974018013105044026
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1107860500271631381}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2fa330e212ff0e143996d79aef61de50, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BuildingPatrolPointsRefresh
+  doors:
+  - {fileID: 7271482261590702710}
+  - {fileID: 7228997961219087939}
+  - {fileID: 8520430919842259085}
+  buildingPatrolPointsParent: {fileID: 0}
 --- !u!4 &1162631226615781433 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -3271636435401459129, guid: 3a97208cc740a8c49af973f5784c1fbf, type: 3}
@@ -3745,7 +3770,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1879881367105776614, guid: b70865235db126d41a1d25219cabc79a, type: 3}
       propertyPath: m_AdditionalLightsShadowResolutionTier
-      value: 0
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 8918630065786188585, guid: b70865235db126d41a1d25219cabc79a, type: 3}
       propertyPath: m_Name
@@ -3950,7 +3975,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1879881367105776614, guid: b70865235db126d41a1d25219cabc79a, type: 3}
       propertyPath: m_AdditionalLightsShadowResolutionTier
-      value: 0
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 8918630065786188585, guid: b70865235db126d41a1d25219cabc79a, type: 3}
       propertyPath: m_Name
@@ -4020,7 +4045,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1879881367105776614, guid: b70865235db126d41a1d25219cabc79a, type: 3}
       propertyPath: m_AdditionalLightsShadowResolutionTier
-      value: 0
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 8918630065786188585, guid: b70865235db126d41a1d25219cabc79a, type: 3}
       propertyPath: m_Name
@@ -4745,7 +4770,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1879881367105776614, guid: b70865235db126d41a1d25219cabc79a, type: 3}
       propertyPath: m_AdditionalLightsShadowResolutionTier
-      value: 0
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 8918630065786188585, guid: b70865235db126d41a1d25219cabc79a, type: 3}
       propertyPath: m_Name
@@ -4885,6 +4910,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 3568328192233665742, guid: 1e23c3504f516b6448cbfea655ee2423, type: 3}
   m_PrefabInstance: {fileID: 7076275184368295338}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &8520430919842259085 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1444912273328766247, guid: 1e23c3504f516b6448cbfea655ee2423, type: 3}
+  m_PrefabInstance: {fileID: 7076275184368295338}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2188092fbb495934a961779876e7c108, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Door
 --- !u!1001 &7084441329801733006
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5721,7 +5757,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1879881367105776614, guid: b70865235db126d41a1d25219cabc79a, type: 3}
       propertyPath: m_AdditionalLightsShadowResolutionTier
-      value: 0
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 8918630065786188585, guid: b70865235db126d41a1d25219cabc79a, type: 3}
       propertyPath: m_Name
@@ -6066,6 +6102,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 3568328192233665742, guid: 1e23c3504f516b6448cbfea655ee2423, type: 3}
   m_PrefabInstance: {fileID: 8097423024965313380}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &7228997961219087939 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1444912273328766247, guid: 1e23c3504f516b6448cbfea655ee2423, type: 3}
+  m_PrefabInstance: {fileID: 8097423024965313380}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2188092fbb495934a961779876e7c108, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Door
 --- !u!1001 &8134664871086524241
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6128,6 +6175,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 3568328192233665742, guid: 1e23c3504f516b6448cbfea655ee2423, type: 3}
   m_PrefabInstance: {fileID: 8134664871086524241}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &7271482261590702710 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1444912273328766247, guid: 1e23c3504f516b6448cbfea655ee2423, type: 3}
+  m_PrefabInstance: {fileID: 8134664871086524241}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2188092fbb495934a961779876e7c108, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Door
 --- !u!1001 &8172218740936674678
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6379,7 +6437,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1879881367105776614, guid: b70865235db126d41a1d25219cabc79a, type: 3}
       propertyPath: m_AdditionalLightsShadowResolutionTier
-      value: 0
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 8918630065786188585, guid: b70865235db126d41a1d25219cabc79a, type: 3}
       propertyPath: m_Name
