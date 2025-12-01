@@ -8,7 +8,7 @@ public class CheckList : MonoBehaviour
     public TMP_Text generatorText;
     public TMP_Text fuseText;
 
-    private void Start()
+    private void Awake()
     {
         CheckListObject.SetActive(false);
     }

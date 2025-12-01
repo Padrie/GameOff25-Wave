@@ -6,6 +6,7 @@ using UnityEngine;
 public class SubSystemEventManager : MonoBehaviour
 {
     int systemAmount;
+    public GameObject levelFinishTrigger;
 
     public int amountOfSystemsRepaired
     {
@@ -38,7 +39,7 @@ public class SubSystemEventManager : MonoBehaviour
     {
         SubSystem.OnRepaired -= AddToRepaired;
     }
-
+    
     public void AddToRepaired(RepairItemCategory repair)
     {
         amountOfSystemsRepaired++;
@@ -47,6 +48,6 @@ public class SubSystemEventManager : MonoBehaviour
     public void RepairedAllSystems()
     {
         print("Repaired all Systems");
-        UIManager.Instance.ShowUI(uiid.WinScreenScene);
+        levelFinishTrigger.SetActive(true);
     }
 }
