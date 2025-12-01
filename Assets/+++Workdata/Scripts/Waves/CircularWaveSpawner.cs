@@ -249,7 +249,7 @@ public class CircularWaveSpawner : MonoBehaviour
 
     private void HandleInput()
     {
-        if (Input.GetKeyDown(spawnKey))
+        if (Input.GetKeyDown(spawnKey) && DisableDebugControls.debugControlsEnabled)
         {
             if (spawnAtPlayer && playerTransform != null)
             {

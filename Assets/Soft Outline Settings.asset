@@ -51,7 +51,7 @@ MonoBehaviour:
   layerMask:
     serializedVersion: 2
     m_Bits: 4294967295
-  renderQueue: 0
+  renderQueue: 2
   occlusion: 0
   cullingMode: 0
   closedLoop: 0

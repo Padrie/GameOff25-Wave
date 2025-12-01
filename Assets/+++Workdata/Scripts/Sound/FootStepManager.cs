@@ -230,19 +230,8 @@ namespace FootstepSystem
 
             if (isRunning)
             {
-                AlertEnemyToSound(SoundStrength.Normal);
-            }
-            else if (isWalking)
-            {
-                AlertEnemyToSound(SoundStrength.Quiet);
-            }
-        }
+                enemySoundPerception.CalculateSoundDistance(transform.position, SoundStrength.Normal);
 
-        private void AlertEnemyToSound(SoundStrength soundStrength)
-        {
-            if (enemySoundPerception != null)
-            {
-                enemySoundPerception.CalculateSoundDistance(transform.position,soundStrength);
             }
         }
 

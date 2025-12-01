@@ -1,12 +1,15 @@
 using UnityEngine;
+using UnityEngine.Events;
 
 public class InteractableObject : MonoBehaviour, IInteractable
 {
     [SerializeField] private string objectName = "Object";
     [SerializeField] private bool canInteractMultipleTimes = true;
 
-    private bool hasBeenInteracted = false;
+    [Space]
+    [SerializeField] private UnityEvent onInteracted;
 
+    private bool hasBeenInteracted = false;
 
     //Called when player interacts with this object
     public void Interact()
@@ -15,11 +18,10 @@ public class InteractableObject : MonoBehaviour, IInteractable
         {
             return;
         }
-
         hasBeenInteracted = true;
-
         Debug.Log($"Interacted with {objectName}!");
 
+        onInteracted?.Invoke();
         OnInteracted();
     }
 

@@ -13,6 +13,7 @@ Shader "TextMeshPro/Glimmer"
         _GlimmerSharpness("Glimmer Sharpness", Range(1, 20)) = 5
         _GlimmerIntensity("Glimmer Intensity", Range(0, 2)) = 1
         _GlimmerOffset("Glimmer Offset", Range(-2, 2)) = 0
+        [Toggle] _UseUnscaledTime("Use Unscaled Time", Float) = 1
         
         // Standard TMP Properties
         _OutlineColor("Outline Color", Color) = (0,0,0,1)
@@ -92,6 +93,9 @@ Shader "TextMeshPro/Glimmer"
             TEXTURE2D(_MainTex);
             SAMPLER(sampler_MainTex);
 
+            // Global unscaled time - set via script using Shader.SetGlobalFloat
+            float _UnscaledTimeGlobal;
+
             CBUFFER_START(UnityPerMaterial)
                 float4 _MainTex_ST;
                 float4 _FaceColor;
@@ -104,6 +108,7 @@ Shader "TextMeshPro/Glimmer"
                 float _GlimmerSharpness;
                 float _GlimmerIntensity;
                 float _GlimmerOffset;
+                float _UseUnscaledTime;
                 float _WeightNormal;
                 float _WeightBold;
             CBUFFER_END
@@ -146,8 +151,9 @@ Shader "TextMeshPro/Glimmer"
                 float2 glimmerUV = i.screenPos;
                 float glimmerPos = dot(glimmerUV, direction);
                 
-                // Animate the glimmer
-                float time = _Time.y * _GlimmerSpeed + _GlimmerOffset;
+                // Use unscaled time or scaled time based on toggle
+                float currentTime = _UseUnscaledTime > 0.5 ? _UnscaledTimeGlobal : _Time.y;
+                float time = currentTime * _GlimmerSpeed + _GlimmerOffset;
                 float glimmerMask = glimmerPos - time;
                 
                 // Create sharp glimmer edge

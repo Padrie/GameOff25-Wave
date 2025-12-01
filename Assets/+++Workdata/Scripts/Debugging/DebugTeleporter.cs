@@ -67,7 +67,7 @@ public class DebugTeleporter : MonoBehaviour
 #endif
 
         // Toggle menu
-        if (Input.GetKeyDown(menuKey))
+        if (Input.GetKeyDown(menuKey) && DisableDebugControls.debugControlsEnabled)
         {
             showMenu = !showMenu;
 
@@ -79,7 +79,7 @@ public class DebugTeleporter : MonoBehaviour
         }
 
         // Manual refresh with hotkey
-        if (Input.GetKeyDown(refreshKey))
+        if (Input.GetKeyDown(refreshKey) && DisableDebugControls.debugControlsEnabled)
         {
             RefreshTeleportMarkers();
         }

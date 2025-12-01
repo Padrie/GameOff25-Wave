@@ -41,8 +41,8 @@ public class Options : MonoBehaviour
     public Color hoverTabColor;
     public Color selectedTabColor;
 
-    private const int NormalFontSize = 48;
-    private const int SelectedFontSize = 64;
+    private const int NormalFontSize = 38;
+    private const int SelectedFontSize = 44;
 
     private const string FULLSCREEN_KEY = "Display_Fullscreen";
     private const string DOF_KEY = "Graphics_DOF";

@@ -28,7 +28,7 @@ public class FreeCam : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(toggleKey))
+        if (Input.GetKeyDown(toggleKey) && DisableDebugControls.debugControlsEnabled)
             ToggleFreeCam();
 
         if (!freeCamActive) return;

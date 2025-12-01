@@ -8,8 +8,7 @@ using UnityEngine.SceneManagement;
 
 public class Manager : MonoBehaviour
 {
-    [SerializeField]
-    private bool doCutscene = true;
+    [SerializeField] private bool doCutscene = true;
 
 
     [SerializeField] private GameObject playerCar;
@@ -32,6 +31,9 @@ public class Manager : MonoBehaviour
     FirstPersonController player;
 
 
+
+
+
     private void Awake()
     {
         lightSaver = FindFirstObjectByType<LightSaver>();
@@ -41,10 +43,16 @@ public class Manager : MonoBehaviour
 
     void Start()
     {
-#if Unity_Editor
-        // Cap fps to monitor refresh rate
-        Application.targetFrameRate = (int)Screen.currentResolution.refreshRateRatio.value;
-#endif
+        if(gameObject.scene.name == "InGame")
+        {
+            Application.targetFrameRate = (int)Screen.currentResolution.refreshRateRatio.value;
+        }
+
+        if(!doCutscene)
+        {
+            EnableGameplay();
+        }
+
 
         if (doCutscene || !Application.isEditor)
         {
@@ -97,7 +105,7 @@ public class Manager : MonoBehaviour
     private void HandleInput()
     {
         // Reload scene
-        if (Input.GetKeyDown(KeyCode.R))
+        if (Input.GetKeyDown(KeyCode.R) && DisableDebugControls.debugControlsEnabled)
         {
             ReloadScene();
         }
@@ -132,7 +140,7 @@ public class Manager : MonoBehaviour
         //}
 
         // Skip cutscene
-        if (Input.GetKeyDown(KeyCode.Tab) && doCutscene)
+        if (Input.GetKeyDown(KeyCode.Tab) && doCutscene && DisableDebugControls.debugControlsEnabled)
         {
             playerCar.GetComponent<CarAnimation>().TeleportToEnd();
             EnableGameplay();

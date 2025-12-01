@@ -15,15 +15,17 @@ public class SubSystem : MonoBehaviour, IInteractable
     public UnityEvent CallWhenRepaired;
     public static event Action<RepairItemCategory> OnRepaired;
 
+    private AudioPlayer audioPlayer;
+
     private void Awake()
     {
         _firstPersonController = FindFirstObjectByType<FirstPersonController>();
+        audioPlayer = FindAnyObjectByType<AudioPlayer>();
     }
 
     public void CorrectRepairItem()
     {
         _firstPersonController.itemSlot.GetComponent<RepairItem>().Reparent(repairItemSlot);
-        GetComponent<Collider>().enabled = false;
         CallWhenRepaired?.Invoke();
         OnRepaired?.Invoke(repairItem);
 
@@ -38,10 +40,12 @@ public class SubSystem : MonoBehaviour, IInteractable
         if (_firstPersonController.itemSlot.GetComponent<RepairItem>().repairItem == repairItem)
         {
             CorrectRepairItem();
+            audioPlayer.PlayCorrectRepairItemSFX(transform.position);
         }
         else
         {
             print("Falsches Repair item du opfer");
+            audioPlayer.PlayFalseRepairItemSFX(transform.position);
         }
     }
 
