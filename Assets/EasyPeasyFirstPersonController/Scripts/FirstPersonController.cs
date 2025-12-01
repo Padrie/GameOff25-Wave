@@ -367,7 +367,7 @@ namespace EasyPeasyFirstPersonController
         {
             if (itemSlot == null)
                 return true;
-            else if (itemSlot != null && preventSprintWhenHoldingItem)
+            else if (itemSlot != null && preventSprintWhenHoldingItem && itemSlot.GetComponent<RepairItem>())
                 return false;
             else
                 return true;
